@@ -260,6 +260,8 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 		allyViewButton.setBackgroundColor(Color.parseColor("#cf5a11"));
 		stationViewButton.setBackgroundColor(Color.parseColor("#cf5a11"));
 		
+		shipSpinner.setBackgroundColor(Color.parseColor("#bf9000"));
+		
 		ImageButton connectButton = (ImageButton) findViewById(R.id.connectButton);
 		connectButton.setOnClickListener(new OnClickListener() {
 			@Override
