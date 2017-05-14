@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Artemis Messenger</string>
+    <string name="sourceHeader">Source</string>
+    <string name="destHeader">Destination</string>
+    <string name="rewardHeader">Reward</string>
+    <string name="addressRow">addressRow</string>
+    <string name="appLayout">appLayout</string>
+    <string name="showAllButton">showAllPrefButton</string>
+    <string name="addressLabel">Address</string>
+    <string name="showMissions">Missions</string>
+    <string name="showAllies">Allies</string>
+    <string name="shipHeader">Ship</string>
+    <string name="shieldsHeader">Shields</string>
+    <string name="statusHeader">Status</string>
+    <string name="showStations">Stations</string>
+    <string name="stationHeader">Station</string>
+    <string name="ordnanceHeader">Ordnance</string>
+    <string name="vesselDataPrefCategory">Vessel Data</string>
+    <string name="missionDispPrefCategory">Mission Display</string>
+    <string name="batteryChargePref">Battery Charge</string>
+    <string name="extraCoolantPref">Extra Coolant</string>
+    <string name="nukePref">Nuclear Missiles</string>
+    <string name="prodSpeedPref">Production Speed</string>
+    <string name="shieldBoostPref">Shield Boost</string>
+    <string-array name="vesselDataPrefList">
+        <item>Default</item>
+        <item>Internal storage</item>
+        <item>External storage</item>
+    </string-array>
+    <string-array name="vesselDataValueList">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+    <string name="vesselDataSummary">Select the location of the /dat folder where vesselData.xml is located. Warning: Changing the location while connected to a server will reset the connection.</string>
+    <string name="batteryChargeKey">batteryChargeCheckBox</string>
+    <string name="extraCoolantKey">extraCoolantCheckBox</string>
+    <string name="nuclearKey">nukeMissilesCheckBox</string>
+    <string name="speedKey">prodSpeedCheckBox</string>
+    <string name="shieldKey">shieldBoostCheckBox</string>
+    <string name="vesselDataKey">vesselDataList</string>
+    <string-array name="vesselDataPrefNoCard">
+        <item>Default</item>
+        <item>Internal storage</item>
+    </string-array>
+    <string-array name="vesselDataValueNoCard">
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+    <string name="newMissionPrefKey">newMissionPrefKey</string>
+    <string name="foundSrcPrefKey">foundSrcPrefKey</string>
+    <string name="foundDestPrefKey">foundDestPrefKey</string>
+    <string name="connect">Connect</string>
+
+</resources>

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+    <PreferenceCategory android:key="pref_key_vessel_data" android:title="@string/vesselDataPrefCategory">
+        <ListPreference
+            android:entryValues="@array/vesselDataValueList"
+            android:entries="@array/vesselDataPrefList"
+            android:dialogTitle="Vessel data location"
+            android:key="@string/vesselDataKey"
+            android:selectable="true"
+            android:negativeButtonText="Cancel"
+            android:defaultValue="0"
+            android:enabled="true"
+            android:positiveButtonText="OK"
+            android:title="Choose location"
+            android:summary="@string/vesselDataSummary"/>
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:key="pref_key_mission_display_options"
+        android:title="@string/missionDispPrefCategory"
+        android:summary="Side missions that do not include at least one of the selected rewards will not be shown.">
+        
+        <CheckBoxPreference
+            android:key="@string/batteryChargeKey"
+            android:title="@string/batteryChargePref"
+            android:enabled="true"
+            android:selectable="true" android:defaultValue="true"/>
+        
+        <CheckBoxPreference 
+            android:key="@string/extraCoolantKey"
+            android:title="@string/extraCoolantPref"
+            android:enabled="true"
+            android:selectable="true" android:defaultValue="true"/>
+        
+        <CheckBoxPreference
+            android:enabled="true"
+            android:key="@string/nuclearKey"
+            android:selectable="true"
+            android:title="@string/nukePref" android:defaultValue="true"/>
+        
+        <CheckBoxPreference
+            android:enabled="true"
+            android:key="@string/speedKey"
+            android:selectable="true"
+            android:title="@string/prodSpeedPref" android:defaultValue="true"/>
+        
+        <CheckBoxPreference
+            android:enabled="true"
+            android:key="@string/shieldKey"
+            android:selectable="true"
+            android:title="@string/shieldBoostPref" android:defaultValue="true"/>
+        
+        <Preference
+            android:summary="All side missions will be shown."
+            android:selectable="true"
+            android:key="@string/showAllButton"
+            android:title="Show All"
+            android:enabled="true"/>
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:key="pref_key_notifications"
+        android:title="Notifications">
+        
+        <RingtonePreference
+            android:title="New side mission"
+            android:showDefault="true"
+            android:ringtoneType="notification"
+            android:key="@string/newMissionPrefKey"
+            android:showSilent="true"
+            android:selectable="true"
+            android:enabled="true"/>
+        <RingtonePreference android:title="Arrived at source" android:showSilent="true" android:showDefault="true" android:ringtoneType="notification" android:key="@string/foundSrcPrefKey" android:selectable="true" android:enabled="true"/>
+        <RingtonePreference android:selectable="true" android:title="Arrived at destination" android:enabled="true" android:showSilent="true" android:showDefault="true" android:ringtoneType="notification" android:key="@string/foundDestPrefKey"/>
+    </PreferenceCategory>
+    
+
+</PreferenceScreen>
