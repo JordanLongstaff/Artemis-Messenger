@@ -90,7 +90,7 @@ public class SettingsActivity extends PreferenceActivity {
 				.putBoolean(getString(R.string.nuclearKey), true)
 				.putBoolean(getString(R.string.speedKey), true)
 				.putBoolean(getString(R.string.shieldKey), true)
-				.apply();
+				.commit();
 				
 				CheckBoxPreference batteryPref = (CheckBoxPreference) findPreference(getString(R.string.batteryChargeKey));
 				batteryPref.setChecked(true);

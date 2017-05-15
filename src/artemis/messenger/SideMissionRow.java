@@ -106,9 +106,7 @@ public class SideMissionRow extends TableRow {
 		started = true;
 		TextView sourceText = (TextView) getChildAt(0);
 		sourceText.setBackgroundColor(Color.parseColor("#002060"));
-//		sourceText.setTextColor(Color.parseColor("#ffffff"));
 		TextView destText = (TextView) getChildAt(1);
-//		destText.setTextColor(Color.parseColor("#000000"));
 		destText.setBackgroundColor(Color.parseColor("#bf9000"));
 	}
 	public void markAsCompleted() {

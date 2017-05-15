@@ -1,6 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
 <resources>
-
     <string name="app_name">Artemis Messenger</string>
     <string name="sourceHeader">Source</string>
     <string name="destHeader">Destination</string>
@@ -53,5 +52,13 @@
     <string name="foundSrcPrefKey">foundSrcPrefKey</string>
     <string name="foundDestPrefKey">foundDestPrefKey</string>
     <string name="connect">Connect</string>
-
+    <string name="showRoute">Route</string>
+    <string name="helpButton">Help</string>
+    <string name="distanceHeader">Distance</string>
+    <string name="title_activity_help">HelpActivity</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="helpTopicsKey">helpTopicsMenuItem</string>
+    <string name="helpStartupKey">helpStartupCheckBox</string>
+    <string name="helpStartupTitle">Show help on startup</string>
 </resources>
