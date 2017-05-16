@@ -1,5 +1,6 @@
 package artemis.messenger;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
@@ -78,6 +79,16 @@ public class SettingsActivity extends PreferenceActivity {
 			vesselDataPref.setEntryValues(getResources().getStringArray(R.array.vesselDataValueList));
 		}
 		bindPreferenceSummaryToValue(vesselDataPref);
+		
+		Preference helpPref = findPreference(getString(R.string.helpTopicsKey));
+		helpPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+			@Override
+			public boolean onPreferenceClick(Preference pref) {
+				Intent helpIntent = new Intent(SettingsActivity.this, HelpActivity.class);
+				startActivity(helpIntent);
+				return false;
+			}
+		});
 		
 		Preference showAllPref = findPreference(getString(R.string.showAllButton));
 		showAllPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {

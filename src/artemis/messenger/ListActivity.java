@@ -195,7 +195,6 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 		
 		// Initialize ship selection box
 		Spinner shipSpinner = (Spinner) findViewById(R.id.shipSpinner);
-		shipSpinner.setBackgroundColor(Color.parseColor("#bf9000"));
 		shipSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
 			@Override
 			public void onItemSelected(AdapterView<?> parent, View view,
@@ -317,7 +316,16 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 		helpButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				
+				Intent helpIntent = new Intent(ListActivity.this, HelpActivity.class);
+				startActivity(helpIntent);
+			}
+		});
+		
+		ImageButton closeButton = (ImageButton) findViewById(R.id.closeButton);
+		closeButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				onBackPressed();
 			}
 		});
 
@@ -336,7 +344,15 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 		updateFont(appLayout);
 		
 		// Set up preference change listener
-		PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(this);
+		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+		preferences.registerOnSharedPreferenceChangeListener(this);
+		
+		// Start up help activity if set
+		if (preferences.getBoolean(getString(R.string.helpStartupKey), true)) {
+			Intent helpIntent = new Intent(this, HelpActivity.class);
+			startActivity(helpIntent);
+		}
+		
 	}
 	
 	// Set all views in app layout to have the same font
@@ -356,31 +372,45 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 	 * Sets up a connection to a running Artemis server.
 	 */
 	private void createConnection() {
+		// If a server was running, stop it
 		if (server != null) {
 			server.stop();
 			server = null;
 			inPackets.clear();
 		}
+		
+		// Initialize important components required for runnables
 		final EditText addressField = (EditText) findViewById(R.id.addressField);
 		final LinearLayout addressRow = (LinearLayout) findViewById(R.id.addressRow);
 		final Spinner shipSpinner = (Spinner) findViewById(R.id.shipSpinner);
 		final ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.ship_name_spinner);
-		final String ip = addressField.getText().toString();
+		
+		// Get URL
+		final String url = addressField.getText().toString();
+		
+		// If one was already in use, clear tables and prep for new connection
 		if (host != null) {
 			uiThreadControl(clearAllTables);
 		}
 		
+		// Find selected vesselData.xml location
 		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
 		int resolverIndex = Integer.parseInt(pref.getString(getString(R.string.vesselDataKey), "0"));
 		PathResolver resolver;
 		
 		if (resolverIndex == 0) {
+			// If it's the app assets, point there
 			resolver = new AssetsResolver(getAssets());
 		} else {
+			// Otherwise, point to location and unpack from assets if necessary
 			Toast.makeText(this, "Unpacking assets...", Toast.LENGTH_SHORT).show();
 			String filesDir;
+			
+			// Point to either internal or external storage
 			if (resolverIndex == 2) filesDir = Environment.getExternalStorageDirectory() + "/artemis/dat";
 			else filesDir = getFilesDir() + "/artemis/dat";
+			
+			// Create path if it doesn't already exist
 			File datDir = new File(filesDir);
 			if (!datDir.exists()) datDir.mkdirs();
 			AssetManager am = getAssets();
@@ -407,12 +437,12 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 		
 		context = new com.walkertribe.ian.Context(resolver);
 		
-		Toast.makeText(this, "Connecting to " + ip + "...", Toast.LENGTH_LONG).show();
+		Toast.makeText(this, "Connecting to " + url + "...", Toast.LENGTH_LONG).show();
 		
 		new Thread(new Runnable() {
 			@Override public void run() {
 				try {
-					server = new ThreadedArtemisNetworkInterface(ip, 2010, context);
+					server = new ThreadedArtemisNetworkInterface(url, 2010, context);
 					server.addListener(ListActivity.this);
 					
 					manager = new SystemManager(context);

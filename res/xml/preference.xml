@@ -73,7 +73,8 @@
     </PreferenceCategory>
     <PreferenceCategory android:title="Help" android:key="pref_key_help">
         <Preference android:summary="Learn to use Artemis Messenger." android:key="@string/helpTopicsKey" android:title="Show help topics" android:selectable="true" android:enabled="true"/>
-        <CheckBoxPreference android:title="@string/helpStartupTitle" android:selectable="true" android:key="@string/helpStartupKey" android:enabled="true"/>
+        
+        <CheckBoxPreference android:title="@string/helpStartupTitle" android:key="@string/helpStartupKey"/>
     </PreferenceCategory>
     
 

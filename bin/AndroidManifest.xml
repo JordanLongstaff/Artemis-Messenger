@@ -46,6 +46,10 @@
             android:name=".HelpActivity"
             android:label="@string/title_activity_help" >
         </activity>
+        <activity
+            android:name=".HelpPageActivity"
+            android:label="@string/title_activity_help_page" >
+        </activity>
     </application>
 
 </manifest>
