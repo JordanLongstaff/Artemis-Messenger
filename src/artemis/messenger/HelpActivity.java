@@ -36,6 +36,7 @@ public class HelpActivity extends Activity {
 					return;
 				}
 				
+				// Open help page content
 				Intent helpPageIntent = new Intent(HelpActivity.this, HelpPageActivity.class);
 				helpPageIntent.putExtra("Page", pos);
 				startActivity(helpPageIntent);

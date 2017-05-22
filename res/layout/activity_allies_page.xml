@@ -30,7 +30,130 @@
             android:layout_height="wrap_content"
             android:orientation="vertical" >
 
-        <Button android:id="@+id/alliesBack" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/backButton" /></LinearLayout>
+            <TextView
+                android:id="@+id/alliesPar1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/alliesParagraph1" />
+
+            <LinearLayout
+                android:id="@+id/alliesImageFrame"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+
+                <ImageView
+                    android:id="@+id/alliesImage"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/activity_vertical_margin"
+                    android:layout_weight="1"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/showAllies"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/allies_view" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/alliesHeader2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:text="@string/alliesHeader"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <TextView
+                android:id="@+id/alliesPar2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:text="@string/alliesParagraph2" />
+
+            <TextView
+                android:id="@+id/alliesPar3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:text="@string/alliesParagraph3" />
+
+            <TextView
+                android:id="@+id/alliesPar4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:text="@string/alliesParagraph4" />
+
+            <TextView
+                android:id="@+id/alliesPar5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:text="@string/alliesParagraph5" />
+
+            <TextView
+                android:id="@+id/alliesPar6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:text="@string/alliesParagraph6" />
+
+            <TextView
+                android:id="@+id/alliesPar7"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:text="@string/alliesParagraph7" />
+
+            <TextView
+                android:id="@+id/alliesPar8"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:text="@string/alliesParagraph8" />
+
+            <TextView
+                android:id="@+id/alliesPar9"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:text="@string/alliesParagraph9" />
+
+            <TextView
+                android:id="@+id/alliesPar10"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:text="@string/alliesParagraph10" />
+
+            <TextView
+                android:id="@+id/alliesPar11"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:text="@string/alliesParagraph11" />
+
+            <TextView
+                android:id="@+id/alliesPar12"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:text="@string/alliesParagraph12" />
+
+            <TextView
+                android:id="@+id/alliesPar13"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:text="@string/alliesParagraph13" />
+
+            <TextView
+                android:id="@+id/alliesPar14"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:text="@string/alliesParagraph14" /><Button android:id="@+id/alliesBack" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/backButton" />
+
+        </LinearLayout>
     </ScrollView>
 
     

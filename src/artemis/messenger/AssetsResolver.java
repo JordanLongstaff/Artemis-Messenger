@@ -7,6 +7,11 @@ import com.walkertribe.ian.vesseldata.PathResolver;
 
 import android.content.res.AssetManager;
 
+/**
+ * Path resolver that points to app's Assets folder - needed for vesselData.xml.
+ * @author Jordan Longstaff
+ *
+ */
 public class AssetsResolver implements PathResolver {
 	private final AssetManager manager;
 	

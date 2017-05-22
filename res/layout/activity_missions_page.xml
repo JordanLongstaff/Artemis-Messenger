@@ -6,7 +6,8 @@
     android:orientation="vertical" >
 
     <LinearLayout
-        android:id="@+id/missionsTitleBar"        android:layout_width="match_parent"
+        android:id="@+id/missionsTitleBar"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content" >
 
         <TextView
@@ -29,9 +30,133 @@
             android:layout_height="wrap_content"
             android:orientation="vertical" >
 
-        <Button android:id="@+id/missionsBack" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/backButton" /></LinearLayout>
-    </ScrollView>
+            <TextView
+                android:id="@+id/missionsPar1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/missionsParagraph1" />
 
-    
+            <LinearLayout
+                android:id="@+id/missionsImageFrame"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+
+                <ImageView
+                    android:id="@+id/missionsImage"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginTop="@dimen/activity_vertical_margin"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/showMissions"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/missions_view" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/missionsHeader2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:text="@string/missionsHeader"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <TextView
+                android:id="@+id/missionsPar2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:text="@string/missionsParagraph2" />
+
+            <LinearLayout
+                android:id="@+id/commsImageFrame"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+
+                <ImageView
+                    android:id="@+id/commsImage"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginTop="@dimen/activity_vertical_margin"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/missionsParagraph3"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/comms_message" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/missionsPar4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:text="@string/missionsParagraph4" />
+
+            <TextView
+                android:id="@+id/missionsPar5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:text="@string/missionsParagraph5" />
+
+            <TextView
+                android:id="@+id/missionsPar6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:text="@string/missionsParagraph6" />
+
+            <TextView
+                android:id="@+id/missionsPar7"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:text="@string/missionsParagraph7" />
+
+            <TextView
+                android:id="@+id/missionsPar8"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:text="@string/missionsParagraph8" />
+
+            <TextView
+                android:id="@+id/missionsPar9"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:text="@string/missionsParagraph9" />
+
+            <TextView
+                android:id="@+id/missionsPar10"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:text="@string/missionsParagraph10" />
+
+            <TextView
+                android:id="@+id/missionsPar11"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:text="@string/missionsParagraph11" />
+
+            <TextView
+                android:id="@+id/missionsPar12"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:text="@string/missionsParagraph12" />
+
+            <Button
+                android:id="@+id/missionsBack"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/backButton" />
+
+</LinearLayout>
+    </ScrollView>
 
 </LinearLayout>

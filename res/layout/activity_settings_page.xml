@@ -30,7 +30,79 @@
             android:layout_height="wrap_content"
             android:orientation="vertical" >
 
-        <Button android:id="@+id/settingsBack" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/backButton" /></LinearLayout>
+            <TextView
+                android:id="@+id/settingsPar1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/settingsParagraph1" />
+
+        <TextView
+            android:id="@+id/settingsHeader2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:text="@string/settingsDataHeader"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <TextView
+            android:id="@+id/settingsPar2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:text="@string/settingsParagraph2" />
+
+        <TextView
+            android:id="@+id/settingsHeader3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:text="@string/settingsFilterHeader"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <TextView
+            android:id="@+id/settingsPar3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:text="@string/settingsParagraph3" />
+
+        <TextView
+            android:id="@+id/settingsHeader4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:text="@string/settingsRingtoneHeader"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <TextView
+            android:id="@+id/settingsPar4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:text="@string/settingsParagraph4" />
+
+        <TextView
+            android:id="@+id/settingsHeader5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:text="@string/settingsHelpHeader"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <TextView
+            android:id="@+id/settingsPar5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:text="@string/settingsParagraph5" />
+
+        <Button
+            android:id="@+id/settingsBack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/backButton" />
+
+</LinearLayout>
     </ScrollView>
 
     

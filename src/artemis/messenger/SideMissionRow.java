@@ -8,25 +8,30 @@ import android.widget.TableRow;
 import android.widget.TextView;
 
 public class SideMissionRow extends TableRow {
+	// Side mission information
 	private final String source, destination;
 	private boolean started = false, completed = false;
 	private final HashMap<String, Integer> rewards;
 	
+	// Reward keys
 	public static final String BATTERY_KEY = "batteries.";
 	public static final String PRODUCTION_KEY = "speed.";
 	public static final String NUCLEAR_KEY = "torpedoes.";
 	public static final String COOLANT_KEY = "coolant.";
 	public static final String SHIELD_KEY = "generators.";
 	
+	// Reward map
 	private static final HashMap<String, String> rewardMap = new HashMap<String, String>();
 	
 	public SideMissionRow(Context context, String src, String dest, String payout) {
+		// Fill side mission information
 		super(context);
 		source = src;
 		destination = dest;
 		rewards = new HashMap<String, Integer>();
 		rewards.put(payout, 1);
 		
+		// Set up reward map
 		if (rewardMap.isEmpty()) {
 			rewardMap.put(PRODUCTION_KEY, context.getString(R.string.prodSpeedPref));
 			rewardMap.put(NUCLEAR_KEY, context.getString(R.string.nukePref));
@@ -35,10 +40,12 @@ public class SideMissionRow extends TableRow {
 			rewardMap.put(SHIELD_KEY, context.getString(R.string.shieldBoostPref));
 		}
 		
+		// Build layout
 		setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
 		
 		LayoutParams cellLayout = new LayoutParams(0, LayoutParams.MATCH_PARENT, 1);
 		
+		// Add table row cells
 		TextView sourceText = new TextView(context);
 		sourceText.setTypeface(ListActivity.APP_FONT);
 		sourceText.setText(source);
@@ -60,10 +67,12 @@ public class SideMissionRow extends TableRow {
 		rewardText.setPadding(3, 3, 3, 3);
 		addView(rewardText);
 		
+		// Set background colours
 		setBackgroundColor(Color.parseColor("#002060"));
 		sourceText.setBackgroundColor(Color.parseColor("#bf9000"));
 	}
 	
+	// Getter/manipulator methods
 	public String getSource() { return source; }
 	public String getDestination() { return destination; }
 	public int getQuantity(String reward) {
@@ -82,11 +91,13 @@ public class SideMissionRow extends TableRow {
 		rewardText.setText(getRewardList());
 	}
 	
+	// String formatter
 	@Override
 	public String toString() {
 		return String.format("[%s, %s, %s]", source, destination, getRewardList());
 	}
 	
+	// Get list of all rewards
 	public String getRewardList() {
 		String text = "";
 		for (String reward: rewards.keySet()) {
@@ -97,11 +108,13 @@ public class SideMissionRow extends TableRow {
 		return text;
 	}
 	
+	// Need to change source text if source was previously ambiguous
 	public void updateSource(String src) {
 		TextView sourceText = (TextView) getChildAt(0);
 		sourceText.setText(src);
 	}
 	
+	// Mark mission as started
 	public void markAsStarted() {
 		started = true;
 		TextView sourceText = (TextView) getChildAt(0);
@@ -109,6 +122,8 @@ public class SideMissionRow extends TableRow {
 		TextView destText = (TextView) getChildAt(1);
 		destText.setBackgroundColor(Color.parseColor("#bf9000"));
 	}
+	
+	// Mark mission as completed
 	public void markAsCompleted() {
 		completed = true;
 		int green = Color.parseColor("#008000");

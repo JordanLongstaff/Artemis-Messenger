@@ -16,6 +16,7 @@ public class HelpPageActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_basics_page);
 		
+		// Arrays determine content based on received help page number
 		int[] titleBarIDs = new int[] {
 				R.id.basicsTitle,
 				R.id.missionsTitle,
@@ -46,14 +47,17 @@ public class HelpPageActivity extends Activity {
 				R.id.aboutBack
 		};
 
+		// Get help page number so a single class can handle one of seven different layouts
 		Intent intent = getIntent();
 		int helpPageID = intent.getIntExtra("Page", 0);
 		setContentView(layoutIDs[helpPageID]);
 		
+		// Title bar
 		TextView titleBar = (TextView)findViewById(titleBarIDs[helpPageID]);
 		titleBar.setBackgroundColor(Color.parseColor("#707070"));
 		titleBar.setText(getResources().getStringArray(R.array.helpTopicsList)[helpPageID]);
 		
+		// Back button
 		Button backButton = (Button)findViewById(backButtonIDs[helpPageID]);
 		backButton.setOnClickListener(new OnClickListener() {
 			@Override

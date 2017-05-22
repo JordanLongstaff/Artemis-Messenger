@@ -30,6 +30,59 @@
             android:layout_height="wrap_content"
             android:orientation="vertical" >
 
+            <TextView
+                android:id="@+id/stationsPar1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/stationsParagraph1" />
+
+            <LinearLayout
+                android:id="@+id/stationsImageFrame"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+
+                <ImageView
+                    android:id="@+id/stationsImage"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginTop="@dimen/activity_vertical_margin"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/showStations"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/stations_view" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/stationsHeader2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:text="@string/alliesHeader"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <TextView
+                android:id="@+id/stationsPar2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:text="@string/stationsParagraph2" />
+
+            <TextView
+                android:id="@+id/stationsPar3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:text="@string/stationsParagraph3" />
+
+            <TextView
+                android:id="@+id/stationsPar4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:text="@string/stationsParagraph4" />
+
         <Button android:id="@+id/stationsBack" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/backButton" /></LinearLayout>
     </ScrollView>
 

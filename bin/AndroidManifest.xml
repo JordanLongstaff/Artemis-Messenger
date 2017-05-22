@@ -4,7 +4,7 @@
     android:installLocation="preferExternal"
     android:revisionCode="25"
     android:versionCode="26"
-    android:versionName="3.1.0" >
+    android:versionName="4.0.0" >
 
     <uses-sdk
         android:minSdkVersion="8"
