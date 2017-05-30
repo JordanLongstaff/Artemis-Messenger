@@ -143,7 +143,9 @@ public class PlayerShipParser extends AbstractObjectParser {
         reader.readObjectUnknown(Bit.UNK_5_6, 5);
         reader.readObjectUnknown(Bit.UNK_5_7, 4);
         reader.readObjectUnknown(Bit.UNK_5_8, 1);
-        if (player.getVessel(reader.getContext()) != null && player.getVessel(reader.getContext()).is(VesselAttribute.FIGHTER)) {
+        if (player.getVessel(reader.getContext()) != null &&
+        		(player.getVessel(reader.getContext()).is(VesselAttribute.FIGHTER) ||
+        				player.getVessel(reader.getContext()).is(VesselAttribute.SINGLESEAT))) {
         	player.setCapitalShipId(reader.readInt(Bit.CAPITAL_SHIP_ID, -1));
         }
         player.setAccentColor(reader.readInt(Bit.ACCENT_COLOR, -1));

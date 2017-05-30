@@ -1,5 +1,8 @@
 package com.walkertribe.ian.protocol.core.comm;
 
+import java.util.EnumSet;
+
+import com.walkertribe.ian.enums.CommsSubjectType;
 import com.walkertribe.ian.enums.ConnectionType;
 import com.walkertribe.ian.iface.PacketFactory;
 import com.walkertribe.ian.iface.PacketFactoryRegistry;
@@ -36,19 +39,30 @@ public class CommsIncomingPacket extends BaseArtemisPacket {
     private final int mPriority;
     private final String mFrom;
     private final String mMessage;
+    private final EnumSet<CommsSubjectType> mFilters;
 
     private CommsIncomingPacket(PacketReader reader) {
         super(ConnectionType.SERVER, TYPE);
-        mPriority = reader.readInt();
+        
+        mPriority = reader.readShort();
+        
+        if (reader.peekByte() == 0) {
+        	mFilters = EnumSet.noneOf(CommsSubjectType.class);
+        } else {
+        	mFilters = CommsSubjectType.fromBits(mPriority);
+        }
+        
         mFrom = reader.readString();
         mMessage = reader.readString().replace('^', '\n');
     }
 
-    public CommsIncomingPacket(int priority, String from, String message) {
+    public CommsIncomingPacket(int priority, String from, String message, int filterBits) {
     	super(ConnectionType.SERVER, TYPE);
 
-    	if (priority < MIN_PRIORITY_VALUE || priority > MAX_PRIORITY_VALUE) {
-    		throw new IllegalArgumentException("Invalid priority: " + priority);
+    	if (filterBits == 0) {
+	    	if (priority < MIN_PRIORITY_VALUE || priority > MAX_PRIORITY_VALUE) {
+	    		throw new IllegalArgumentException("Invalid priority: " + priority);
+	    	}
     	}
 
     	if (from == null || from.length() == 0) {
@@ -62,6 +76,7 @@ public class CommsIncomingPacket extends BaseArtemisPacket {
     	mPriority = priority;
     	mFrom = from;
     	mMessage = message;
+    	mFilters = CommsSubjectType.fromBits(filterBits);
     }
 
     /**
@@ -87,6 +102,13 @@ public class CommsIncomingPacket extends BaseArtemisPacket {
      */
     public String getMessage() {
         return mMessage;
+    }
+    
+    /**
+     * The filters applicable to the message.
+     */
+    public EnumSet<CommsSubjectType> getFilters() {
+    	return mFilters;
     }
 
 	@Override

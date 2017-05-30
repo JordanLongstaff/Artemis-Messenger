@@ -196,9 +196,6 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 		} catch (IOException e) { }
 		
 		// Initialize ship selection components
-		final TextView shipText = (TextView) findViewById(R.id.shipText);
-		shipText.setVisibility(View.GONE);
-		
 		Spinner shipSpinner = (Spinner) findViewById(R.id.shipSpinner);
 		shipSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
 			@Override
@@ -206,9 +203,6 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 					int position, long id) {
 				// Wait for server
 				while (server == null);
-				
-				// Copy ship name to ship text view
-				shipText.setText("Ship: " + parent.getSelectedItem());
 				
 				// Set up Comms connection from selected ship
 				playerShip = position + 1;
@@ -585,11 +579,7 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 			public void run() {
 				clearAllTables.run();
 				
-				TextView shipText = (TextView)findViewById(R.id.shipText);
-				shipText.setVisibility(View.GONE);
-				
 				shipSpinner.setAdapter(adapter);
-				shipSpinner.setVisibility(View.VISIBLE);
 				addressRow.setBackgroundColor(Color.BLACK);
 			}
 		});
@@ -616,15 +606,10 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 		inPackets.clear();
 		outPackets.clear();
 		dockingStation = null;
-		final Spinner shipSpinner = (Spinner) findViewById(R.id.shipSpinner);
 		uiThreadControl(new Runnable() {
 			@Override
 			public void run() {
 				clearAllTables.run();
-				
-				TextView shipText = (TextView)findViewById(R.id.shipText);
-				shipText.setVisibility(View.GONE);
-				shipSpinner.setVisibility(View.VISIBLE);
 			}
 		});
 	}
@@ -636,17 +621,6 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 	 */
 	@Listener
 	public void onPacket(ObjectUpdatePacket pkt) {
-		// Disable ship switching during simulation
-		final Spinner shipSpinner = (Spinner)findViewById(R.id.shipSpinner);
-		uiThreadControl(new Runnable() {
-			@Override
-			public void run() {
-				shipSpinner.setVisibility(View.GONE);
-				TextView shipText = (TextView)findViewById(R.id.shipText);
-				shipText.setVisibility(View.VISIBLE);
-			}
-		});
-		
 		// Activate object update lock
 		objectControl = true;
 		
@@ -937,6 +911,7 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 						uiThreadControl(new Runnable() {
 							@Override
 							public void run() {
+								if (!allies.containsKey(id)) return;
 								AllyStatusRow row = allies.get(id).get(name);
 								setStatus(row, AllyStatus.BROKEN_COMPUTER);
 								row.setEnergy(message.endsWith("you need some."));
@@ -984,6 +959,7 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 						uiThreadControl(new Runnable() {
 							@Override
 							public void run() {
+								if (!allies.containsKey(id)) return;
 								setStatus(allies.get(id).get(name), AllyStatus.HOSTAGE);
 							}
 						});
@@ -994,6 +970,7 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 						uiThreadControl(new Runnable() {
 							@Override
 							public void run() {
+								if (!allies.containsKey(id)) return;
 								setStatus(allies.get(id).get(name), AllyStatus.COMMANDEERED);
 							}
 						});
@@ -1004,6 +981,7 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 						uiThreadControl(new Runnable() {
 							@Override
 							public void run() {
+								if (!allies.containsKey(id)) return;
 								AllyStatusRow row = allies.get(id).get(name);
 								setStatus(row, AllyStatus.FLYING_BLIND);
 								row.setEnergy(message.endsWith("you need some."));
@@ -1016,6 +994,7 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 						uiThreadControl(new Runnable() {
 							@Override
 							public void run() {
+								if (!allies.containsKey(id)) return;
 								AllyStatusRow row = allies.get(id).get(name);
 								setStatus(row, AllyStatus.NEED_DAMCON);
 								row.setEnergy(message.endsWith("you need some."));
@@ -1028,6 +1007,7 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 						uiThreadControl(new Runnable() {
 							@Override
 							public void run() {
+								if (!allies.containsKey(id)) return;
 								AllyStatusRow row = allies.get(id).get(name);
 								setStatus(row, AllyStatus.NEED_ENERGY);
 							}
@@ -1688,7 +1668,9 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 					// Calculate optimal route
 					route.addAll(graph.calculateRoute(Double.POSITIVE_INFINITY));
 				}
-			} catch (IllegalArgumentException e) { }
+			}
+			catch (IllegalArgumentException e) { }
+			catch (NullPointerException e) { }
 
 			// Empty out current route
 			uiThreadControl(new Runnable() {

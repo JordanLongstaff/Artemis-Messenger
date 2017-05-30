@@ -70,13 +70,13 @@
         <item>Back</item>
     </string-array>
     <string name="title_activity_help_page">HelpPageActivity</string>
-    <string name="basicsParagraph3">Before you can use Artemis Messenger, you must have an Artemis server running. Open Artemis on your computer and click "Start Server". After that, enter the server\'s address into the Address bar at the top of your screen, then tap the Connect button on the right to connect to the server.</string>
+    <string name="basicsParagraph3">Before you can use Artemis Messenger, you must have an Artemis server running. Open Artemis on your computer and click "Start Server". After that, enter the server\'s address into the Address bar at the top of your screen, then touch the Connect button on the right to connect to the server.</string>
     <string name="basicsParagraph2">Artemis Messenger is a Comms client app designed to be used with Artemis Spaceship Bridge Simulator, developed by Thom Robertson. It will be your assistant in managing side missions, ally ships, stations and more.</string>
     <string name="basicsParagraph1">Welcome to Artemis Messenger! If this is your first time using this app, this tutorial will teach you all you need to know about how to use it.</string>
     <string name="basicsConnectHeader">Connecting to a server</string>
     <string name="basicsLeavingHeader">Leaving Artemis Messenger</string>
     <string name="closeButton">Close</string>
-    <string name="basicsParagraph4">You will know that the connection was successful if the area around the Address bar turns green. You will probably all see text appear in the box below it; that is the ship selector box. Click it to switch to any of the eight ships; you will then assume a Comms role for that ship.</string>
+    <string name="basicsParagraph4">You will know that the connection was successful if the area around the Address bar turns green. You will probably also see text appear in the box below it; that is the ship selector box. Touch it to switch to any of the eight ships; you will then assume a Comms role for that ship.</string>
     <string name="basicsParagraph6">If you touch the Home button on your phone to return to your Home menu, Artemis Messenger will keep running in the background. It will continue to receive information about side missions, allies and stations via a Comms service. This information will be shown as notifications on your phone. If you click on one of those notifications, you will return to Artemis Messenger.</string>
     <string name="basicsParagraph5">When you want to leave Artemis Messenger, just hit the Back button on your phone. If your phone doesn\'t have a Back button, you can also press the Close button in the top-right corner of the screen. If the app is connected to a server, a dialog will appear asking if you want to close the connection; otherwise, no dialog will appear.</string>
     <string name="helpTitle">Help</string>

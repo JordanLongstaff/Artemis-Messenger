@@ -85,6 +85,14 @@ public class SideMissionRow extends TableRow {
 	public boolean isStarted() { return started; }
 	public boolean isCompleted() { return completed; }
 	public void addReward(String reward) {
+		if (rewardMap.containsValue(reward)) {
+			for (String key: rewardMap.keySet()) {
+				if (rewardMap.get(key).equals(reward)) {
+					reward = key;
+					break;
+				}
+			}
+		}
 		if (rewards.containsKey(reward)) rewards.put(reward, rewards.get(reward) + 1);
 		else rewards.put(reward, 1);
 		TextView rewardText = (TextView) getChildAt(2);

@@ -3,6 +3,7 @@ package com.walkertribe.ian.protocol.core.fighter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
 import com.walkertribe.ian.enums.ConnectionType;
 import com.walkertribe.ian.iface.PacketFactory;
@@ -12,6 +13,7 @@ import com.walkertribe.ian.iface.PacketWriter;
 import com.walkertribe.ian.protocol.ArtemisPacket;
 import com.walkertribe.ian.protocol.ArtemisPacketException;
 import com.walkertribe.ian.protocol.BaseArtemisPacket;
+import com.walkertribe.ian.util.Version;
 
 /**
  * Updates the current status of the fighter bays.
@@ -22,12 +24,14 @@ public class FighterBayStatusPacket extends BaseArtemisPacket implements Iterabl
 
     public static class Bay {
     	private int id;
+    	private int bayNum;
     	private String name;
     	private String className;
     	private int refitTime;
 
-    	public Bay(int id, String name, String className, int refitTime) {
+    	public Bay(int id, int bayNum, String name, String className, int refitTime) {
     		this.id = id;
+    		this.bayNum = bayNum;
     		this.name = name;
     		this.className = className;
     		this.refitTime = refitTime;
@@ -39,6 +43,14 @@ public class FighterBayStatusPacket extends BaseArtemisPacket implements Iterabl
 
 		public void setId(int id) {
 			this.id = id;
+		}
+		
+		public int getBayNumber() {
+			return bayNum;
+		}
+		
+		public void setBayNumber(int bayNum) {
+			this.bayNum = bayNum;
 		}
 
 		public String getName() {
@@ -85,7 +97,7 @@ public class FighterBayStatusPacket extends BaseArtemisPacket implements Iterabl
 
 		@Override
 		public String toString() {
-			return "#" + id + ": " + name + " (" + className + "): " + refitTime;
+			return String.format(Locale.getDefault(), "#%d (#%d): %s (%s): %d", id, bayNum, name, className, refitTime);
 		}
     }
 
@@ -116,10 +128,13 @@ public class FighterBayStatusPacket extends BaseArtemisPacket implements Iterabl
         		break;
         	}
 
+        	int bayNum = 0;
+        	if (reader.getVersion().ge(new Version("2.6"))) bayNum = reader.readInt();
+        	
         	String name = reader.readString();
         	String className = reader.readString();
         	int refitTime = reader.readInt();
-        	bays.add(new Bay(id, name, className, refitTime));
+        	bays.add(new Bay(id, bayNum, name, className, refitTime));
         } while (reader.hasMore());
 
         System.out.println(this);
@@ -139,6 +154,7 @@ public class FighterBayStatusPacket extends BaseArtemisPacket implements Iterabl
     	for (Bay bay : bays) {
     		writer
     			.writeInt(bay.id)
+    			.writeInt(bay.bayNum)
     			.writeString(bay.name)
     			.writeString(bay.className)
     			.writeInt(bay.refitTime);
