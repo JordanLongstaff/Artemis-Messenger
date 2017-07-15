@@ -82,6 +82,11 @@ public class SideMissionRow extends TableRow {
 	public boolean hasReward(String reward) {
 		return getQuantity(reward) > 0;
 	}
+	public int getNumRewards() {
+		int sum = 0;
+		for (String r: rewards.keySet()) sum += rewards.get(r);
+		return sum;
+	}
 	public boolean isStarted() { return started; }
 	public boolean isCompleted() { return completed; }
 	public void addReward(String reward) {
@@ -125,18 +130,26 @@ public class SideMissionRow extends TableRow {
 	// Mark mission as started
 	public void markAsStarted() {
 		started = true;
-		TextView sourceText = (TextView) getChildAt(0);
-		sourceText.setBackgroundColor(Color.parseColor("#002060"));
-		TextView destText = (TextView) getChildAt(1);
-		destText.setBackgroundColor(Color.parseColor("#bf9000"));
 	}
 	
 	// Mark mission as completed
 	public void markAsCompleted() {
+		started = true;
 		completed = true;
-		int green = Color.parseColor("#008000");
-		for (int i = 0; i < getChildCount(); i++) getChildAt(i).setBackgroundColor(green);
-		TextView rewardText = (TextView) getChildAt(2);
-		rewardText.setText(getRewardList() + " (Acquired)");
+	}
+	
+	// Update row design based on progress
+	public void updateProgress() {
+		if (completed) {
+			int green = Color.parseColor("#008000");
+			for (int i = 0; i < getChildCount(); i++) getChildAt(i).setBackgroundColor(green);
+			TextView rewardText = (TextView) getChildAt(2);
+			rewardText.setText(getRewardList() + " (Acquired)");
+		} else if (started) {
+			TextView sourceText = (TextView) getChildAt(0);
+			sourceText.setBackgroundColor(Color.parseColor("#002060"));
+			TextView destText = (TextView) getChildAt(1);
+			destText.setBackgroundColor(Color.parseColor("#bf9000"));
+		}
 	}
 }

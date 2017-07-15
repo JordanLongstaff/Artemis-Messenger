@@ -106,6 +106,7 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 	private static final String dataFile = "server.dat";
 	private static final int updateInterval = 100;
 	private static final int dsInterval = 300000;
+	private static final int timeout = 9000;
 	
 	// Static font for public access
 	public static Typeface APP_FONT;
@@ -354,7 +355,6 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 			Intent helpIntent = new Intent(this, HelpActivity.class);
 			startActivity(helpIntent);
 		}
-		
 	}
 	
 	// Set all views in app layout to have the same font
@@ -451,7 +451,7 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 		new Thread(new Runnable() {
 			@Override public void run() {
 				try {
-					server = new ThreadedArtemisNetworkInterface(url, 2010, context);
+					server = new ThreadedArtemisNetworkInterface(url, 2010, timeout, context);
 					server.addListener(ListActivity.this);
 					
 					manager = new SystemManager(context);
@@ -462,7 +462,8 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 					uiThreadControl(new Runnable() {
 						@Override
 						public void run() {
-							addressRow.setBackgroundColor(Color.RED);
+							Toast.makeText(ListActivity.this, "Connection failed", Toast.LENGTH_LONG).show();
+							addressRow.setBackgroundColor(Color.parseColor("#c00000"));
 							shipSpinner.setAdapter(adapter);
 						}
 					});
@@ -699,8 +700,18 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 			uiThreadControl(new Runnable() {
 				@Override
 				public void run() {
-					try { stationsTable.addView(row); }
-					catch (IllegalStateException e) { }
+					try {
+						for (int i = 0; i < stationsTable.getChildCount(); i++) {
+							StationStatusRow otherRow = (StationStatusRow) stationsTable.getChildAt(i);
+							TextView statusText = (TextView) otherRow.getChildAt(0);
+							String otherName = statusText.getText().toString().split(" ")[0];
+							if (base.getName().compareTo(otherName) < 0) {
+								stationsTable.addView(row, i);
+								return;
+							}
+						}
+						stationsTable.addView(row);
+					} catch (IllegalStateException e) { }
 				}
 			});
 		}
@@ -862,11 +873,21 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 					if ((!row.isStarted() && row.getSource().startsWith(object.getName())) ||
 							row.getDestination().startsWith(object.getName())) {
 						try {
-							// If mission wasn't started, destination has one less mission
-							if (!row.isStarted() && row.getSource().startsWith(object.getName())) {
-								String[] other = row.getDestination().split(" ", 3);
-								try { allies.get(other[0]).get(other[2]).removeMission(); }
-								catch (NullPointerException e) { bases.get(other[0]).get(other[2]).removeMission(); }
+							// If mission wasn't started, one less mission for entity that wasn't destroyed
+							if (!row.isStarted()) {
+								if (row.getSource().startsWith(object.getName())) {
+									String[] other = row.getDestination().split(" ", 3);
+									for (int n = 0; n < row.getNumRewards(); n++) {
+										try { allies.get(other[0]).get(other[2]).removeMission(); }
+										catch (NullPointerException e) { bases.get(other[0]).get(other[2]).removeMission(); }
+									}
+								} else if (row.getDestination().startsWith(object.getName())) {
+									String[] other = row.getSource().split(" ", 3);
+									for (int n = 0; n < row.getNumRewards(); n++) {
+										try { allies.get(other[0]).get(other[2]).removeMission(); }
+										catch (NullPointerException e) { bases.get(other[0]).get(other[2]).removeMission(); }
+									}
+								}
 							}
 							
 							// Remove row from Missions table
@@ -917,6 +938,28 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 								row.setEnergy(message.endsWith("you need some."));
 							}
 						});
+					} else if (message.startsWith("Docking crew")) {
+						// Make sure this ship is the correct one
+						if (message.split(", ")[1].startsWith(manager.getPlayerShip(playerShip).getName())) {
+							for (ArtemisObject o: manager.getObjects(ObjectType.BASE)) {
+								final String[] senderParts = sender.split(" ", 3);
+								if (o.getName().startsWith(senderParts[0])) {
+									final StationStatusRow row = bases.get(senderParts[0]).get(senderParts[2]);
+									uiThreadControl(new Runnable() {
+										@Override
+										public void run() {
+											row.setReady(true);
+										}
+									});
+									stationHandler.postDelayed(new Runnable() {
+										@Override
+										public void run() {
+											row.setReady(false);
+										}
+									}, 60000);
+								}
+							}
+						}
 					} else if (message.startsWith("Docking complete")) {
 						// Docking at a station
 						for (ArtemisObject o: manager.getObjects(ObjectType.BASE)) {
@@ -929,6 +972,16 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 							}
 						}
 					} else if (message.startsWith("We've produced") || message.contains("ing production of")) {
+						// Production of previous ordnance ended
+						String base = sender.split(" ")[0];
+						for (StationStatusRow row: bases.get(base).values()) {
+							// If a new missile was produced, recalibrate production speed
+							if (message.startsWith("We've")) {
+								row.recalibrateSpeed();
+							}
+							row.resetMissile();
+						}
+						
 						// Commencing production of a new ordnance
 						for (ArtemisObject o: manager.getObjects(ObjectType.BASE)) {
 							if (!sender.startsWith(o.getName())) continue;
@@ -946,8 +999,13 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 							public void run() {
 								row.setShields(shields);
 								for (OrdnanceType type: OrdnanceType.values()) {
-									row.setStock(type, Integer.parseInt(list[type.ordinal() + 1].split("of")[0].trim()));
-									if (list[list.length - 1].contains(type.toString())) row.setOrdnanceType(type);
+									row.setStock(type, Integer.parseInt(list[type.ordinal()+1].split("of")[0].trim()));
+									if (list[list.length - 1].contains(type.toString())) {
+										String[] lastWords = list[list.length - 1].split(" ");
+										int minutes = Integer.parseInt(lastWords[lastWords.length - 2]);
+										row.setBuildTime(minutes);
+										row.setOrdnanceType(type);
+									}
 								}
 								if (list.length > 7) row.setFighters(Integer.parseInt(list[6].split(" ")[1]));
 							}
@@ -1123,49 +1181,58 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 						// Extract reward
 						String[] words = message.split(" ");
 						final String reward = words[words.length - 1];
-						uiThreadControl(new Runnable() {
-							@Override
-							public void run() {
-								// Check if this mission should be displayed according to reward filters
-								SharedPreferences pref =
-										PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-								boolean show;
-								if (reward.equals(SideMissionRow.BATTERY_KEY)) {
-									show = pref.getBoolean(getString(R.string.batteryChargeKey), true);
-								} else if (reward.equals(SideMissionRow.NUCLEAR_KEY)) {
-									show = pref.getBoolean(getString(R.string.nuclearKey), true);
-								} else if (reward.equals(SideMissionRow.SHIELD_KEY)) {
-									show = pref.getBoolean(getString(R.string.shieldKey), true);
-								} else if (reward.equals(SideMissionRow.COOLANT_KEY)) {
-									show = pref.getBoolean(getString(R.string.extraCoolantKey), true);
-								} else {
-									show = pref.getBoolean(getString(R.string.speedKey), true);
-								}
-								
-								// Check if there's a row to merge with this one
-								boolean exists = false;
-								for (SideMissionRow row: missions) {
-									if (row.isStarted() ||
-											!row.getSource().contains(" ") ||
-											!row.getSource().startsWith(source) ||
-											!row.getDestination().equals(sender)) continue;
+						
+						// Check if this mission should be displayed according to reward filters
+						SharedPreferences pref =
+								PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+						final boolean show;
+						if (reward.equals(SideMissionRow.BATTERY_KEY)) {
+							show = pref.getBoolean(getString(R.string.batteryChargeKey), true);
+						} else if (reward.equals(SideMissionRow.NUCLEAR_KEY)) {
+							show = pref.getBoolean(getString(R.string.nuclearKey), true);
+						} else if (reward.equals(SideMissionRow.SHIELD_KEY)) {
+							show = pref.getBoolean(getString(R.string.shieldKey), true);
+						} else if (reward.equals(SideMissionRow.COOLANT_KEY)) {
+							show = pref.getBoolean(getString(R.string.extraCoolantKey), true);
+						} else {
+							show = pref.getBoolean(getString(R.string.speedKey), true);
+						}
+
+						// Check if there's a row to merge with this one
+						boolean exists = false;
+						for (int i = 0; i < missions.size(); i++) {
+							final SideMissionRow row = missions.get(i);
+							if (row.isStarted() ||
+									!row.getSource().contains(" ") ||
+									!row.getSource().startsWith(source) ||
+									!row.getDestination().equals(sender)) continue;
+							uiThreadControl(new Runnable() {
+								@Override
+								public void run() {
 									row.addReward(reward);
-									exists = true;
-									break;
 								}
-								
-								// If not, add to Missions view if filters allow
-								if (!exists) {
-									SideMissionRow newRow =
-											new SideMissionRow(getBaseContext(), source, sender, reward);
-									missions.add(newRow);
-									if (show) missionsTable.addView(newRow);
-								} else if (show) {
-									clearTable.run();
-									updateTables.run();
-								}
+							});
+							exists = true;
+							break;
+						}
+						
+						// If not, add to Missions view if filters allow
+						if (!exists) {
+							final SideMissionRow newRow =
+									new SideMissionRow(getBaseContext(), source, sender, reward);
+							missions.add(newRow);
+							if (show) {
+								uiThreadControl(new Runnable() {
+									@Override
+									public void run() {
+										missionsTable.addView(newRow);
+									}
+								});
 							}
-						});
+						} else if (show) {
+							uiThreadControl(clearTable);
+							uiThreadControl(updateTables);
+						}
 					} else if (message.contains("to deliver the")) {
 						// Visited source of side mission
 						String destination = message.split(" to ")[1];
@@ -1174,40 +1241,52 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 							if (row.isStarted() ||
 									!sender.startsWith(row.getSource()) ||
 									!row.getDestination().startsWith(destination)) continue;
-							final int index = i;
+							row.markAsStarted();
 							uiThreadControl(new Runnable() {
 								@Override
 								public void run() {
 									// Update side mission row
 									row.updateSource(sender);
-									row.markAsStarted();
-									
-									// See if there's another row to merge with this one
-									for (int i = 0; i < missions.size(); i++) {
-										SideMissionRow other = missions.get(i);
-										if (i == index ||
-												!other.isStarted() ||
-												other.isCompleted() ||
-												!other.getSource().equals(sender) ||
-												!other.getDestination().equals(row.getDestination())) continue;
-										String[] rewards = row.getRewardList().split(", ");
-										for (String s: rewards) {
-											int quantity = 1;
-											if (s.charAt(s.length() - 2) == 'x') {
-												quantity = Integer.parseInt(s.substring(s.length() - 1));
-												s = s.split(" x")[0];
-											}
-											for (int t = 0; t < quantity; t++) other.addReward(s);
-										}
-										try { missionsTable.removeView(row); }
-										catch (Exception e) { }
-										missions.remove(row);
-										break;
-									}
-									clearTable.run();
-									updateTables.run();
+									row.updateProgress();
 								}
 							});
+							
+							for (int j = 0; j < missions.size(); j++) {
+								final SideMissionRow other = missions.get(j);
+								if (j == i ||
+										!other.isStarted() ||
+										other.isCompleted() ||
+										!other.getSource().equals(sender) ||
+										!other.getDestination().equals(row.getDestination())) continue;
+								String[] rewards = row.getRewardList().split(", ");
+								for (String s: rewards) {
+									int quantity = 1;
+									if (s.charAt(s.length() - 2) == 'x') {
+										quantity = Integer.parseInt(s.substring(s.indexOf(" x") + 2));
+										s = s.split(" x")[0];
+									}
+									final String rewardStr = s;
+									for (int t = 0; t < quantity; t++) {
+										uiThreadControl(new Runnable() {
+											@Override
+											public void run() {
+												other.addReward(rewardStr);
+											}
+										});
+									}
+								}
+								uiThreadControl(new Runnable() {
+									@Override
+									public void run() {
+										try { missionsTable.removeView(row); }
+										catch (Exception e) { }										
+									}
+								});
+								missions.remove(row);
+								break;
+							}
+							uiThreadControl(clearTable);
+							uiThreadControl(updateTables);
 						}
 						
 						// Remove sender from the mission, their part of it is done
@@ -1232,12 +1311,13 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 									!sender.startsWith(row.getSource()) ||
 									!row.getDestination().startsWith(destination)) continue;
 							missions.add(row);
+							row.markAsStarted();
 							closed.get(id).remove(row);
 							uiThreadControl(new Runnable() {
 								@Override
 								public void run() {
 									row.updateSource(sender);
-									row.markAsStarted();
+									row.updateProgress();
 									missionsTable.addView(row);
 								}
 							});
@@ -1248,6 +1328,13 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 						String[] words = message.split(" ");
 						String reward = words[words.length - 1];
 						
+						if (reward.equals(SideMissionRow.PRODUCTION_KEY)) {
+							String baseName = sender.split(" ")[0];
+							for (StationStatusRow baseRow: bases.get(baseName).values()) {
+								baseRow.incProductionSpeed();
+							}
+						}
+						
 						// Find side mission row and finalize that mission
 						for (int i = 0; i < missions.size(); i++) {
 							final SideMissionRow row = missions.get(i);
@@ -1255,10 +1342,11 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 									!row.isStarted() ||
 									!row.getDestination().equals(sender) ||
 									!row.hasReward(reward)) continue;
+							row.markAsCompleted();
 							uiThreadControl(new Runnable() {
 								@Override
 								public void run() {
-									row.markAsCompleted();
+									row.updateProgress();
 									
 									// Set up touch-to-remove function
 									row.setOnClickListener(new OnClickListener() {
@@ -1295,11 +1383,12 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 									!row.getDestination().equals(sender) ||
 									!row.hasReward(reward)) continue;
 							missions.add(row);
+							row.markAsCompleted();
 							closed.get(id).remove(row);
 							uiThreadControl(new Runnable() {
 								@Override
 								public void run() {
-									row.markAsCompleted();
+									row.updateProgress();
 									missionsTable.addView(row);
 									row.setOnClickListener(new OnClickListener() {
 										@Override
@@ -1543,7 +1632,7 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 		}
 	};
 	
-	// UI thread control to run one method at a time on the UI thread
+	// UI thread control to run one method at a time, sequentially, on the UI thread
 	private boolean uiThreadInUse;
 	
 	private void uiThreadControl(Runnable run) {
@@ -1560,7 +1649,7 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 			for (ArtemisObject obj: manager.getObjects(ObjectType.NPC_SHIP)) {
 				try {
 					for (AllyStatusRow row: allies.get(obj.getName()).values()) {
-						if (!row.isBuildingTorpedoes()) continue;
+						if (!row.isBuildingTorpedoes()) continue; 
 						outPackets.add(new CommsOutgoingPacket(obj, OtherMessage.HAIL, context));
 					}
 				} catch (NullPointerException e) { }
@@ -1727,6 +1816,7 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 				try {
 					StationStatusRow row = bases.get(base.getName()).get(base.getVessel(context).getName());
 					row.setShields((int) base.getShieldsFront());
+					row.updateTime(null);
 				} catch (NullPointerException e) {}
 			}
 			updateHandler.postDelayed(this, updateInterval);

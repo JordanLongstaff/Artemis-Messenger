@@ -1,5 +1,8 @@
 package artemis.messenger;
 
+import java.util.Date;
+import java.util.HashMap;
+
 import com.walkertribe.ian.enums.BaseMessage;
 import com.walkertribe.ian.enums.OrdnanceType;
 import com.walkertribe.ian.iface.ArtemisNetworkInterface;
@@ -24,9 +27,22 @@ public class StationStatusRow extends TableRow {
 	private final int maxShields;
 	private final int[] ordnance;
 	private OrdnanceType building;
+	private boolean setMissile, firstMissile;
+	private long startTime, endTime;
 	private final ArtemisBase station;
 	private final String name;
-	private boolean docking;
+	private boolean docking, ready;
+	private int readySignals, speed;
+	
+	private static final int ONE_MINUTE = 60000;
+	
+	public static final String INDUSTRIAL = "Industrial";
+	public static final String SCIENCE    = "Science";
+	public static final String DEEP_SPACE = "Deep";
+	public static final String COMMAND    = "Command";
+	public static final String CIVILIAN   = "Civilian";
+	
+	private static final HashMap<String, Integer> buildFactors = new HashMap<String, Integer>(); 
 
 	public StationStatusRow(Context base, ArtemisBase ab, final ArtemisNetworkInterface server,
 			final com.walkertribe.ian.Context context) {
@@ -37,6 +53,15 @@ public class StationStatusRow extends TableRow {
 		shields = (int) ab.getShieldsFront();
 		maxShields = (int) ab.getShieldsRear();
 		ordnance = new int[OrdnanceType.COUNT];
+		
+		// Set up build factor map
+		if (buildFactors.isEmpty()) {
+			buildFactors.put(INDUSTRIAL, 6);
+			buildFactors.put(SCIENCE, 1);
+			buildFactors.put(DEEP_SPACE, 2);
+			buildFactors.put(COMMAND, 4);
+			buildFactors.put(CIVILIAN, 1);
+		}
 		
 		// Set up layout
 		LayoutParams cellLayout = new LayoutParams(0, LayoutParams.MATCH_PARENT, 1);
@@ -54,6 +79,10 @@ public class StationStatusRow extends TableRow {
 		ordnanceText.setLayoutParams(cellLayout);
 		ordnanceText.setPadding(3, 3, 3, 3);
 		addView(ordnanceText);
+		
+		// Set up initial fields
+		firstMissile = false;
+		speed = 1;
 		
 		updateStatus();
 
@@ -95,10 +124,45 @@ public class StationStatusRow extends TableRow {
 	// Number of missions station is involved with
 	public int getMissions() { return missions; }
 	
+	// Increase production speed
+	public void incProductionSpeed() {
+		speed++;
+		updateOrdnance();
+	}
+	
 	// Ordnance type station is building
 	public void setOrdnanceType(OrdnanceType type) {
+		if (setMissile) return;
+		startTime = new Date().getTime();
 		building = type;
+		if (firstMissile) {
+			int buildTime = type.getBuildTime() << 1;
+			TextView statusText = (TextView) getChildAt(0);
+			buildTime /= buildFactors.get(statusText.getText().toString().split(" ")[2]);
+			buildTime /= speed;
+			endTime = startTime + buildTime;
+		}
+		firstMissile = true;
+		setMissile = true;
 		updateOrdnance();
+	}
+	
+	// Override previous missile type we were building
+	public void resetMissile() {
+		setMissile = false;
+	}
+	
+	// Recalibrate speed if it's incorrect
+	public void recalibrateSpeed() {
+		long recalibrateTime = new Date().getTime() - startTime;
+		long buildTime = endTime - startTime;
+		speed = (int)Math.round((double)speed * buildTime / recalibrateTime); 
+	}
+	
+	// Set build time for ordnance
+	public void setBuildTime(int minutes) {
+		if (firstMissile) return;
+		endTime = new Date().getTime() + minutes * ONE_MINUTE;
 	}
 	
 	// Number of fighters on the station
@@ -116,6 +180,24 @@ public class StationStatusRow extends TableRow {
 	// Is ship docked here?
 	public void setDocking(boolean dock) {
 		docking = dock;
+		if (dock) {
+			if (ready) readySignals++;
+			ready = false;
+		}
+		updateStatus();
+	}
+	
+	// Is station ready for a ship?
+	public void setReady(boolean crewReady) {
+		if (!crewReady && readySignals > 0) {
+			readySignals--;
+			return;
+		}
+		if (docking) {
+			if (crewReady) readySignals++;
+			return;
+		}
+		ready = crewReady;
 		updateStatus();
 	}
 	
@@ -128,6 +210,7 @@ public class StationStatusRow extends TableRow {
 		if (fighters == 1) status += ", 1 fighter";
 		else if (fighters > 1) status += ", " + fighters + " fighters";
 		if (docking) status += " (docked)";
+		else if (ready) status += " (standby)";
 		statusText.setText(status);
 	}
 	
@@ -138,8 +221,37 @@ public class StationStatusRow extends TableRow {
 			if (!stock.equals("")) stock += "/";
 			stock += ordnance[t.ordinal()] + " " + t; 
 		}
-		if (building != null) stock += "\nBuilding Type " + building.getType() + " " + building;
+		if (speed > 1) {
+			stock += " (speed x" + speed + ")";
+		}
+		updateTime(stock);
+	}
+	
+	// Update missile-building text
+	public void updateTime(String stock) {
 		TextView ordnanceText = (TextView) getChildAt(1);
+		if (stock == null) {
+			stock = ordnanceText.getText().toString().split("\n")[0];
+		}
+		if (building != null) {
+			int eta = (int)(endTime - new Date().getTime());
+			int millis = eta % 1000;
+			int seconds = (eta / 1000) % 60;
+			int minutes = eta / 60000;
+			if (eta < 0) {
+				millis = 0;
+				seconds = 0;
+				minutes = 0;
+			}
+			if (millis > 0) {
+				seconds++;
+				if (seconds == 60) {
+					seconds = 0;
+					minutes++;
+				}
+			}
+			stock += String.format("\nType %d %s ready in %d:%02d", building.getType(), building.toString(), minutes, seconds);
+		}
 		ordnanceText.setText(stock);
 	}
 }
