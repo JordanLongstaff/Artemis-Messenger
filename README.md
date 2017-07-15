@@ -1,4 +1,4 @@
-# Artemis Messenger 4.0.0
+# Artemis Messenger 4.1.0
 
 ## What is Artemis Messenger?
 
@@ -18,7 +18,7 @@ Side missions are simply tasks requiring you to travel from one point to another
 
 This app also has the ability to monitor the statuses of ally ships and stations! At the start of a simulation, and at regular intervals throughout, the app will send messages to ally ships requesting a hail from them. The message received in response is then parsed and used to populate the Allies table with information on the ally ships. The information is written in three columns: Ship (the ID and name of the ship), Shields (front and rear shield strength) and Status (all other information). The information reported in Status is as follows: ships can be normal, flying blind, malfunctioning, commandeered, or traps. They may have some side missions for you, and they may also have some spare energy, or in a Deep Strike mission, spare torpedoes. This information is obtained through messages, but the Shields information is not; it is updated live by a system manager.
 
-The stations are managed using a similar system. Instead of interval updates, the stations give status updates when various events occur, such as docking, undocking, and the completion of missile production. There are two columns in this table: Station and Ordnance. The Station column includes the name and type of the station, its shield strength and any side missions or replacement fighters it has. Like ally ships, stations' shield strengths are updated in real time. The Ordnance column includes stock information on a station's Homing, Nuke, Mine, EMP and Plasma shock torpedoes, as well as a listing of what ordnance is currently being built. At any time, a station's row in the table can be touched in order to send a request to stand by for docking.
+The stations are managed using a similar system. Instead of interval updates, the stations give status updates when various events occur, such as docking, undocking, and the completion of missile production. There are two columns in this table: Station and Ordnance. The Station column includes the name and type of the station, its shield strength and any side missions or replacement fighters it has. Like ally ships, stations' shield strengths are updated in real time. The Ordnance column includes stock information on a station's Homing, Nuke, Mine, EMP and Plasma shock torpedoes, as well as a listing of what ordnance is currently being built, how much longer it is expected to take to finish, and how much faster than normal it is being built. At any time, a station's row in the table can be touched in order to send a request to stand by for docking; the Station column indicates when the crew is standing by or when you are docked there.
 
 ## Can I contibute to this project?
 
