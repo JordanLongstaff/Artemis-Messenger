@@ -31,7 +31,7 @@ public class StationStatusRow extends TableRow {
 	private long startTime, endTime;
 	private final ArtemisBase station;
 	private final String name;
-	private boolean docking, ready;
+	private boolean docking, ready, paused;
 	private int readySignals, speed;
 	
 	private static final int ONE_MINUTE = 60000;
@@ -154,6 +154,10 @@ public class StationStatusRow extends TableRow {
 	
 	// Recalibrate speed if it's incorrect
 	public void recalibrateSpeed() {
+		if (paused) {
+			paused = false;
+			return;
+		}
 		long recalibrateTime = new Date().getTime() - startTime;
 		long buildTime = endTime - startTime;
 		speed = (int)Math.round((double)speed * buildTime / recalibrateTime); 
@@ -199,6 +203,15 @@ public class StationStatusRow extends TableRow {
 		}
 		ready = crewReady;
 		updateStatus();
+	}
+	
+	// Is the game paused?
+	public void setPaused(boolean p) {
+		if (p) {
+			paused = true;
+		} else if (endTime >= new Date().getTime()) {
+			paused = false;
+		}
 	}
 	
 	// Update status text

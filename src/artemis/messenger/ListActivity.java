@@ -23,6 +23,7 @@ import com.walkertribe.ian.iface.DisconnectEvent;
 import com.walkertribe.ian.iface.Listener;
 import com.walkertribe.ian.iface.ThreadedArtemisNetworkInterface;
 import com.walkertribe.ian.protocol.core.GameOverPacket;
+import com.walkertribe.ian.protocol.core.PausePacket;
 import com.walkertribe.ian.protocol.core.comm.CommsIncomingPacket;
 import com.walkertribe.ian.protocol.core.comm.CommsOutgoingPacket;
 import com.walkertribe.ian.protocol.core.setup.AllShipSettingsPacket;
@@ -701,16 +702,27 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 				@Override
 				public void run() {
 					try {
-						for (int i = 0; i < stationsTable.getChildCount(); i++) {
-							StationStatusRow otherRow = (StationStatusRow) stationsTable.getChildAt(i);
+						int index = -1;
+						int minIndex = 0, maxIndex = stationsTable.getChildCount();
+						while (minIndex < maxIndex) {
+							index = (maxIndex + minIndex) / 2;
+							String rowName = base.getName();
+							StationStatusRow otherRow = (StationStatusRow) stationsTable.getChildAt(index);
 							TextView statusText = (TextView) otherRow.getChildAt(0);
 							String otherName = statusText.getText().toString().split(" ")[0];
-							if (base.getName().compareTo(otherName) < 0) {
-								stationsTable.addView(row, i);
-								return;
+							if (otherName.startsWith("DS") && rowName.startsWith("DS")) {
+								rowName = rowName.substring(2);
+								otherName = otherName.substring(2);
+								while (rowName.length() < otherName.length()) rowName = "0" + rowName;
+								while (otherName.length() < rowName.length()) otherName = "0" + otherName;
 							}
+							if (rowName.compareTo(otherName) < 0) {
+								maxIndex = index;
+							} else if (rowName.compareTo(otherName) > 0) {
+								minIndex = ++index;
+							} else break;
 						}
-						stationsTable.addView(row);
+						stationsTable.addView(row, index);
 					} catch (IllegalStateException e) { }
 				}
 			});
@@ -914,6 +926,19 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 	@Listener
 	public void onPacket(CommsIncomingPacket pkt) {
 		inPackets.add(pkt);
+	}
+	
+	/**
+	 * Called when a PausePacket is received by the client. Pauses build countdown timers on all stations.
+	 * @param pkt the pause packet
+	 */
+	@Listener
+	public void onPacket(PausePacket pkt) {
+		for (HashMap<String, StationStatusRow> map: bases.values()) {
+			for (StationStatusRow row: map.values()) {
+				row.setPaused(pkt.getPaused().getBooleanValue());
+			}
+		}
 	}
 	
 	private void handlePackets() {
