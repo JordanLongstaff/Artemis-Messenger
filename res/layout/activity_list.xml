@@ -262,7 +262,7 @@
             android:id="@+id/routeDestHeader"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="5"
+            android:layout_weight="3"
             android:gravity="center_horizontal"
             android:text="@string/destHeader"
             android:textAppearance="?android:attr/textAppearanceMedium" />
@@ -271,7 +271,7 @@
             android:id="@+id/distanceHeader"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="5"
+            android:layout_weight="2"
             android:gravity="center_horizontal"
             android:text="@string/directionHeader"
             android:textAppearance="?android:attr/textAppearanceMedium" />

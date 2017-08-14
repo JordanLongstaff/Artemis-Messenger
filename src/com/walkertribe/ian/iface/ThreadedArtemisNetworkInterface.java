@@ -9,6 +9,7 @@ import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketException;
+import java.net.SocketTimeoutException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -135,6 +136,11 @@ public class ThreadedArtemisNetworkInterface implements ArtemisNetworkInterface 
      */
     public void setParsePackets(boolean parse) {
     	mReceiveThread.setParsePackets(parse);
+    }
+    
+    @Override
+    public void setTimeout(int timeout) throws SocketException {
+    	mSendThread.mSkt.setSoTimeout(timeout);
     }
 
     @Override
@@ -349,7 +355,9 @@ public class ThreadedArtemisNetworkInterface implements ArtemisNetworkInterface 
                 	if (mRunning) {
                     	Throwable cause = ex.getCause();
 
-                    	if (cause instanceof EOFException || cause instanceof SocketException) {
+                    	if (cause instanceof EOFException ||
+                    			cause instanceof SocketException ||
+                    			cause instanceof SocketTimeoutException) {
                     		// Parse failed because the connection was lost
                     		mInterface.disconnectCause = DisconnectEvent.Cause.REMOTE_DISCONNECT;
                         	mInterface.exception = (Exception) cause;
@@ -372,7 +380,7 @@ public class ThreadedArtemisNetworkInterface implements ArtemisNetworkInterface 
             mRunning = false;
         }
     }
-
+    
 	@Override
 	public void attachDebugger(Debugger debugger) {
 		if (debugger == null) {

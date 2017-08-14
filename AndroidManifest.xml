@@ -2,9 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="artemis.messenger"
     android:installLocation="preferExternal"
-    android:revisionCode="27"
-    android:versionCode="28"
-    android:versionName="4.1.1" >
+    android:revisionCode="28"
+    android:versionCode="29"
+    android:versionName="4.2.0" >
 
     <uses-sdk
         android:minSdkVersion="8"
@@ -32,6 +32,12 @@
 
         <service
             android:name=".CommsService"
+            android:stopWithTask="false"
+            android:exported="false" />
+
+        <service
+            android:name=".NotificationCleanupService"
+            android:stopWithTask="false"
             android:exported="false" />
 
         <activity

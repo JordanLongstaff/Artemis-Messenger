@@ -71,7 +71,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/activity_vertical_margin"
-            android:text="@string/settingsRingtoneHeader"
+            android:text="@string/settingsRouteHeader"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <TextView
@@ -86,7 +86,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/activity_vertical_margin"
-            android:text="@string/settingsHelpHeader"
+            android:text="@string/settingsRingtoneHeader"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <TextView
@@ -95,6 +95,21 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/activity_vertical_margin"
             android:text="@string/settingsParagraph5" />
+
+        <TextView
+            android:id="@+id/settingsHeader6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:text="@string/settingsHelpHeader"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <TextView
+            android:id="@+id/settingsPar6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:text="@string/settingsParagraph6" />
 
         <Button
             android:id="@+id/settingsBack"

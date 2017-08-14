@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumMap;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,7 +23,7 @@ import com.walkertribe.ian.iface.ConnectionSuccessEvent;
 import com.walkertribe.ian.iface.DisconnectEvent;
 import com.walkertribe.ian.iface.Listener;
 import com.walkertribe.ian.iface.ThreadedArtemisNetworkInterface;
-import com.walkertribe.ian.protocol.core.GameOverPacket;
+import com.walkertribe.ian.protocol.core.GameOverReasonPacket;
 import com.walkertribe.ian.protocol.core.PausePacket;
 import com.walkertribe.ian.protocol.core.comm.CommsIncomingPacket;
 import com.walkertribe.ian.protocol.core.comm.CommsOutgoingPacket;
@@ -45,9 +46,11 @@ import com.walkertribe.ian.world.SystemManager;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.res.AssetManager;
@@ -57,6 +60,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.view.KeyEvent;
 import android.view.View;
@@ -87,12 +91,14 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 	private com.walkertribe.ian.Context context;
 	private ArtemisNetworkInterface server;
 	private SystemManager manager;
+	private CommsService service;
+	private ServiceConnection connection;
 	private String host, dockingStation;
 	private int playerShip;
 	private LinearLayout missionsTable, alliesTable, stationsTable, routeTable;
 	private TableLayout alliesView, stationsView, missionsView, routeView;
-	private boolean updateRunning, objectControl, routing;
-	private Handler updateHandler, stationHandler, dsHandler, routeHandler;
+	private boolean updateRunning, objectControl, routing, showRoute;
+	private Handler updateHandler, stationHandler, dsHandler, routeHandler, serviceHandler;
 	private List<SideMissionRow> missions;
 	private Map<String, ArrayList<SideMissionRow>> closed;
 	private Map<String, HashMap<String, StationStatusRow>> bases;
@@ -102,12 +108,15 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 	private List<CommsIncomingPacket> inPackets;
 	private List<CommsOutgoingPacket> outPackets;
 	private boolean assetsFail;
+	private boolean gameRunning;
+	private RoutingGraph graph;
 	
 	// Constants
 	private static final String dataFile = "server.dat";
 	private static final int updateInterval = 100;
 	private static final int dsInterval = 300000;
 	private static final int timeout = 9000;
+	private static final int heartbeatTimeout = 2000;
 	
 	// Static font for public access
 	public static Typeface APP_FONT;
@@ -177,12 +186,29 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 		stationHandler = new Handler();
 		dsHandler = new Handler();
 		routeHandler = new Handler();
+		serviceHandler = new Handler();
 		
 		// Initialize app font
 		if (APP_FONT == null) APP_FONT = Typeface.createFromAsset(getAssets(), "fonts/BUTTERUNSALTED.TTF");
 		
 		// Initialize address field
 		final EditText addressField = (EditText) findViewById(R.id.addressField);
+		
+		// Initialize service connection
+		connection = new ServiceConnection() {
+			@Override
+			public void onServiceConnected(ComponentName className, IBinder binder) {
+				CommsService.ArtemisBinder amBinder = (CommsService.ArtemisBinder) binder;
+				service = amBinder.getService();
+				serviceHandler.post(updateService);
+			}
+
+			@Override
+			public void onServiceDisconnected(ComponentName className) {
+				service = null;
+				unbindService(this);
+			}
+		};
 		
 		// Attempt to load previous address from data file
 		try {
@@ -206,10 +232,11 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 				// Wait for server
 				while (server == null);
 				
-				// Set up Comms connection from selected ship
+				// Set up Comms and Main Screen connection from selected ship
 				playerShip = position + 1;
 				server.send(new SetShipPacket(position + 1));
 				server.send(new SetConsolePacket(Console.COMMUNICATIONS, true));
+				server.send(new SetConsolePacket(Console.MAIN_SCREEN, true));
 				
 				// Update docking status
 				if (dockingStation != null) uiThreadControl(resetDockedRow);
@@ -245,6 +272,7 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 				missionsView.setVisibility(View.GONE);
 				stationsView.setVisibility(View.GONE);
 				routeView.setVisibility(View.GONE);
+				showRoute = false;
 				allyViewButton.setBackgroundColor(Color.parseColor("#bf9000"));
 				missionViewButton.setBackgroundColor(Color.parseColor("#cf5a11"));
 				stationViewButton.setBackgroundColor(Color.parseColor("#cf5a11"));
@@ -259,6 +287,7 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 				missionsView.setVisibility(View.VISIBLE);
 				stationsView.setVisibility(View.GONE);
 				routeView.setVisibility(View.GONE);
+				showRoute = false;
 				missionViewButton.setBackgroundColor(Color.parseColor("#bf9000"));
 				allyViewButton.setBackgroundColor(Color.parseColor("#cf5a11"));
 				stationViewButton.setBackgroundColor(Color.parseColor("#cf5a11"));
@@ -273,6 +302,7 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 				missionsView.setVisibility(View.GONE);
 				stationsView.setVisibility(View.VISIBLE);
 				routeView.setVisibility(View.GONE);
+				showRoute = false;
 				stationViewButton.setBackgroundColor(Color.parseColor("#bf9000"));
 				missionViewButton.setBackgroundColor(Color.parseColor("#cf5a11"));
 				allyViewButton.setBackgroundColor(Color.parseColor("#cf5a11"));
@@ -346,6 +376,9 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 		// Update app font
 		LinearLayout appLayout = (LinearLayout) findViewById(R.id.appLayout);
 		updateFont(appLayout);
+		
+		// Start notification cleanup service
+		startService(new Intent(this, NotificationCleanupService.class));
 		
 		// Set up preference change listener
 		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -488,6 +521,9 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 	public void onConnectSuccess(ConnectionSuccessEvent e) {
 		// Connect to Comms
 		server.send(new SetConsolePacket(Console.COMMUNICATIONS, true));
+		
+		// Also need to connect to Main Screen to receive proper game over signal
+		server.send(new SetConsolePacket(Console.MAIN_SCREEN, true));
 		server.send(new ReadyPacket());
 		
 		try {
@@ -549,7 +585,8 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 		outPackets.clear();
 		
 		// Shut down connection
-		server.stop();
+		if (service != null) service.onDisconnect(event);
+		else server.stop();
 		server = null;
 		host = null;
 		
@@ -565,6 +602,9 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 		dockingStation = null;
 		routeHandler.removeCallbacks(updateRoute);
 		routing = false;
+		
+		// Clean up Routing graph
+		graph = null;
 		
 		// Clear server data
 		missions.clear();
@@ -582,17 +622,30 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 				clearAllTables.run();
 				
 				shipSpinner.setAdapter(adapter);
-				addressRow.setBackgroundColor(Color.BLACK);
+				addressRow.setBackgroundColor(Color.parseColor("#c00000"));
 			}
 		});
 	}
 	
 	/**
-	 * Called when a game over packet is received by the client.
-	 * @param pkt the game over packet
+	 * Called when a game over reason packet is received by the client.
+	 * @param pkt the game over reason packet
 	 */
 	@Listener
-	public void onPacket(GameOverPacket pkt) {
+	public void onPacket(GameOverReasonPacket pkt) {
+		// Disable heartbeat dependency
+		try { server.setTimeout(0); }
+		catch (IOException e) { server.stop(); }
+		
+		// Stop Comms service
+		if (service != null) {
+			service.onPacket(pkt);
+			gameRunning = false;
+		}
+		
+		// Clean up Routing graph
+		graph = null;
+		
 		// Clear current data
 		missions.clear();
 		for (HashMap<String, AllyStatusRow> map: allies.values()) map.clear();
@@ -626,6 +679,21 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 		// Activate object update lock
 		objectControl = true;
 		
+		// Activate Comms service handler
+		gameRunning = true;
+		
+		// Activate heartbeat dependency
+		try { server.setTimeout(heartbeatTimeout); }
+		catch (IOException e) { server.stop(); }
+		
+		// Prepare Routing graph
+		if (graph == null)
+			try {
+				int id = manager.getPlayerShip(playerShip).getId();
+				ArtemisObject object = manager.getObject(id);
+				graph = new RoutingGraph(manager, object.getId());
+			} catch (Exception e) { }
+		
 		// Find all NPC ships
 		List<ArtemisObject> objects = manager.getObjects(ObjectType.NPC_SHIP);
 		for (ArtemisObject obj: objects) {
@@ -650,13 +718,9 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 			if (!rogues.containsKey(npc.getName())) rogues.put(npc.getName(), new ArrayList<String>());
 			
 			// Set up table row in Allies view 
-			final AllyStatusRow row = new AllyStatusRow(
-					getBaseContext(),
-					npc.getName() + " " + npc.getVessel(context).getName(),
-					(int) npc.getShieldsFront(),
-					(int) npc.getShieldsRear(),
-					(int) npc.getShieldsFrontMax(),
-					(int) npc.getShieldsRearMax());
+			final AllyStatusRow row = new AllyStatusRow(getBaseContext(),
+					npc,
+					npc.getName() + " " + npc.getVessel(context).getName());
 			allies.get(npc.getName()).put(npc.getVessel(context).getName(), row);
 			uiThreadControl(new Runnable() {
 				@Override
@@ -942,6 +1006,8 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 	}
 	
 	private void handlePackets() {
+		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+		
 		while (true) {
 			try {
 				// Open inbox
@@ -963,6 +1029,9 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 								row.setEnergy(message.endsWith("you need some."));
 							}
 						});
+						
+						// Update the Routing graph
+						if (showRoute) updateRouteGraph(pref.getBoolean(getString(R.string.malfunctionKey), false));
 					} else if (message.startsWith("Docking crew")) {
 						// Make sure this ship is the correct one
 						if (message.split(", ")[1].startsWith(manager.getPlayerShip(playerShip).getName())) {
@@ -1046,6 +1115,9 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 								setStatus(allies.get(id).get(name), AllyStatus.HOSTAGE);
 							}
 						});
+						
+						// Update the Routing graph
+						if (showRoute) updateRouteGraph(pref.getBoolean(getString(R.string.hostageKey), false));
 					} else if (message.contains("\nWe have commandeered")) {
 						// Ally ship commandeered
 						final String id = sender.substring(sender.lastIndexOf(" ") + 1);
@@ -1083,6 +1155,9 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 								row.setEnergy(message.endsWith("you need some."));
 							}
 						});
+						
+						// Update the Routing graph
+						if (showRoute) updateRouteGraph(pref.getBoolean(getString(R.string.needDamConKey), false));
 					} else if (message.contains("\nWe're out of energy")) {
 						// Ally ship needs energy
 						final String id = sender.substring(sender.lastIndexOf(" ") + 1);
@@ -1095,6 +1170,9 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 								setStatus(row, AllyStatus.NEED_ENERGY);
 							}
 						});
+						
+						// Update the Routing graph
+						if (showRoute) updateRouteGraph(pref.getBoolean(getString(R.string.needEnergyKey), false));
 					} else if (message.startsWith("Torpedo transfer")) {
 						// Ally ship gives you torpedoes in Deep Strike
 						uiThreadControl(new Runnable() {
@@ -1147,6 +1225,9 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 							}
 						});
 					} else if (message.contains("and we'll")) {
+						// Send to Comms service
+						if (service != null) service.onPacket(pkt);
+						
 						// New side mission
 						final String[] senderParts = sender.split(" ", 3);
 						
@@ -1208,8 +1289,6 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 						final String reward = words[words.length - 1];
 						
 						// Check if this mission should be displayed according to reward filters
-						SharedPreferences pref =
-								PreferenceManager.getDefaultSharedPreferences(getBaseContext());
 						final boolean show;
 						if (reward.equals(SideMissionRow.BATTERY_KEY)) {
 							show = pref.getBoolean(getString(R.string.batteryChargeKey), true);
@@ -1258,7 +1337,14 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 							uiThreadControl(clearTable);
 							uiThreadControl(updateTables);
 						}
+						
+						// Update the Routing graph
+						if (showRoute) updateRouteGraph(!show);
 					} else if (message.contains("to deliver the")) {
+						// Send to Comms service
+						if (service != null)
+							service.onPacket(pkt);
+						
 						// Visited source of side mission
 						String destination = message.split(" to ")[1];
 						for (int i = 0; i < missions.size(); i++) {
@@ -1349,6 +1435,10 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 							i--;
 						}
 					} else if (message.startsWith("As promised")) {
+						// Send to Comms service
+						if (service != null)
+							service.onPacket(pkt);
+						
 						// End of side mission
 						String[] words = message.split(" ");
 						String reward = words[words.length - 1];
@@ -1477,6 +1567,7 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 						// Any other message from ally ships
 						final String id = sender.substring(sender.lastIndexOf(" ") + 1);
 						final String name = sender.split(" " + id)[0];
+						final boolean hasEnergy = message.endsWith("you need some.");
 						uiThreadControl(new Runnable() {
 							@Override
 							public void run() {
@@ -1488,10 +1579,13 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 									} catch (NullPointerException e) { }
 								}
 								if (row.getStatus() != AllyStatus.REWARD) setStatus(row, AllyStatus.NORMAL);
-								row.setEnergy(message.endsWith("you need some."));
+								row.setEnergy(hasEnergy);
 								row.setTorpedoes(message.contains("We have some torpe"));
 							}
 						});
+						
+						// Update the Routing graph
+						if (showRoute) updateRouteGraph(!hasEnergy);
 					}
 				}
 				
@@ -1508,45 +1602,8 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 		// If there's no server running, do nothing
 		if (server == null || !server.isConnected()) return;
 		
-		// Set up list of allies
-		String allyList = "", missionList = "", stationList = "";
-		for (String key: allies.keySet()) {
-			for (AllyStatusRow row: allies.get(key).values()) {
-				if (row.getStatus().ordinal() < AllyStatus.FIGHTERS.ordinal()) {
-					if (!allyList.equals("")) allyList += "/";
-					allyList += key;
-				}
-			}
-		}
-		
-		// Set up list of stations
-		for (String key: bases.keySet()) {
-			for (@SuppressWarnings("unused") String name: bases.get(key).keySet()) {
-				if (!stationList.equals("")) stationList += "/";
-				stationList += key;
-			}
-		}
-		
-		// Set up list of side missions
-		for (SideMissionRow row: missions) {
-			if (!row.isCompleted()) {
-				if (!missionList.equals("")) missionList += "/";
-				missionList += row.getSource().split(" ")[0] + "," + row.getDestination().split(" ")[0];
-			}
-		}
-		
 		// Start up Comms service
-		int location = Integer.parseInt(PreferenceManager
-				.getDefaultSharedPreferences(this)
-				.getString(getString(R.string.vesselDataKey), "0"));
-		Intent startBackground = new Intent(this, CommsService.class)
-				.putExtra("Server", host)
-				.putExtra("Ship", playerShip)
-				.putExtra("Allies", allyList)
-				.putExtra("Missions", missionList)
-				.putExtra("Stations", stationList)
-				.putExtra("VesselData", location);
-		startService(startBackground);
+		bindService(new Intent(this, CommsService.class), connection, Context.BIND_AUTO_CREATE);
 	}
 	
 	@Override
@@ -1554,7 +1611,8 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 		super.onResume();
 		
 		// App resumed, stop Comms service
-		stopService(new Intent(ListActivity.this, CommsService.class));
+		unbindService(connection);
+		service = null;
 	}
 	
 	// Empty out Missions view
@@ -1581,7 +1639,7 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 		public void run() {
 			// Missions first
 			SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-			for (SideMissionRow row: missions) {
+			for (SideMissionRow row: new ArrayList<SideMissionRow>(missions)) {
 				missionsTable.addView(row);
 				if (row.hasReward(SideMissionRow.BATTERY_KEY) && preferences.getBoolean(getString(R.string.batteryChargeKey), true)) continue;
 				if (row.hasReward(SideMissionRow.COOLANT_KEY) && preferences.getBoolean(getString(R.string.extraCoolantKey), true)) continue;
@@ -1683,142 +1741,301 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 		}
 	};
 	
+	public void updateRouteGraph(boolean keepMinCost) {
+		if (graph == null) return;
+		graph.resetGraph();
+		showRoute = true;
+		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+		
+		double minCost = Double.POSITIVE_INFINITY;
+		int minPoints = Integer.MAX_VALUE;
+		
+		if (keepMinCost) {
+			minCost = graph.getMinimumCost();
+			minPoints = graph.getMinimumPoints();
+		}
+		
+		for (SideMissionRow row: new ArrayList<SideMissionRow>(missions)) {
+			// Skip completed missions
+			if (row.isCompleted()) continue;
+
+			boolean show = false;
+			if (pref.getBoolean(getString(R.string.batteryChargeKey), true)) {
+				show |= row.hasReward(SideMissionRow.BATTERY_KEY);
+			}
+			if (pref.getBoolean(getString(R.string.nuclearKey), true)) {
+				show |= row.hasReward(SideMissionRow.NUCLEAR_KEY);
+			}
+			if (pref.getBoolean(getString(R.string.shieldKey), true)) {
+				show |= row.hasReward(SideMissionRow.SHIELD_KEY);
+			}
+			if (pref.getBoolean(getString(R.string.extraCoolantKey), true)) {
+				show |= row.hasReward(SideMissionRow.COOLANT_KEY);
+			}
+			if (pref.getBoolean(getString(R.string.speedKey), true)) {
+				show |= row.hasReward(SideMissionRow.PRODUCTION_KEY);
+			}
+			
+			// Skip missions that are not shown because of reward filters
+			if (!show) continue;
+			
+			// Get call signs of ships
+			String srcCall = row.getSource().split(" ")[0];
+			String destCall = row.getDestination().split(" ")[0];
+			
+			// If mission was started, ignore source
+			if (row.isStarted()) {
+				srcCall = destCall;
+				destCall = null;
+			}
+			
+			// Make sure both call signs belong to an ally or station
+			if (!bases.containsKey(srcCall) && !allies.containsKey(srcCall)) continue;
+			if (destCall != null && !bases.containsKey(destCall) && !allies.containsKey(destCall)) continue;
+			
+			ArtemisObject srcObject = null, destObject = null;
+			
+			List<ArtemisObject> points = new ArrayList<ArtemisObject>(manager.getObjects(ObjectType.BASE));
+			points.addAll(manager.getObjects(ObjectType.NPC_SHIP));
+			
+			// Find source among stations and allies
+			for (ArtemisObject obj: points) {
+				BaseArtemisShielded npc = (BaseArtemisShielded) obj;
+				
+				// Skip enemies
+				if (npc.getVessel(context) == null ||
+						npc.getVessel(context).getFaction() == null ||
+						npc.getVessel(context).getFaction().getId() > 1) continue;
+				
+				// Make sure call sign is a match
+				if (!npc.getName().equals(srcCall)) continue;
+				
+				// Make sure object is not a fighter ship
+				if (npc.getVessel(context).is(VesselAttribute.FIGHTER) ||
+						npc.getVessel(context).is(VesselAttribute.SINGLESEAT)) continue;
+				srcObject = npc;
+				break;
+			}
+			
+			// Do the same for destination
+			if (destCall != null) {
+				for (ArtemisObject obj: points) {
+					BaseArtemisShielded npc = (BaseArtemisShielded) obj;
+					if (npc.getVessel(context) == null ||
+							npc.getVessel(context).getFaction() == null ||
+							npc.getVessel(context).getFaction().getId() > 1) continue;
+					if (!npc.getName().equals(destCall)) continue;
+					if (npc.getVessel(context).is(VesselAttribute.FIGHTER) ||
+							npc.getVessel(context).is(VesselAttribute.SINGLESEAT)) continue;
+					destObject = npc;
+					break;
+				}
+			}
+			
+			// Add path to routing graph
+			graph.addPath(srcObject, destObject);
+		}
+		
+		// Check for allies
+		for (HashMap<String, AllyStatusRow> map: allies.values()) {
+			for (AllyStatusRow row: map.values()) {
+				if (row.getStatus().ordinal() >= AllyStatus.FIGHTERS.ordinal()) continue;
+				
+				boolean show = false;
+				if (pref.getBoolean(getString(R.string.energyKey), false)) {
+					show |= row.hasEnergy();
+				}
+				if (pref.getBoolean(getString(R.string.needEnergyKey), false)) {
+					show |= row.getStatus() == AllyStatus.NEED_ENERGY;
+				}
+				if (pref.getBoolean(getString(R.string.needDamConKey), false)) {
+					show |= row.getStatus() == AllyStatus.NEED_DAMCON;
+				}
+				if (pref.getBoolean(getString(R.string.malfunctionKey), false)) {
+					show |= row.getStatus() == AllyStatus.BROKEN_COMPUTER;
+				}
+				if (pref.getBoolean(getString(R.string.hostageKey), false)) {
+					show |= row.getStatus() == AllyStatus.HOSTAGE;
+				}
+				
+				if (!show) continue;
+				
+				graph.addPath(row.getAllyShip(), null);
+			}
+		}
+		
+		graph.setMinimumCost(minCost);
+		graph.setMinimumPoints(minPoints);
+	}
+	
 	// Updates Routing table
 	final Runnable updateRoute = new Runnable() {
 		@Override
 		public void run() {
 			routing = true;
 			
-			final ArrayList<Integer> route = new ArrayList<Integer>();
+			// If we've destroyed our graph, Route table should be empty
+			if (graph == null) {
+				uiThreadControl(new Runnable() {
+					@Override
+					public void run() {
+						routeTable.removeAllViews();
+					}
+				});
+			}
+			
+			ArrayList<Integer> route = null;
 			
 			try {
 				// If Routing view is not visible, do nothing
 				if (routeView.getVisibility() == View.VISIBLE) {
-					// Build routing graph
-					final RoutingGraph graph = new RoutingGraph(manager, manager.getPlayerShip(playerShip).getId());
+					// If Routing view has just been activated, re-populate our graph
+					updateRouteGraph(showRoute);
+					graph.purgePaths();
 					
-					for (SideMissionRow row: missions) {
-						// Skip completed missions
-						if (row.isCompleted()) continue;
-	
-						SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-						boolean show = false;
-						if (pref.getBoolean(getString(R.string.batteryChargeKey), true)) {
-							show |= row.hasReward(SideMissionRow.BATTERY_KEY);
-						}
-						if (pref.getBoolean(getString(R.string.nuclearKey), true)) {
-							show |= row.hasReward(SideMissionRow.NUCLEAR_KEY);
-						}
-						if (pref.getBoolean(getString(R.string.shieldKey), true)) {
-							show |= row.hasReward(SideMissionRow.SHIELD_KEY);
-						}
-						if (pref.getBoolean(getString(R.string.extraCoolantKey), true)) {
-							show |= row.hasReward(SideMissionRow.COOLANT_KEY);
-						}
-						if (pref.getBoolean(getString(R.string.speedKey), true)) {
-							show |= row.hasReward(SideMissionRow.PRODUCTION_KEY);
-						}
-						
-						// Skip missions that are not shown because of reward filters
-						if (!show) continue;
-						
-						// Get call signs of ships
-						String srcCall = row.getSource().split(" ")[0];
-						String destCall = row.getDestination().split(" ")[0];
-						
-						// If mission was started, ignore source
-						if (row.isStarted()) {
-							srcCall = destCall;
-							destCall = null;
-						}
-						
-						// Make sure both call signs belong to an ally or station
-						if (!bases.containsKey(srcCall) && !allies.containsKey(srcCall)) continue;
-						if (destCall != null && !bases.containsKey(destCall) && !allies.containsKey(destCall)) continue;
-						
-						ArtemisObject srcObject = null, destObject = null;
-						
-						List<ArtemisObject> points = new ArrayList<ArtemisObject>(manager.getObjects(ObjectType.BASE));
-						points.addAll(manager.getObjects(ObjectType.NPC_SHIP));
-						
-						// Find source among stations and allies
-						for (ArtemisObject obj: points) {
-							BaseArtemisShielded npc = (BaseArtemisShielded) obj;
-							
-							// Skip enemies
-							if (npc.getVessel(context) == null ||
-									npc.getVessel(context).getFaction() == null ||
-									npc.getVessel(context).getFaction().getId() > 1) continue;
-							
-							// Make sure call sign is a match
-							if (!npc.getName().equals(srcCall)) continue;
-							
-							// Make sure object is not a fighter ship
-							if (npc.getVessel(context).is(VesselAttribute.FIGHTER) ||
-									npc.getVessel(context).is(VesselAttribute.SINGLESEAT)) continue;
-							srcObject = npc;
-							break;
-						}
-						
-						// Do the same for destination
-						if (destCall != null) {
-							for (ArtemisObject obj: points) {
-								BaseArtemisShielded npc = (BaseArtemisShielded) obj;
-								if (npc.getVessel(context) == null ||
-										npc.getVessel(context).getFaction() == null ||
-										npc.getVessel(context).getFaction().getId() > 1) continue;
-								if (!npc.getName().equals(destCall)) continue;
-								if (npc.getVessel(context).is(VesselAttribute.FIGHTER) ||
-										npc.getVessel(context).is(VesselAttribute.SINGLESEAT)) continue;
-								destObject = npc;
-								break;
-							}
-						}
-						
-						// Add path to routing graph
-						graph.addPath(srcObject, destObject);
-					}
-					
-					// Calculate optimal route
-					route.addAll(graph.calculateRoute(Double.POSITIVE_INFINITY));
+					// Guess optimal route
+					route = graph.guessRoute();
 				}
 			}
 			catch (IllegalArgumentException e) { }
 			catch (NullPointerException e) { }
-
-			// Empty out current route
+			
+			// If we have a route to fill, do so
+			final ArrayList<RouteEntryRow> entryRows;
+			if (route != null) {
+				entryRows = new ArrayList<RouteEntryRow>(route.size());
+				for (int id: route) {
+					BaseArtemisShielded object = (BaseArtemisShielded)manager.getObject(id);
+					String objName = object.getName() + " Terran " + object.getVessel(context).getName();
+					ArtemisObject player = manager.getPlayerShip(playerShip);
+					
+					RouteEntryRow newRow = new RouteEntryRow(getBaseContext(), object, objName);
+					newRow.updateDistance(player);
+					entryRows.add(newRow);
+				}
+			} else {
+				entryRows = new ArrayList<RouteEntryRow>(routeTable.getChildCount());
+				for (int i = 0; i < routeTable.getChildCount(); i++)
+					entryRows.add((RouteEntryRow)routeTable.getChildAt(i));
+			}
+			
+			for (RouteEntryRow row: entryRows) {
+				String objName = row.getObjectName().split(" ")[0];
+				RouteEntryReason[] reasons = new RouteEntryReason[0];
+				
+				if (objName.startsWith("DS")) {
+					for (StationStatusRow baseRow: bases.get(objName).values()) {
+						reasons = new RouteEntryReason[baseRow.getMissions()];
+						for (int i = 0; i < reasons.length; i++)
+							reasons[i] = RouteEntryReason.MISSION;
+						break;
+					}
+				} else {
+					SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+					for (AllyStatusRow allyRow: allies.get(objName).values()) {
+						int numMissions = allyRow.getMissions();
+						EnumSet<RouteEntryReason> others = EnumSet.noneOf(RouteEntryReason.class);
+						if (pref.getBoolean(getString(R.string.energyKey), false) && allyRow.hasEnergy())
+							others.add(RouteEntryReason.HAS_ENERGY);
+						switch (allyRow.getStatus()) {
+						case NEED_ENERGY:
+							if (pref.getBoolean(getString(R.string.needEnergyKey), false))
+								others.add(RouteEntryReason.NEEDS_ENERGY);
+							break;
+						case NEED_DAMCON:
+							if (pref.getBoolean(getString(R.string.needDamConKey), false))
+								others.add(RouteEntryReason.DAMCON);
+							break;
+						case BROKEN_COMPUTER:
+							if (pref.getBoolean(getString(R.string.malfunctionKey), false))
+								others.add(RouteEntryReason.MALFUNCTION);
+							break;
+						case HOSTAGE:
+							if (pref.getBoolean(getString(R.string.hostageKey), false))
+								others.add(RouteEntryReason.HOSTAGE);
+							break;
+						case COMMANDEERED:
+							if (pref.getBoolean(getString(R.string.commandeeredKey), false))
+								others.add(RouteEntryReason.COMMANDEERED);
+							break;
+						default:
+							break;
+						}
+						
+						reasons = new RouteEntryReason[numMissions + others.size()];
+						for (int i = 0; i < numMissions; i++) {
+							reasons[i] = RouteEntryReason.MISSION;
+						}
+						
+						System.arraycopy(
+								others.toArray(new RouteEntryReason[others.size()]),
+								0,
+								reasons,
+								numMissions,
+								others.size());
+						
+						break;
+					}
+				}
+				
+				row.setReasons(reasons);
+			}
+			
+			// Refresh current route
 			uiThreadControl(new Runnable() {
 				@Override
 				public void run() {
 					routeTable.removeAllViews();
-				}
-			});
-			
-			// Then, if we have a route to fill, do so
-			uiThreadControl(new Runnable() {
-				@Override
-				public void run() {
-					for (int id: route) {
-						BaseArtemisShielded object = (BaseArtemisShielded)manager.getObject(id);
-						String objName = object.getName() + " Terran " + object.getVessel(context).getName();
-						ArtemisObject player = manager.getPlayerShip(playerShip);
-
-						float distX = object.getX() - player.getX();
-						float distY = object.getY() - player.getY();
-						float distZ = object.getZ() - player.getZ();
-						
-						double angle = Math.atan2(distZ, distX);
-						int direction = (270 - (int)Math.toDegrees(angle)) % 360;
-						double distance = Math.sqrt(distX * distX + distY * distY + distZ * distZ);
-						
-						RouteEntryRow newRow = new RouteEntryRow(getBaseContext(), objName, distance, direction);
-						routeTable.addView(newRow);
+					for (RouteEntryRow row: entryRows) {
+						row.updateDistance(manager.getPlayerShip(playerShip));
+						row.updateReasons();
+						routeTable.addView(row);
 					}
 				}
 			});
-			
+				
 			// Run this again after 1/10 of a second
 			routeHandler.postDelayed(this, updateInterval);
+		}
+	};
+	
+	final Runnable updateService = new Runnable() {
+		@Override
+		public void run() {
+			// Stop if there's no Comms service running
+			if (service == null) return;
+			
+			// If game is running, update notifications
+			if (gameRunning) {
+				// Count allies
+				int numAllies = 0, numBases = 0, numMissions = 0;
+				for (String key: allies.keySet()) {
+					for (AllyStatusRow row: allies.get(key).values()) {
+						if (row.getStatus().ordinal() < AllyStatus.FIGHTERS.ordinal()) {
+							numAllies++;
+						}
+					}
+				}
+				
+				// Count stations
+				for (String key: bases.keySet()) {
+					numBases += bases.get(key).size();
+				}
+				
+				// Count side missions
+				for (SideMissionRow row: missions) {
+					if (!row.isCompleted()) {
+						numMissions += row.getNumRewards();
+					}
+				}
+				
+				// Update Comms service
+				try { service.update(numAllies, numBases, numMissions); }
+				catch (NullPointerException e) { return; }
+			}
+			
+			// Run this again after 1/10 of a second
+			serviceHandler.postDelayed(this, updateInterval);
 		}
 	};
 	
@@ -1857,6 +2074,8 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 		} else if (key.endsWith("CheckBox")) {
 			uiThreadControl(clearTable);
 			uiThreadControl(updateTables);
+			
+			if (showRoute) updateRouteGraph(false);
 		}
 	}
 }

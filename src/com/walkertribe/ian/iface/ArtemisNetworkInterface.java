@@ -1,5 +1,7 @@
 package com.walkertribe.ian.iface;
 
+import java.io.IOException;
+
 import com.walkertribe.ian.enums.ConnectionType;
 import com.walkertribe.ian.protocol.ArtemisPacket;
 import com.walkertribe.ian.protocol.Protocol;
@@ -77,4 +79,10 @@ public interface ArtemisNetworkInterface {
      * types.
      */
     public void proxyTo(ArtemisNetworkInterface iface);
+    
+    /**
+     * Sets the timeout value.
+     * @param timeout the timeout value
+     */
+    public void setTimeout(int timeout) throws IOException;
 }

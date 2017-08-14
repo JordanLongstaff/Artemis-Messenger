@@ -1,5 +1,7 @@
 package artemis.messenger;
 
+import com.walkertribe.ian.world.ArtemisNpc;
+
 import android.content.Context;
 import android.graphics.Color;
 import android.widget.TableRow;
@@ -12,6 +14,7 @@ import android.widget.TextView;
  */
 public class AllyStatusRow extends TableRow {
 	// Ally ship information
+	private final ArtemisNpc ally;
 	private int front, rear, missions;
 	private final int fMax, rMax;
 	private boolean energy, blind, torps, building;
@@ -26,13 +29,14 @@ public class AllyStatusRow extends TableRow {
 		Color.RED                    // Red - duh
 	};
 
-	public AllyStatusRow(Context context, String n, int f, int r, int fmax, int rmax) {
+	public AllyStatusRow(Context context, ArtemisNpc npc, String n) {
 		// Initialize ally ship information
 		super(context);
-		front = f;
-		rear = r;
-		fMax = fmax;
-		rMax = rmax;
+		ally = npc;
+		front = (int) npc.getShieldsFront();
+		rear = (int) npc.getShieldsRear();
+		fMax = (int) npc.getShieldsFrontMax();
+		rMax = (int) npc.getShieldsRearMax();
 		energy = false;
 		
 		// Start by assuming status is normal
@@ -63,6 +67,11 @@ public class AllyStatusRow extends TableRow {
 		// Update text
 		updateShields();
 		updateStatus();
+	}
+	
+	// Get ally ship reference
+	public ArtemisNpc getAllyShip() {
+		return ally;
 	}
 	
 	// Add mission
@@ -99,6 +108,7 @@ public class AllyStatusRow extends TableRow {
 		energy = e;
 		updateStatus();
 	}
+	public boolean hasEnergy() { return energy; }
 	
 	// Does ship have torpedoes in Deep Strike mode?
 	public void setTorpedoes(boolean t) {

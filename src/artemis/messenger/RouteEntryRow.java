@@ -1,5 +1,10 @@
 package artemis.messenger;
 
+import java.util.EnumMap;
+import java.util.Locale;
+
+import com.walkertribe.ian.world.ArtemisObject;
+
 import android.content.Context;
 import android.graphics.Color;
 import android.widget.TableRow;
@@ -11,29 +16,90 @@ import android.widget.TextView;
  *
  */
 public class RouteEntryRow extends TableRow {
-	public RouteEntryRow(Context context, String object, double distance, int direction) {
+	private final ArtemisObject point;
+	private final EnumMap<RouteEntryReason, Integer> reasons;
+	
+	public RouteEntryRow(Context context, ArtemisObject pt, String object) {
 		super(context);
+		point = pt;
+		reasons = new EnumMap<RouteEntryReason, Integer>(RouteEntryReason.class);
 		
 		// Prepare row layout
 		setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
-		
-		LayoutParams cellLayout = new LayoutParams(0, LayoutParams.MATCH_PARENT, 1);
+
+		LayoutParams leftLayout = new LayoutParams(0, LayoutParams.MATCH_PARENT, 3);
+		LayoutParams rightLayout = new LayoutParams(0, LayoutParams.MATCH_PARENT, 2);
 		
 		TextView pointText = new TextView(context);
 		pointText.setTypeface(ListActivity.APP_FONT);
 		pointText.setText(object);
-		pointText.setLayoutParams(cellLayout);
+		pointText.setLayoutParams(leftLayout);
 		pointText.setPadding(3, 3, 3, 3);
 		addView(pointText);
 		
 		TextView distanceText = new TextView(context);
 		distanceText.setTypeface(ListActivity.APP_FONT);
-		distanceText.setText(String.format("DIR %d\nRANGE %.1f", direction, distance));
-		distanceText.setLayoutParams(cellLayout);
+		distanceText.setLayoutParams(rightLayout);
 		distanceText.setPadding(3, 3, 3, 3);
 		addView(distanceText);
 		
 		// Paint row in blue
 		setBackgroundColor(Color.parseColor("#002060"));
+	}
+	
+	public String getObjectName() {
+		TextView pointText = (TextView) getChildAt(0);
+		return pointText.getText().toString().split("\n")[0];
+	}
+	
+	public void updateDistance(ArtemisObject player) {
+		float distX = point.getX() - player.getX();
+		float distY = point.getY() - player.getY();
+		float distZ = point.getZ() - player.getZ();
+		
+		double angle = Math.atan2(distZ, distX);
+		int direction = (270 - (int)Math.toDegrees(angle)) % 360;
+		double distance = Math.sqrt(distX * distX + distY * distY + distZ * distZ);
+
+		TextView distanceText = (TextView) getChildAt(1);
+		distanceText.setText(String.format("DIR %d\nRANGE %.1f", direction, distance));
+	}
+	
+	public void setReasons(RouteEntryReason... rers) {
+		// Clear previous reasons
+		for (RouteEntryReason reason: RouteEntryReason.values()) {
+			reasons.put(reason, 0);
+		}
+		
+		// Populate route entry reasons
+		for (RouteEntryReason reason: rers) {
+			reasons.put(reason, reasons.get(reason) + 1);
+		}
+	}
+	
+	public void updateReasons() {
+		// Get text for left column
+		String line2 = "";
+		for (RouteEntryReason reason: reasons.keySet()) {
+			if (reasons.get(reason) == 0) continue;
+			String entry = reason.name().replaceAll("_", " ").toLowerCase(Locale.getDefault());
+			switch (reason) {
+			case DAMCON:
+				entry = "DamCon";
+				break;
+			case MISSION:
+				int numMissions = reasons.get(reason);
+				if (numMissions == 1) break;
+				entry = numMissions + " missions";
+				break;
+			default:
+				break;
+			}
+			line2 += ", " + entry;
+		}
+		if (!line2.equals("")) line2 = "\n" + Character.toUpperCase(line2.charAt(2)) + line2.substring(3);
+		
+		TextView pointText = (TextView) getChildAt(0);
+		pointText.setText(getObjectName() + line2);
 	}
 }
