@@ -140,4 +140,5 @@
     <string name="settingsRouteHeader">Routing</string>
     <string name="commandeeredKey">commandeeredCheckBox</string>
     <string name="hasTorpsKey">hasTorpsCheckBox</string>
+    <string name="includeAlliesKey">includeAllyShips</string>
 </resources>

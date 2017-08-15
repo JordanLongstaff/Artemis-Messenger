@@ -763,6 +763,7 @@ int string helpStartupTitle 0x7f0b0039
 int string helpTitle 0x7f0b0044
 int string helpTopicsKey 0x7f0b0037
 int string hostageKey 0x7f0b007c
+int string includeAlliesKey 0x7f0b0081
 int string licenseText 0x7f0b0047
 int string malfunctionKey 0x7f0b0079
 int string missionDispPrefCategory 0x7f0b0022
@@ -785,12 +786,12 @@ int string newMissionPrefKey 0x7f0b002f
 int string nuclearKey 0x7f0b002b
 int string nukePref 0x7f0b0025
 int string ordnanceHeader 0x7f0b0020
-int string pref_header_general 0x7f0b0082
-int string pref_header_notifications 0x7f0b0083
-int string pref_ringtone_silent 0x7f0b0086
-int string pref_title_new_message_notifications 0x7f0b0084
-int string pref_title_ringtone 0x7f0b0085
-int string pref_title_vibrate 0x7f0b0087
+int string pref_header_general 0x7f0b0083
+int string pref_header_notifications 0x7f0b0084
+int string pref_ringtone_silent 0x7f0b0087
+int string pref_title_new_message_notifications 0x7f0b0085
+int string pref_title_ringtone 0x7f0b0086
+int string pref_title_vibrate 0x7f0b0088
 int string prodSpeedPref 0x7f0b0026
 int string rewardHeader 0x7f0b0014
 int string routingParagraph1 0x7f0b0072
@@ -828,7 +829,7 @@ int string stationsParagraph5 0x7f0b0076
 int string statusHeader 0x7f0b001d
 int string title_activity_help 0x7f0b0035
 int string title_activity_help_page 0x7f0b003a
-int string title_activity_settings 0x7f0b0081
+int string title_activity_settings 0x7f0b0082
 int string vesselDataKey 0x7f0b002e
 int string vesselDataPrefCategory 0x7f0b0021
 int string vesselDataSummary 0x7f0b0028
