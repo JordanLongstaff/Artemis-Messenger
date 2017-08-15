@@ -148,6 +148,14 @@ public class RoutingGraph {
 	}
 	
 	/**
+	 * Returns the size of the graph, which is equal to the number of points that currently must be visited.
+	 * @return the size of the graph
+	 */
+	public int size() {
+		return paths.size();
+	}
+	
+	/**
 	 * Resets the routing graph.
 	 */
 	public void resetGraph() {

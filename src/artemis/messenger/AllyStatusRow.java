@@ -117,6 +117,8 @@ public class AllyStatusRow extends TableRow {
 		updateStatus();
 	}
 	
+	public boolean hasTorpedoes() { return torps; }
+	
 	// Is ship building torpedoes in Deep Strike mode?
 	public boolean isBuildingTorpedoes() { return building; }
 	

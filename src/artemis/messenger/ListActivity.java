@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -1037,7 +1038,7 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 						if (message.split(", ")[1].startsWith(manager.getPlayerShip(playerShip).getName())) {
 							for (ArtemisObject o: manager.getObjects(ObjectType.BASE)) {
 								final String[] senderParts = sender.split(" ", 3);
-								if (o.getName().startsWith(senderParts[0])) {
+								if (o.getName().startsWith(senderParts[0]) && bases.containsKey(senderParts[0])) {
 									final StationStatusRow row = bases.get(senderParts[0]).get(senderParts[2]);
 									uiThreadControl(new Runnable() {
 										@Override
@@ -1068,12 +1069,14 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 					} else if (message.startsWith("We've produced") || message.contains("ing production of")) {
 						// Production of previous ordnance ended
 						String base = sender.split(" ")[0];
-						for (StationStatusRow row: bases.get(base).values()) {
-							// If a new missile was produced, recalibrate production speed
-							if (message.startsWith("We've")) {
-								row.recalibrateSpeed();
+						if (bases.containsKey(base)) {
+							for (StationStatusRow row: bases.get(base).values()) {
+								// If a new missile was produced, recalibrate production speed
+								if (message.startsWith("We've")) {
+									row.recalibrateSpeed();
+								}
+								row.resetMissile();
 							}
-							row.resetMissile();
 						}
 						
 						// Commencing production of a new ordnance
@@ -1178,6 +1181,7 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 						uiThreadControl(new Runnable() {
 							@Override
 							public void run() {
+								if (!allies.containsKey(sender)) return;
 								for (AllyStatusRow row: allies.get(sender).values()) row.setTorpedoes(false);
 							}
 						});
@@ -1186,6 +1190,7 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 						uiThreadControl(new Runnable() {
 							@Override
 							public void run() {
+								if (!allies.containsKey(sender)) return;
 								for (AllyStatusRow row: allies.get(sender).values()) row.setEnergy(false);
 							}
 						});
@@ -1194,6 +1199,7 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 						uiThreadControl(new Runnable() {
 							@Override
 							public void run() {
+								if (!allies.containsKey(sender)) return;
 								for (AllyStatusRow row: allies.get(sender).values()) setStatus(row, AllyStatus.REWARD);
 							}
 						});
@@ -1249,12 +1255,14 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 							uiThreadControl(new Runnable() {
 								@Override
 								public void run() {
-									bases.get(srcShip).get(station).addMission();
 									try {
+										if (!allies.containsKey(senderParts[0])) return;
 										allies.get(senderParts[0]).get(senderParts[2]).addMission();
 									} catch (NullPointerException e) {
+										if (!bases.containsKey(senderParts[0])) return;
 										bases.get(senderParts[0]).get(senderParts[2]).addMission();
 									}
+									bases.get(srcShip).get(station).addMission();
 								}
 							});
 						} else {
@@ -1274,12 +1282,14 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 							uiThreadControl(new Runnable() {
 								@Override
 								public void run() {
-									allies.get(srcShip).get(source.substring(srcShip.length() + 8)).addMission();
 									try {
+										if (!allies.containsKey(senderParts[0])) return;
 										allies.get(senderParts[0]).get(senderParts[2]).addMission();
 									} catch (NullPointerException e) {
+										if (!bases.containsKey(senderParts[0])) return;
 										bases.get(senderParts[0]).get(senderParts[2]).addMission();
 									}
+									allies.get(srcShip).get(source.substring(srcShip.length() + 8)).addMission();
 								}
 							});
 						}
@@ -1407,8 +1417,10 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 							@Override
 							public void run() {
 								try {
+									if (!allies.containsKey(senderParts[0])) return;
 									allies.get(senderParts[0]).get(senderParts[2]).removeMission();
 								} catch (NullPointerException e) {
+									if (!bases.containsKey(senderParts[0])) return;
 									bases.get(senderParts[0]).get(senderParts[2]).removeMission();
 								}
 							}
@@ -1445,8 +1457,9 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 						
 						if (reward.equals(SideMissionRow.PRODUCTION_KEY)) {
 							String baseName = sender.split(" ")[0];
-							for (StationStatusRow baseRow: bases.get(baseName).values()) {
-								baseRow.incProductionSpeed();
+							if (bases.containsKey(baseName)) {
+								for (StationStatusRow baseRow: bases.get(baseName).values())
+									baseRow.incProductionSpeed();
 							}
 						}
 						
@@ -1482,8 +1495,10 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 							@Override
 							public void run() {
 								try {
+									if (!allies.containsKey(senderParts[0])) return;
 									allies.get(senderParts[0]).get(senderParts[2]).removeMission();
 								} catch (NullPointerException e) {
+									if (!bases.containsKey(senderParts[0])) return;
 									bases.get(senderParts[0]).get(senderParts[2]).removeMission();
 								}
 							}
@@ -1525,6 +1540,7 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 									outPackets.add(
 											new CommsOutgoingPacket(o, BaseMessage.PLEASE_REPORT_STATUS, context));
 								}
+								if (!allies.containsKey(sender)) return;
 								for (AllyStatusRow row: allies.get(sender).values()) {
 									row.setBlind(false);
 									row.setStatus(AllyStatus.NORMAL);
@@ -1536,6 +1552,7 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 						uiThreadControl(new Runnable() {
 							@Override
 							public void run() {
+								if (!allies.containsKey(sender)) return;
 								for (AllyStatusRow row: allies.get(sender).values())
 									setStatus(row, AllyStatus.NORMAL);
 							}
@@ -1545,6 +1562,7 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 						uiThreadControl(new Runnable() {
 							@Override
 							public void run() {
+								if (!allies.containsKey(sender)) return;
 								for (AllyStatusRow row: allies.get(sender).values())
 									if (row.getStatus() == AllyStatus.FLYING_BLIND) setStatus(row, AllyStatus.NORMAL);
 							}
@@ -1554,6 +1572,7 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 						uiThreadControl(new Runnable() {
 							@Override
 							public void run() {
+								if (!allies.containsKey(sender)) return;
 								for (AllyStatusRow row: allies.get(sender).values()) {
 									if (row.isFlyingBlind()) {
 										setStatus(row, AllyStatus.REWARD);
@@ -1639,7 +1658,8 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 		public void run() {
 			// Missions first
 			SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-			for (SideMissionRow row: new ArrayList<SideMissionRow>(missions)) {
+			for (int i = 0; i < missions.size(); i++) {
+				SideMissionRow row = missions.get(i);
 				missionsTable.addView(row);
 				if (row.hasReward(SideMissionRow.BATTERY_KEY) && preferences.getBoolean(getString(R.string.batteryChargeKey), true)) continue;
 				if (row.hasReward(SideMissionRow.COOLANT_KEY) && preferences.getBoolean(getString(R.string.extraCoolantKey), true)) continue;
@@ -1650,7 +1670,8 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 			}
 			
 			// Stations next
-			for (String n: bases.keySet()) {
+			for (String n: new HashSet<String>(bases.keySet())) {
+				if (!bases.containsKey(n)) continue;
 				for (StationStatusRow r: bases.get(n).values()) {
 					try { stationsTable.addView(r); }
 					catch (Exception e) { }
@@ -1658,7 +1679,8 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 			}
 			
 			// Allies next
-			for (String n: allies.keySet()) {
+			for (String n: new HashSet<String>(allies.keySet())) {
+				if (!allies.containsKey(n)) continue;
 				for (AllyStatusRow r: allies.get(n).values()) {
 					try { alliesTable.addView(r); }
 					catch (Exception e) { }
@@ -1680,6 +1702,7 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 	final Runnable updateDockedRow = new Runnable() {
 		@Override
 		public void run() {
+			if (!bases.containsKey(dockingStation)) return;
 			for (StationStatusRow row: bases.get(dockingStation).values()) {
 				row.setDocking(true);
 			}
@@ -1690,6 +1713,7 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 	final Runnable resetDockedRow = new Runnable() {
 		@Override
 		public void run() {
+			if (!bases.containsKey(dockingStation)) return;
 			for (StationStatusRow row: bases.get(dockingStation).values()) {
 				row.setDocking(false);
 			}
@@ -1747,15 +1771,8 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 		showRoute = true;
 		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
 		
-		double minCost = Double.POSITIVE_INFINITY;
-		int minPoints = Integer.MAX_VALUE;
-		
-		if (keepMinCost) {
-			minCost = graph.getMinimumCost();
-			minPoints = graph.getMinimumPoints();
-		}
-		
-		for (SideMissionRow row: new ArrayList<SideMissionRow>(missions)) {
+		for (int i = 0; i < missions.size(); i++) {
+			SideMissionRow row = missions.get(i);
 			// Skip completed missions
 			if (row.isCompleted()) continue;
 
@@ -1845,6 +1862,9 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 				if (pref.getBoolean(getString(R.string.energyKey), false)) {
 					show |= row.hasEnergy();
 				}
+				if (pref.getBoolean(getString(R.string.hasTorpsKey), false)) {
+					show |= row.hasTorpedoes();
+				}
 				if (pref.getBoolean(getString(R.string.needEnergyKey), false)) {
 					show |= row.getStatus() == AllyStatus.NEED_ENERGY;
 				}
@@ -1857,11 +1877,25 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 				if (pref.getBoolean(getString(R.string.hostageKey), false)) {
 					show |= row.getStatus() == AllyStatus.HOSTAGE;
 				}
+				if (pref.getBoolean(getString(R.string.commandeeredKey), false)) {
+					show |= row.getStatus() == AllyStatus.COMMANDEERED;
+				}
 				
 				if (!show) continue;
 				
 				graph.addPath(row.getAllyShip(), null);
 			}
+		}
+		
+		graph.purgePaths();
+		keepMinCost &= graph.size() <= routeTable.getChildCount();
+		
+		double minCost = Double.POSITIVE_INFINITY;
+		int minPoints = Integer.MAX_VALUE;
+		
+		if (keepMinCost) {
+			minCost = graph.getMinimumCost();
+			minPoints = graph.getMinimumPoints();
 		}
 		
 		graph.setMinimumCost(minCost);
@@ -1891,7 +1925,6 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 				if (routeView.getVisibility() == View.VISIBLE) {
 					// If Routing view has just been activated, re-populate our graph
 					updateRouteGraph(showRoute);
-					graph.purgePaths();
 					
 					// Guess optimal route
 					route = graph.guessRoute();
@@ -1919,24 +1952,27 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 					entryRows.add((RouteEntryRow)routeTable.getChildAt(i));
 			}
 			
-			for (RouteEntryRow row: entryRows) {
+			for (int r = 0; r < entryRows.size(); r++) {
+				RouteEntryRow row = entryRows.get(r);
 				String objName = row.getObjectName().split(" ")[0];
 				RouteEntryReason[] reasons = new RouteEntryReason[0];
 				
-				if (objName.startsWith("DS")) {
+				if (objName.startsWith("DS") && bases.containsKey(objName)) {
 					for (StationStatusRow baseRow: bases.get(objName).values()) {
 						reasons = new RouteEntryReason[baseRow.getMissions()];
 						for (int i = 0; i < reasons.length; i++)
 							reasons[i] = RouteEntryReason.MISSION;
 						break;
 					}
-				} else {
+				} else if (allies.containsKey(objName)) {
 					SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
 					for (AllyStatusRow allyRow: allies.get(objName).values()) {
 						int numMissions = allyRow.getMissions();
 						EnumSet<RouteEntryReason> others = EnumSet.noneOf(RouteEntryReason.class);
 						if (pref.getBoolean(getString(R.string.energyKey), false) && allyRow.hasEnergy())
 							others.add(RouteEntryReason.HAS_ENERGY);
+						if (pref.getBoolean(getString(R.string.hasTorpsKey), false) && allyRow.hasTorpedoes())
+							others.add(RouteEntryReason.TORPEDOES);
 						switch (allyRow.getStatus()) {
 						case NEED_ENERGY:
 							if (pref.getBoolean(getString(R.string.needEnergyKey), false))
@@ -1978,7 +2014,10 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 					}
 				}
 				
-				row.setReasons(reasons);
+				if (reasons.length == 0) {
+					entryRows.remove(r--);
+				}
+				else row.setReasons(reasons);
 			}
 			
 			// Refresh current route
@@ -2009,7 +2048,8 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 			if (gameRunning) {
 				// Count allies
 				int numAllies = 0, numBases = 0, numMissions = 0;
-				for (String key: allies.keySet()) {
+				for (String key: new HashSet<String>(allies.keySet())) {
+					if (!allies.containsKey(key)) continue;
 					for (AllyStatusRow row: allies.get(key).values()) {
 						if (row.getStatus().ordinal() < AllyStatus.FIGHTERS.ordinal()) {
 							numAllies++;
@@ -2018,12 +2058,13 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 				}
 				
 				// Count stations
-				for (String key: bases.keySet()) {
-					numBases += bases.get(key).size();
+				for (String key: new HashSet<String>(bases.keySet())) {
+					if (bases.containsKey(key)) numBases += bases.get(key).size();
 				}
 				
 				// Count side missions
-				for (SideMissionRow row: missions) {
+				for (int i = 0; i < missions.size(); i++) {
+					SideMissionRow row = missions.get(i);
 					if (!row.isCompleted()) {
 						numMissions += row.getNumRewards();
 					}

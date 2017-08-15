@@ -2,9 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="artemis.messenger"
     android:installLocation="preferExternal"
-    android:revisionCode="28"
-    android:versionCode="29"
-    android:versionName="4.2.0" >
+    android:revisionCode="29"
+    android:versionCode="30"
+    android:versionName="4.2.1" >
 
     <uses-sdk
         android:minSdkVersion="8"
