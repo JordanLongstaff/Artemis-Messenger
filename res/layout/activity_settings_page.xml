@@ -71,7 +71,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/activity_vertical_margin"
-            android:text="@string/settingsRouteHeader"
+            android:text="@string/settingsSortHeader"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <TextView
@@ -86,7 +86,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/activity_vertical_margin"
-            android:text="@string/settingsRingtoneHeader"
+            android:text="@string/settingsRouteHeader"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <TextView
@@ -101,7 +101,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/activity_vertical_margin"
-            android:text="@string/settingsHelpHeader"
+            android:text="@string/settingsRingtoneHeader"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <TextView
@@ -110,6 +110,21 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/activity_vertical_margin"
             android:text="@string/settingsParagraph6" />
+
+        <TextView
+            android:id="@+id/settingsHeader7"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:text="@string/settingsHelpHeader"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <TextView
+            android:id="@+id/settingsPar7"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:text="@string/settingsParagraph7" />
 
         <Button
             android:id="@+id/settingsBack"

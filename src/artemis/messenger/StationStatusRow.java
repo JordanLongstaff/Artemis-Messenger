@@ -31,7 +31,7 @@ public class StationStatusRow extends TableRow {
 	private long startTime, endTime;
 	private final ArtemisBase station;
 	private final String name;
-	private boolean docking, ready, paused;
+	private boolean docking, ready, paused, closest;
 	private int readySignals, speed;
 	
 	private static final int ONE_MINUTE = 60000;
@@ -205,6 +205,12 @@ public class StationStatusRow extends TableRow {
 		updateStatus();
 	}
 	
+	// Is station the closest to you?
+	public void setClosest(boolean close) {
+		closest = close;
+		updateStatus();
+	}
+	
 	// Is the game paused?
 	public void setPaused(boolean p) {
 		if (p) {
@@ -224,6 +230,7 @@ public class StationStatusRow extends TableRow {
 		else if (fighters > 1) status += ", " + fighters + " fighters";
 		if (docking) status += " (docked)";
 		else if (ready) status += " (standby)";
+		else if (closest) status += " (closest)";
 		statusText.setText(status);
 	}
 	

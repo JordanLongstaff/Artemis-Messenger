@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -105,7 +104,6 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 	private Map<String, HashMap<String, StationStatusRow>> bases;
 	private Map<String, HashMap<String, AllyStatusRow>> allies;
 	private Map<String, ArrayList<String>> rogues;
-	private Map<AllyStatus, Integer> statuses;
 	private List<CommsIncomingPacket> inPackets;
 	private List<CommsOutgoingPacket> outPackets;
 	private boolean assetsFail;
@@ -173,7 +171,6 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 		allies = Collections.synchronizedMap(new HashMap<String, HashMap<String, AllyStatusRow>>());
 		bases = Collections.synchronizedMap(new HashMap<String, HashMap<String, StationStatusRow>>());
 		rogues = Collections.synchronizedMap(new HashMap<String, ArrayList<String>>());
-		statuses = Collections.synchronizedMap(new EnumMap<AllyStatus, Integer>(AllyStatus.class));
 		inPackets = Collections.synchronizedList(new ArrayList<CommsIncomingPacket>());
 		outPackets = Collections.synchronizedList(new ArrayList<CommsOutgoingPacket>());
 		
@@ -190,7 +187,7 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 		serviceHandler = new Handler();
 		
 		// Initialize app font
-		if (APP_FONT == null) APP_FONT = Typeface.createFromAsset(getAssets(), "fonts/BUTTERUNSALTED.TTF");
+		if (APP_FONT == null) APP_FONT = Typeface.createFromAsset(getAssets(), "fonts/Rajdhani-Medium.ttf");
 		
 		// Initialize address field
 		final EditText addressField = (EditText) findViewById(R.id.addressField);
@@ -555,7 +552,6 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 		bases.clear();
 		allies.clear();
 		rogues.clear();
-		for (AllyStatus s: AllyStatus.values()) statuses.put(s, 0);
 
 		// Start packet handler
 		new AsyncTask<String, String, String>() {
@@ -657,7 +653,6 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 		closed.clear();
 		for (ArrayList<String> list: rogues.values()) list.clear();
 		rogues.clear();
-		for (AllyStatus status: AllyStatus.values()) statuses.put(status, 0);
 		dsHandler.removeCallbacks(askForTorps);
 		inPackets.clear();
 		outPackets.clear();
@@ -698,7 +693,7 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 		// Find all NPC ships
 		List<ArtemisObject> objects = manager.getObjects(ObjectType.NPC_SHIP);
 		for (ArtemisObject obj: objects) {
-			ArtemisNpc npc = (ArtemisNpc) obj;
+			final ArtemisNpc npc = (ArtemisNpc) obj;
 			
 			// Skip enemy ships
 			if (npc.getVessel(context) == null ||
@@ -730,9 +725,6 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 					catch (IllegalStateException e) { }
 				}
 			});
-			
-			// Set ally ship to have Normal status by default
-			statuses.put(AllyStatus.NORMAL, statuses.get(AllyStatus.NORMAL) + 1);
 			
 			// Send a hail message to discover actual status
 			outPackets.add(new CommsOutgoingPacket(npc, OtherMessage.HAIL, context));
@@ -891,7 +883,7 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 			
 			// Remove from Stations table
 			if (bases.containsKey(base.getName())) {
-				for (final StationStatusRow row: bases.get(base.getName()).values()) {
+				for (final StationStatusRow row: new ArrayList<StationStatusRow>(bases.get(base.getName()).values())) {
 					uiThreadControl(new Runnable() {
 						@Override
 						public void run() {
@@ -920,7 +912,6 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 						alliesTable.removeView(row);
 					}
 				});
-				statuses.put(row.getStatus(), statuses.get(row.getStatus()) - 1);
 				allies.get(npc.getName()).remove(npc.getVessel(context).getName());
 				if (allies.get(npc.getName()).isEmpty()) allies.remove(npc.getName());
 			}
@@ -955,14 +946,22 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 								if (row.getSource().startsWith(object.getName())) {
 									String[] other = row.getDestination().split(" ", 3);
 									for (int n = 0; n < row.getNumRewards(); n++) {
-										try { allies.get(other[0]).get(other[2]).removeMission(); }
-										catch (NullPointerException e) { bases.get(other[0]).get(other[2]).removeMission(); }
+										try {
+											if (allies.containsKey(other[0]))
+												allies.get(other[0]).get(other[2]).removeMission();
+											else if (bases.containsKey(other[0]))
+												bases.get(other[0]).get(other[2]).removeMission();
+										} catch (NullPointerException e) { }
 									}
 								} else if (row.getDestination().startsWith(object.getName())) {
 									String[] other = row.getSource().split(" ", 3);
 									for (int n = 0; n < row.getNumRewards(); n++) {
-										try { allies.get(other[0]).get(other[2]).removeMission(); }
-										catch (NullPointerException e) { bases.get(other[0]).get(other[2]).removeMission(); }
+										try {
+											if (allies.containsKey(other[0]))
+												allies.get(other[0]).get(other[2]).removeMission();
+											else if (bases.containsKey(other[0]))
+												bases.get(other[0]).get(other[2]).removeMission();
+										} catch (NullPointerException e) { }
 									}
 								}
 							}
@@ -999,8 +998,9 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 	 */
 	@Listener
 	public void onPacket(PausePacket pkt) {
-		for (HashMap<String, StationStatusRow> map: bases.values()) {
-			for (StationStatusRow row: map.values()) {
+		for (String key: new HashSet<String>(bases.keySet())) {
+			if (!bases.containsKey(key)) continue;
+			for (StationStatusRow row: new ArrayList<StationStatusRow>(bases.get(key).values())) {
 				row.setPaused(pkt.getPaused().getBooleanValue());
 			}
 		}
@@ -1026,8 +1026,9 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 							public void run() {
 								if (!allies.containsKey(id)) return;
 								AllyStatusRow row = allies.get(id).get(name);
-								setStatus(row, AllyStatus.BROKEN_COMPUTER);
+								row.setStatus(AllyStatus.BROKEN_COMPUTER);
 								row.setEnergy(message.endsWith("you need some."));
+								updateTables.run();
 							}
 						});
 						
@@ -1070,7 +1071,7 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 						// Production of previous ordnance ended
 						String base = sender.split(" ")[0];
 						if (bases.containsKey(base)) {
-							for (StationStatusRow row: bases.get(base).values()) {
+							for (StationStatusRow row: new ArrayList<StationStatusRow>(bases.get(base).values())) {
 								// If a new missile was produced, recalibrate production speed
 								if (message.startsWith("We've")) {
 									row.recalibrateSpeed();
@@ -1115,7 +1116,8 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 							@Override
 							public void run() {
 								if (!allies.containsKey(id)) return;
-								setStatus(allies.get(id).get(name), AllyStatus.HOSTAGE);
+								allies.get(id).get(name).setStatus(AllyStatus.HOSTAGE);
+								updateTables.run();
 							}
 						});
 						
@@ -1129,7 +1131,8 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 							@Override
 							public void run() {
 								if (!allies.containsKey(id)) return;
-								setStatus(allies.get(id).get(name), AllyStatus.COMMANDEERED);
+								allies.get(id).get(name).setStatus(AllyStatus.COMMANDEERED);
+								updateTables.run();
 							}
 						});
 					} else if (message.contains("\nOur sensors are all down")) {
@@ -1141,8 +1144,9 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 							public void run() {
 								if (!allies.containsKey(id)) return;
 								AllyStatusRow row = allies.get(id).get(name);
-								setStatus(row, AllyStatus.FLYING_BLIND);
+								row.setStatus(AllyStatus.FLYING_BLIND);
 								row.setEnergy(message.endsWith("you need some."));
+								updateTables.run();
 							}
 						});
 					} else if (message.contains("\nOur engines are damaged")) {
@@ -1154,8 +1158,9 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 							public void run() {
 								if (!allies.containsKey(id)) return;
 								AllyStatusRow row = allies.get(id).get(name);
-								setStatus(row, AllyStatus.NEED_DAMCON);
+								row.setStatus(AllyStatus.NEED_DAMCON);
 								row.setEnergy(message.endsWith("you need some."));
+								updateTables.run();
 							}
 						});
 						
@@ -1170,7 +1175,8 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 							public void run() {
 								if (!allies.containsKey(id)) return;
 								AllyStatusRow row = allies.get(id).get(name);
-								setStatus(row, AllyStatus.NEED_ENERGY);
+								row.setStatus(AllyStatus.NEED_ENERGY);
+								updateTables.run();
 							}
 						});
 						
@@ -1182,7 +1188,8 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 							@Override
 							public void run() {
 								if (!allies.containsKey(sender)) return;
-								for (AllyStatusRow row: allies.get(sender).values()) row.setTorpedoes(false);
+								for (AllyStatusRow row: new ArrayList<AllyStatusRow>(allies.get(sender).values()))
+									row.setTorpedoes(false);
 							}
 						});
 					} else if (message.startsWith("Here's the energy")) {
@@ -1191,7 +1198,9 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 							@Override
 							public void run() {
 								if (!allies.containsKey(sender)) return;
-								for (AllyStatusRow row: allies.get(sender).values()) row.setEnergy(false);
+								for (AllyStatusRow row: new ArrayList<AllyStatusRow>(allies.get(sender).values()))
+									row.setEnergy(false);
+								updateTables.run();
 							}
 						});
 					} else if (message.endsWith("when we get there.")) {
@@ -1200,7 +1209,9 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 							@Override
 							public void run() {
 								if (!allies.containsKey(sender)) return;
-								for (AllyStatusRow row: allies.get(sender).values()) setStatus(row, AllyStatus.REWARD);
+								for (AllyStatusRow row: new ArrayList<AllyStatusRow>(allies.get(sender).values()))
+									row.setStatus(AllyStatus.REWARD);
+								updateTables.run();
 							}
 						});
 					} else if (message.contains("We're broken down!") || message.contains("How are you?")) {
@@ -1213,7 +1224,7 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 							@Override
 							public void run() {
 								try {
-									setStatus(allies.get(id).get(name),
+									allies.get(id).get(name).setStatus(
 											message.contains("How are you?") ?
 													AllyStatus.MINE_TRAP :
 														AllyStatus.FIGHTERS);
@@ -1245,9 +1256,8 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 						final String srcShip = message.split("with ")[1].split(" ")[0];
 						final String source;
 						
-						if (srcShip.startsWith("DS")) {
+						if (bases.containsKey(srcShip)) {
 							// Source location is a station
-							if (!bases.containsKey(srcShip)) continue;
 							String srcStation = "";
 							for (String key: bases.get(srcShip).keySet()) srcStation = key;
 							source = srcShip + " Terran " + srcStation;
@@ -1256,13 +1266,13 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 								@Override
 								public void run() {
 									try {
-										if (!allies.containsKey(senderParts[0])) return;
-										allies.get(senderParts[0]).get(senderParts[2]).addMission();
-									} catch (NullPointerException e) {
-										if (!bases.containsKey(senderParts[0])) return;
-										bases.get(senderParts[0]).get(senderParts[2]).addMission();
-									}
-									bases.get(srcShip).get(station).addMission();
+										if (allies.containsKey(senderParts[0]))
+											allies.get(senderParts[0]).get(senderParts[2]).addMission();
+										else if (bases.containsKey(senderParts[0]))
+											bases.get(senderParts[0]).get(senderParts[2]).addMission();
+									} catch (NullPointerException e) { }
+									if (bases.containsKey(srcShip))
+										bases.get(srcShip).get(station).addMission();
 								}
 							});
 						} else {
@@ -1283,13 +1293,13 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 								@Override
 								public void run() {
 									try {
-										if (!allies.containsKey(senderParts[0])) return;
-										allies.get(senderParts[0]).get(senderParts[2]).addMission();
-									} catch (NullPointerException e) {
-										if (!bases.containsKey(senderParts[0])) return;
-										bases.get(senderParts[0]).get(senderParts[2]).addMission();
-									}
-									allies.get(srcShip).get(source.substring(srcShip.length() + 8)).addMission();
+										if (allies.containsKey(senderParts[0]))
+											allies.get(senderParts[0]).get(senderParts[2]).addMission();
+										else if (bases.containsKey(senderParts[0]))
+											bases.get(senderParts[0]).get(senderParts[2]).addMission();
+									} catch (NullPointerException e) { }
+									if (allies.containsKey(srcShip))
+										allies.get(srcShip).get(source.substring(srcShip.length() + 8)).addMission();
 								}
 							});
 						}
@@ -1417,12 +1427,11 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 							@Override
 							public void run() {
 								try {
-									if (!allies.containsKey(senderParts[0])) return;
-									allies.get(senderParts[0]).get(senderParts[2]).removeMission();
-								} catch (NullPointerException e) {
-									if (!bases.containsKey(senderParts[0])) return;
-									bases.get(senderParts[0]).get(senderParts[2]).removeMission();
-								}
+									if (allies.containsKey(senderParts[0]))
+										allies.get(senderParts[0]).get(senderParts[2]).removeMission();
+									else if (bases.containsKey(senderParts[0]))
+										bases.get(senderParts[0]).get(senderParts[2]).removeMission();
+								} catch (NullPointerException e) { }
 							}
 						});
 						
@@ -1458,7 +1467,8 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 						if (reward.equals(SideMissionRow.PRODUCTION_KEY)) {
 							String baseName = sender.split(" ")[0];
 							if (bases.containsKey(baseName)) {
-								for (StationStatusRow baseRow: bases.get(baseName).values())
+								for (StationStatusRow baseRow:
+									new ArrayList<StationStatusRow>(bases.get(baseName).values()))
 									baseRow.incProductionSpeed();
 							}
 						}
@@ -1495,12 +1505,11 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 							@Override
 							public void run() {
 								try {
-									if (!allies.containsKey(senderParts[0])) return;
-									allies.get(senderParts[0]).get(senderParts[2]).removeMission();
-								} catch (NullPointerException e) {
-									if (!bases.containsKey(senderParts[0])) return;
-									bases.get(senderParts[0]).get(senderParts[2]).removeMission();
-								}
+									if (allies.containsKey(senderParts[0]))
+										allies.get(senderParts[0]).get(senderParts[2]).removeMission();
+									else if (bases.containsKey(senderParts[0]))
+										bases.get(senderParts[0]).get(senderParts[2]).removeMission();
+								} catch (NullPointerException e) { }
 							}
 						});
 						
@@ -1541,10 +1550,11 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 											new CommsOutgoingPacket(o, BaseMessage.PLEASE_REPORT_STATUS, context));
 								}
 								if (!allies.containsKey(sender)) return;
-								for (AllyStatusRow row: allies.get(sender).values()) {
+								for (AllyStatusRow row: new ArrayList<AllyStatusRow>(allies.get(sender).values())) {
 									row.setBlind(false);
 									row.setStatus(AllyStatus.NORMAL);
 								}
+								updateTables.run();
 							}
 						});
 					} else if (message.endsWith("Let us upgrade your shield generators.")) {
@@ -1553,8 +1563,9 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 							@Override
 							public void run() {
 								if (!allies.containsKey(sender)) return;
-								for (AllyStatusRow row: allies.get(sender).values())
-									setStatus(row, AllyStatus.NORMAL);
+								for (AllyStatusRow row: new ArrayList<AllyStatusRow>(allies.get(sender).values()))
+									row.setStatus(AllyStatus.NORMAL);
+								updateTables.run();
 							}
 						});
 					} else if (message.contains("we are turning")) {
@@ -1563,8 +1574,9 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 							@Override
 							public void run() {
 								if (!allies.containsKey(sender)) return;
-								for (AllyStatusRow row: allies.get(sender).values())
-									if (row.getStatus() == AllyStatus.FLYING_BLIND) setStatus(row, AllyStatus.NORMAL);
+								for (AllyStatusRow row: new ArrayList<AllyStatusRow>(allies.get(sender).values()))
+									if (row.getStatus() == AllyStatus.FLYING_BLIND) row.setStatus(AllyStatus.NORMAL);
+								updateTables.run();
 							}
 						});
 					} else if (message.startsWith("Okay, going")) {
@@ -1573,11 +1585,12 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 							@Override
 							public void run() {
 								if (!allies.containsKey(sender)) return;
-								for (AllyStatusRow row: allies.get(sender).values()) {
+								for (AllyStatusRow row: new ArrayList<AllyStatusRow>(allies.get(sender).values())) {
 									if (row.isFlyingBlind()) {
-										setStatus(row, AllyStatus.REWARD);
+										row.setStatus(AllyStatus.REWARD);
 									}
 								}
+								updateTables.run();
 							}
 						});
 					} else if (message.startsWith("Our shields") &&
@@ -1590,16 +1603,12 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 						uiThreadControl(new Runnable() {
 							@Override
 							public void run() {
-								AllyStatusRow row;
-								while (true) {
-									try {
-										row = allies.get(id).get(name);
-										break;
-									} catch (NullPointerException e) { }
-								}
-								if (row.getStatus() != AllyStatus.REWARD) setStatus(row, AllyStatus.NORMAL);
+								if (!allies.containsKey(id)) return;
+								AllyStatusRow row = allies.get(id).get(name);
+								if (row.getStatus() != AllyStatus.REWARD) row.setStatus(AllyStatus.NORMAL);
 								row.setEnergy(hasEnergy);
 								row.setTorpedoes(message.contains("We have some torpe"));
+								updateTables.run();
 							}
 						});
 						
@@ -1660,50 +1669,130 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 			SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
 			for (int i = 0; i < missions.size(); i++) {
 				SideMissionRow row = missions.get(i);
-				missionsTable.addView(row);
-				if (row.hasReward(SideMissionRow.BATTERY_KEY) && preferences.getBoolean(getString(R.string.batteryChargeKey), true)) continue;
-				if (row.hasReward(SideMissionRow.COOLANT_KEY) && preferences.getBoolean(getString(R.string.extraCoolantKey), true)) continue;
-				if (row.hasReward(SideMissionRow.NUCLEAR_KEY) && preferences.getBoolean(getString(R.string.nuclearKey), true)) continue;
-				if (row.hasReward(SideMissionRow.PRODUCTION_KEY) && preferences.getBoolean(getString(R.string.speedKey), true)) continue;
-				if (row.hasReward(SideMissionRow.SHIELD_KEY) && preferences.getBoolean(getString(R.string.shieldKey), true)) continue;
+				try { missionsTable.addView(row); }
+				catch (IllegalStateException e) { }
+				if (row.hasReward(SideMissionRow.BATTERY_KEY) &&
+						preferences.getBoolean(getString(R.string.batteryChargeKey), true)) continue;
+				if (row.hasReward(SideMissionRow.COOLANT_KEY) &&
+						preferences.getBoolean(getString(R.string.extraCoolantKey), true)) continue;
+				if (row.hasReward(SideMissionRow.NUCLEAR_KEY) &&
+						preferences.getBoolean(getString(R.string.nuclearKey), true)) continue;
+				if (row.hasReward(SideMissionRow.PRODUCTION_KEY) &&
+						preferences.getBoolean(getString(R.string.speedKey), true)) continue;
+				if (row.hasReward(SideMissionRow.SHIELD_KEY) &&
+						preferences.getBoolean(getString(R.string.shieldKey), true)) continue;
 				missionsTable.removeView(row);
 			}
 			
 			// Stations next
 			for (String n: new HashSet<String>(bases.keySet())) {
 				if (!bases.containsKey(n)) continue;
-				for (StationStatusRow r: bases.get(n).values()) {
-					try { stationsTable.addView(r); }
+				for (String s: new HashSet<String>(bases.get(n).keySet())) {
+					try { stationsTable.addView(bases.get(n).get(s)); }
 					catch (Exception e) { }
 				}
 			}
 			
-			// Allies next
+			// Allies next, with sorting
+			alliesTable.removeAllViews();
 			for (String n: new HashSet<String>(allies.keySet())) {
 				if (!allies.containsKey(n)) continue;
-				for (AllyStatusRow r: allies.get(n).values()) {
-					try { alliesTable.addView(r); }
-					catch (Exception e) { }
+				for (String s: allies.get(n).keySet()) {
+					if (!allies.get(n).containsKey(s)) continue;
+					AllyStatusRow r = allies.get(n).get(s);
+					try {
+						int index = -1;
+						int minIndex = 0, maxIndex = alliesTable.getChildCount();
+						while (minIndex < maxIndex) {
+							index = (maxIndex + minIndex) / 2;
+							AllyStatusRow otherRow = (AllyStatusRow) alliesTable.getChildAt(index);
+							int compare = compare(r, otherRow);
+							if (compare < 0) {
+								maxIndex = index;
+							} else if (compare > 0) {
+								minIndex = ++index;
+							} else break;
+						}
+						alliesTable.addView(r, index);
+					} catch (IllegalStateException e) { }
 				}
 			}
 		}
 	};
 	
-	// Assign status to an ally ship
-	private void setStatus(AllyStatusRow row, AllyStatus status) {
-		statuses.put(row.getStatus(), statuses.get(row.getStatus()) - 1);
-		alliesTable.removeView(row);
-		row.setStatus(status);
-		alliesTable.addView(row, statuses.get(status));
-		statuses.put(status, statuses.get(status) + 1);
+	private int compare(AllyStatusRow row1, AllyStatusRow row2) {
+		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+		
+		int methodIndex = Integer.parseInt(pref.getString(getString(R.string.allySortKey), "0"));
+		AllySortMethod method = AllySortMethod.values()[methodIndex];
+		TextView text1 = (TextView) row1.getChildAt(0);
+		TextView text2 = (TextView) row2.getChildAt(0);
+		String[] name1 = text1.getText().toString().split(" ", 2);
+		String[] name2 = text2.getText().toString().split(" ", 2);
+		int compare = 0;
+		
+		switch (method) {
+		case NONE:
+			break;
+		case CLASS_STATUS_NAME:
+			compare = name1[1].compareTo(name2[1]);
+			if (compare != 0) return compare;
+		case STATUS_NAME:
+			if (row1.getStatus().index < row2.getStatus().index) return -1;
+			else if (row1.getStatus().index > row2.getStatus().index) return 1;
+			if (pref.getBoolean(getString(R.string.energyFirstKey), false)) {
+				if (row1.hasEnergy() && !row2.hasEnergy()) return -1;
+				else if (!row1.hasEnergy() && row2.hasEnergy()) return 1;
+			}
+		case NAME:
+			compare = name1[0].compareTo(name2[0]);
+			if (compare != 0) return compare;
+			break;
+		case STATUS_CLASS_NAME:
+			if (row1.getStatus().index < row2.getStatus().index) return -1;
+			else if (row1.getStatus().index > row2.getStatus().index) return 1;
+			if (pref.getBoolean(getString(R.string.energyFirstKey), false)) {
+				if (row1.hasEnergy() && !row2.hasEnergy()) return -1;
+				else if (!row1.hasEnergy() && row2.hasEnergy()) return 1;
+			}
+		case CLASS_NAME:
+			compare = name1[1].compareTo(name2[1]);
+			if (compare != 0) return compare;
+			compare = name1[0].compareTo(name2[0]);
+			if (compare != 0) return compare;
+			break;
+		case CLASS_STATUS:
+			compare = name1[1].compareTo(name2[1]);
+			if (compare != 0) return compare;
+		case STATUS:
+			if (row1.getStatus().index < row2.getStatus().index) return -1;
+			else if (row1.getStatus().index > row2.getStatus().index) return 1;
+			if (pref.getBoolean(getString(R.string.energyFirstKey), false)) {
+				if (row1.hasEnergy() && !row2.hasEnergy()) return -1;
+				else if (!row1.hasEnergy() && row2.hasEnergy()) return 1;
+			}
+			break;
+		case STATUS_CLASS:
+			if (row1.getStatus().index < row2.getStatus().index) return -1;
+			else if (row1.getStatus().index > row2.getStatus().index) return 1;
+			if (pref.getBoolean(getString(R.string.energyFirstKey), false)) {
+				if (row1.hasEnergy() && !row2.hasEnergy()) return -1;
+				else if (!row1.hasEnergy() && row2.hasEnergy()) return 1;
+			}
+		case CLASS:
+			compare = name1[1].compareTo(name2[1]);
+			if (compare != 0) return compare;
+			break;
+		}
+		
+		return compare;
 	}
 	
 	// Update station row, we are docked there
 	final Runnable updateDockedRow = new Runnable() {
 		@Override
 		public void run() {
-			if (!bases.containsKey(dockingStation)) return;
-			for (StationStatusRow row: bases.get(dockingStation).values()) {
+			for (StationStatusRow row: new ArrayList<StationStatusRow>(bases.get(dockingStation).values())) {
 				row.setDocking(true);
 			}
 		}
@@ -1713,8 +1802,7 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 	final Runnable resetDockedRow = new Runnable() {
 		@Override
 		public void run() {
-			if (!bases.containsKey(dockingStation)) return;
-			for (StationStatusRow row: bases.get(dockingStation).values()) {
+			for (StationStatusRow row: new ArrayList<StationStatusRow>(bases.get(dockingStation).values())) {
 				row.setDocking(false);
 			}
 		}
@@ -1755,7 +1843,7 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 		public void run() {
 			for (ArtemisObject obj: manager.getObjects(ObjectType.NPC_SHIP)) {
 				try {
-					for (AllyStatusRow row: allies.get(obj.getName()).values()) {
+					for (AllyStatusRow row: new ArrayList<AllyStatusRow>(allies.get(obj.getName()).values())) {
 						if (!row.isBuildingTorpedoes()) continue; 
 						outPackets.add(new CommsOutgoingPacket(obj, OtherMessage.HAIL, context));
 					}
@@ -1854,8 +1942,9 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 		}
 		
 		// Check for allies
-		for (HashMap<String, AllyStatusRow> map: allies.values()) {
-			for (AllyStatusRow row: map.values()) {
+		for (String key: new HashSet<String>(allies.keySet())) {
+			if (!allies.containsKey(key)) continue;
+			for (AllyStatusRow row: new ArrayList<AllyStatusRow>(allies.get(key).values())) {
 				if (row.getStatus().ordinal() >= AllyStatus.FIGHTERS.ordinal()) continue;
 				
 				boolean show = false;
@@ -1958,7 +2047,7 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 				RouteEntryReason[] reasons = new RouteEntryReason[0];
 				
 				if (objName.startsWith("DS") && bases.containsKey(objName)) {
-					for (StationStatusRow baseRow: bases.get(objName).values()) {
+					for (StationStatusRow baseRow: new ArrayList<StationStatusRow>(bases.get(objName).values())) {
 						reasons = new RouteEntryReason[baseRow.getMissions()];
 						for (int i = 0; i < reasons.length; i++)
 							reasons[i] = RouteEntryReason.MISSION;
@@ -1966,7 +2055,7 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 					}
 				} else if (allies.containsKey(objName)) {
 					SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-					for (AllyStatusRow allyRow: allies.get(objName).values()) {
+					for (AllyStatusRow allyRow: new ArrayList<AllyStatusRow>(allies.get(objName).values())) {
 						int numMissions = allyRow.getMissions();
 						EnumSet<RouteEntryReason> others = EnumSet.noneOf(RouteEntryReason.class);
 						if (pref.getBoolean(getString(R.string.energyKey), false) && allyRow.hasEnergy())
@@ -2050,11 +2139,9 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 				int numAllies = 0, numBases = 0, numMissions = 0;
 				for (String key: new HashSet<String>(allies.keySet())) {
 					if (!allies.containsKey(key)) continue;
-					for (AllyStatusRow row: allies.get(key).values()) {
-						if (row.getStatus().ordinal() < AllyStatus.FIGHTERS.ordinal()) {
-							numAllies++;
-						}
-					}
+					int numRogues = 0;
+					if (rogues.containsKey(key)) numRogues = rogues.get(key).size();
+					numAllies += allies.get(key).size() - numRogues;
 				}
 				
 				// Count stations
@@ -2086,20 +2173,48 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 			updateRunning = true;
 			for (ArtemisObject o: manager.getObjects(ObjectType.NPC_SHIP)) {
 				ArtemisNpc npc = (ArtemisNpc) o;
-				if (npc.getVessel(context) == null || npc.getVessel(context).getFaction() == null || npc.getVessel(context).getFaction().getId() > 1) continue;
+				if (npc.getVessel(context) == null ||
+						npc.getVessel(context).getFaction() == null ||
+						npc.getVessel(context).getFaction().getId() > 1) continue;
 				try {
 					AllyStatusRow row = allies.get(npc.getName()).get(npc.getVessel(context).getName());
 					row.setFront((int) npc.getShieldsFront());
 					row.setRear((int) npc.getShieldsRear());
 				} catch (NullPointerException e) {}
 			}
+			ArtemisBase closest = null;
 			for (ArtemisObject o: manager.getObjects(ObjectType.BASE)) {
 				ArtemisBase base = (ArtemisBase) o;
 				if (base.getVessel(context) == null) continue;
 				try {
 					StationStatusRow row = bases.get(base.getName()).get(base.getVessel(context).getName());
+					row.setClosest(false);
 					row.setShields((int) base.getShieldsFront());
 					row.updateTime(null);
+					
+					if (closest == null) {
+						closest = base;
+						row.setClosest(true);
+					} else {
+						ArtemisPlayer player = manager.getPlayerShip(playerShip);
+						double closestDistance = Math.hypot(
+								closest.getX() - player.getX(),
+								Math.hypot(
+										closest.getY() - player.getY(),
+										closest.getZ() - player.getZ()));
+						double currentDistance = Math.hypot(
+								base.getX() - player.getX(),
+								Math.hypot(
+										base.getY() - player.getY(),
+										base.getZ() - player.getZ()));
+						if (currentDistance < closestDistance) {
+							for (StationStatusRow closestRow:
+								new ArrayList<StationStatusRow>(bases.get(closest.getName()).values()))
+								closestRow.setClosest(false);
+							row.setClosest(true);
+							closest = base;
+						}
+					}
 				} catch (NullPointerException e) {}
 			}
 			updateHandler.postDelayed(this, updateInterval);
@@ -2112,7 +2227,7 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 		if (key.equals(getString(R.string.vesselDataKey))) {
 			if (assetsFail) assetsFail = false;
 			else if (server != null && server.isConnected()) createConnection();
-		} else if (key.endsWith("CheckBox")) {
+		} else if (key.endsWith("CheckBox") || key.equals(getString(R.string.allySortKey))) {
 			uiThreadControl(clearTable);
 			uiThreadControl(updateTables);
 			

@@ -69,6 +69,7 @@
 
     <Button
         android:id="@+id/missionViewButton"
+        style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="1"
@@ -76,6 +77,7 @@
 
     <Button
         android:id="@+id/allyViewButton"
+        style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="1"
@@ -83,6 +85,7 @@
 
     <Button
         android:id="@+id/stationViewButton"
+        style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="1"
@@ -90,6 +93,7 @@
 
     <Button
         android:id="@+id/routeViewButton"
+        style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="1"
@@ -219,7 +223,7 @@
             android:id="@+id/stationHeader"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="5"
+            android:layout_weight="1"
             android:gravity="center_horizontal"
             android:text="@string/stationHeader"
             android:textAppearance="?android:attr/textAppearanceMedium" />
@@ -228,7 +232,7 @@
             android:id="@+id/ordnanceHeader"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="5"
+            android:layout_weight="1"
             android:gravity="center_horizontal"
             android:text="@string/ordnanceHeader"
             android:textAppearance="?android:attr/textAppearanceMedium" />

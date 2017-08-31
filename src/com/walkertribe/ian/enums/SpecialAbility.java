@@ -18,7 +18,8 @@ public enum SpecialAbility {
 	DRONES,       // Torgoth drone launcher
 	ANTI_MINE,    // can shoot mines
 	ANTI_TORP,    // can shoot torpedoes
-	SHIELD_DRAIN; // can drain your shields
+	SHIELD_DRAIN, // can drain your shields
+	SHIELD_VAMP;  // can absorb your shields
 
 	/**
 	 * Returns a set containing the SpecialAbility values that correspond to the

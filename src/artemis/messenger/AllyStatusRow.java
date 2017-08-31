@@ -43,24 +43,26 @@ public class AllyStatusRow extends TableRow {
 		status = AllyStatus.NORMAL;
 
 		// Set up row layout
-		LayoutParams cellLayout = new LayoutParams(0, LayoutParams.MATCH_PARENT, 1);
+		LayoutParams nameLayout = new LayoutParams(0, LayoutParams.MATCH_PARENT, 5);
+		LayoutParams shieldLayout = new LayoutParams(0, LayoutParams.MATCH_PARENT, 3);
+		LayoutParams statusLayout = new LayoutParams(0, LayoutParams.MATCH_PARENT, 7);
 		
 		TextView nameText = new TextView(context);
 		nameText.setTypeface(ListActivity.APP_FONT);
 		nameText.setText(n);
-		nameText.setLayoutParams(cellLayout);
+		nameText.setLayoutParams(nameLayout);
 		nameText.setPadding(3, 3, 3, 3);
 		addView(nameText);
 		
 		TextView shieldsText = new TextView(context);
 		shieldsText.setTypeface(ListActivity.APP_FONT);
-		shieldsText.setLayoutParams(cellLayout);
+		shieldsText.setLayoutParams(shieldLayout);
 		shieldsText.setPadding(3, 3, 3, 3);
 		addView(shieldsText);
 		
 		TextView statusText = new TextView(context);
 		statusText.setTypeface(ListActivity.APP_FONT);
-		statusText.setLayoutParams(cellLayout);
+		statusText.setLayoutParams(statusLayout);
 		statusText.setPadding(3, 3, 3, 3);
 		addView(statusText);
 		

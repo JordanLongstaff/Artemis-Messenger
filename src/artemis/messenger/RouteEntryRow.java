@@ -3,6 +3,8 @@ package artemis.messenger;
 import java.util.EnumMap;
 import java.util.Locale;
 
+import com.walkertribe.ian.world.ArtemisBase;
+import com.walkertribe.ian.world.ArtemisNpc;
 import com.walkertribe.ian.world.ArtemisObject;
 
 import android.content.Context;
@@ -78,6 +80,9 @@ public class RouteEntryRow extends TableRow {
 	}
 	
 	public void updateReasons() {
+		// Change row colour based on statuses
+		boolean commandeered = false, malfunction = false, other = false;
+		
 		// Get text for left column
 		String line2 = "";
 		for (RouteEntryReason reason: reasons.keySet()) {
@@ -85,14 +90,23 @@ public class RouteEntryRow extends TableRow {
 			String entry = reason.name().replaceAll("_", " ").toLowerCase(Locale.getDefault());
 			switch (reason) {
 			case DAMCON:
-				entry = "DamCon";
+				entry = "needs DamCon";
+				other = true;
 				break;
 			case MISSION:
 				int numMissions = reasons.get(reason);
+				other = true;
 				if (numMissions == 1) break;
 				entry = numMissions + " missions";
 				break;
+			case MALFUNCTION:
+				malfunction = true;
+				break;
+			case COMMANDEERED:
+				commandeered = true;
+				break;
 			default:
+				other = true;
 				break;
 			}
 			line2 += ", " + entry;
@@ -101,5 +115,26 @@ public class RouteEntryRow extends TableRow {
 		
 		TextView pointText = (TextView) getChildAt(0);
 		pointText.setText(getObjectName() + line2);
+		
+		int color = Color.parseColor("#002060");
+		
+		boolean damaged = false;
+		if (point instanceof ArtemisNpc) {
+			ArtemisNpc npc = (ArtemisNpc) point;
+			damaged = npc.getShieldsFront() < npc.getShieldsFrontMax();
+			damaged |= npc.getShieldsRear() < npc.getShieldsRearMax();
+		} else {
+			ArtemisBase base = (ArtemisBase) point;
+			damaged = base.getShieldsFront() < base.getShieldsRear();
+		}
+		
+		if (damaged) color = Color.parseColor("#bf9000");
+		else if (commandeered) color = Color.RED;
+		else if (malfunction) {
+			if (other) color = Color.parseColor("#008000");
+			else color = Color.parseColor("#c55a11");
+		}
+		for (int i = 0; i < getChildCount(); i++)
+			getChildAt(i).setBackgroundColor(color);
 	}
 }

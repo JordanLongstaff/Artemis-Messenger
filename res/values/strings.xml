@@ -80,7 +80,7 @@
     <string name="basicsParagraph6">If you touch the Home button on your phone to return to your Home menu, Artemis Messenger will keep running in the background. It will continue to receive information about side missions, allies and stations via a Comms service. This information will be shown as notifications on your phone. If you click on one of those notifications, you will return to Artemis Messenger.</string>
     <string name="basicsParagraph5">When you want to leave Artemis Messenger, just hit the Back button on your phone. If your phone doesn\'t have a Back button, you can also press the Close button in the top-right corner of the screen. If the app is connected to a server, a dialog will appear asking if you want to close the connection; otherwise, no dialog will appear.</string>
     <string name="helpTitle">Help</string>
-    <string name="appVersionText">Artemis Messenger 4.2.1</string>
+    <string name="appVersionText">Artemis Messenger 4.3.0</string>
     <string name="specialThanks">Special thanks to Robert J. Walker for writing the IAN (Interface for Artemis Networking) library, without which this app could not exist. IAN is available on GitHub.</string>
     <string name="licenseText">\u00A9 Copyright 2017.</string>
     <string name="writtenBy">Written by Jordan Longstaff</string>
@@ -115,12 +115,12 @@
     <string name="alliesHeader">What does it show?</string>
     <string name="stationsParagraph1">While running the Artemis Messenger app, touch the Stations button to open the Stations view. This view shows all of the docking stations in the currently running simulation.</string>
     <string name="stationsParagraph3">Like with the Missions and Allies views, Artemis Messenger obtains ordnance information for each station from incoming Comms messages. When the app connects to a running simulation, it sends a message to each station, and the station responds with a status report. This also happens when the player ship docks, undocks, orders a new type of ordnance to be built, or the station finishes building a torpedo.</string>
-    <string name="stationsParagraph2">There are two columns in the Stations table. The Station column shows the name and type of each station, its shield strength, the number of replacement fighters on board, the number of side missions that involve it, and whether or not you are docked there or if the crew is standing by. The Ordnance column shows the current stock of all ordnance types and an indication of what ordnance is currently being built and how long it will take to finish.</string>
+    <string name="stationsParagraph2">There are two columns in the Stations table. The Station column shows the name and type of each station, its shield strength, the number of replacement fighters on board, the number of side missions that involve it, and whether or not you are docked there or if the crew is standing by, or even if the station is the closest one to you. The Ordnance column shows the current stock of all ordnance types and an indication of what ordnance is currently being built and how long it will take to finish.</string>
     <string name="settingsDataHeader">Vessel data</string>
     <string name="settingsParagraph1">While running the Artemis Messenger app, touch the wrench next to the ship selection box to open the Settings menu. This is where you can change your preferences about how the app behaves.</string>
     <string name="settingsParagraph2">Artemis Messenger requires a copy of the vesselData.xml file that Artemis uses. There is already a copy bundled with the app, so if you want to use it, change the location to Default. If you want to use your own, change the location to Internal storage or External storage, as appropriate. This is useful if you are running a mod. If vesselData.xml is missing at that location, Artemis Messenger will copy its own files there.</string>
-    <string name="settingsParagraph5">When Artemis Messenger is running in the background, the Comms service keeps you updated on side missions using notifications. You can make Artemis Messenger play different ringtones whenever such a notification is made. There are three types of notifications: New side mission, Arrived at source and Arrived at destination.</string>
-    <string name="settingsParagraph4">In addition to stops for side missions, the Routing table can also include ally ships that must be visited for other reasons. These ally ships might have spare energy for the player ship, or they might require assistance because they are low on energy, need a DamCon team, are experiencing a malfunction, or have been taken hostage.</string>
+    <string name="settingsParagraph5">In addition to stops for side missions, the Routing table can also include ally ships that must be visited for other reasons. These ally ships might have spare energy for the player ship, or they might require assistance because they are low on energy, need a DamCon team, are experiencing a malfunction, or have been taken hostage.</string>
+    <string name="settingsParagraph4">There are also some options for sorting the entries in the Allies table in almost any order imaginable. Most of the sorting options available are based on an ally ship\'s name, vessel class and/or status. It is also possible to require that allies with energy are located higher in the table than ships without energy.</string>
     <string name="settingsParagraph3">There may be some side missions that you would prefer to ignore, especially if they offer rewards that do not interest you. You can remove those missions from the Missions table using the reward filters. When a filter is activated, any side mission that offers the corresponding reward will be shown. For example, a mission offering Battery Charge and Extra Coolant will be shown if either filter is activated; if both are off, it will be hidden. Touch Show All to activate all filters.</string>
     <string name="settingsHelpHeader">Help</string>
     <string name="settingsFilterHeader">Reward filters</string>
@@ -136,9 +136,42 @@
     <string name="needDamConKey">needDamConCheckBox</string>
     <string name="energyKey">energyCheckBox</string>
     <string name="hostageKey">hostageCheckBox</string>
-    <string name="settingsParagraph6">You can also access the Help menu from the Settings menu by touching Show help topics. If you access the Help menu in this way, you will return to the Settings menu when you leave. By default, the Help menu is set to display whenever you start up Artemis Messenger; you can turn off this function by touching Show help at startup.</string>
+    <string name="settingsParagraph6">When Artemis Messenger is running in the background, the Comms service keeps you updated on side missions using notifications. You can make Artemis Messenger play different ringtones whenever such a notification is made. There are three types of notifications: New side mission, Arrived at source and Arrived at destination.</string>
     <string name="settingsRouteHeader">Routing</string>
     <string name="commandeeredKey">commandeeredCheckBox</string>
     <string name="hasTorpsKey">hasTorpsCheckBox</string>
     <string name="includeAlliesKey">includeAllyShips</string>
+    <string name="allySortPrefCategory">Ally Sorting</string>
+    <string name="routingPrefCategory">Routing</string>
+    <string name="sortMethodKey">sortMethodList</string>
+    <string name="energyFirstKey">energyFirstCheckBox</string>
+    <string-array name="allySortMethodPrefList">
+        <item>No sort</item>
+        <item>Name</item>
+        <item>Class</item>
+        <item>Status</item>
+        <item>Class, then name</item>
+        <item>Status, then name</item>
+        <item>Class, then status</item>
+        <item>Status, then class</item>
+        <item>Class, status, name</item>
+        <item>Status, class, name</item>
+    </string-array>
+    <string-array name="allySortMethodValueList">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+    </string-array>
+    <string name="allySortKey">allySortList</string>
+    <string name="allySortSummary">Choose the method of sorting entries in the Allies table.</string>
+    <string name="settingsParagraph7">You can also access the Help menu from the Settings menu by touching Show help topics. If you access the Help menu in this way, you will return to the Settings menu when you leave. By default, the Help menu is set to display whenever you start up Artemis Messenger; you can turn off this function by touching Show help at startup.</string>
+    <string name="settingsSortHeader">Ally sorting</string>
+    <string name="routingParagraph4">You can gain additional information about a waypoint from the colour of its entry row in the Routing table. Commandeered allies will appear red, damaged allies and stations will appear yellow, malfunctioning allies that are also in the route for another reason appear green, allies that are only malfunctioning appear orange, and all other waypoints appear blue.</string>
 </resources>
