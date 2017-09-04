@@ -103,20 +103,187 @@ public class SettingsActivity extends PreferenceActivity {
 				.putBoolean(getString(R.string.shieldKey), true)
 				.commit();
 				
-				CheckBoxPreference batteryPref = (CheckBoxPreference) findPreference(getString(R.string.batteryChargeKey));
+				CheckBoxPreference batteryPref =
+						(CheckBoxPreference) findPreference(getString(R.string.batteryChargeKey));
 				batteryPref.setChecked(true);
 				
-				CheckBoxPreference coolantPref = (CheckBoxPreference) findPreference(getString(R.string.extraCoolantKey));
+				CheckBoxPreference coolantPref =
+						(CheckBoxPreference) findPreference(getString(R.string.extraCoolantKey));
 				coolantPref.setChecked(true);
 				
-				CheckBoxPreference nukePref = (CheckBoxPreference) findPreference(getString(R.string.nuclearKey));
+				CheckBoxPreference nukePref =
+						(CheckBoxPreference) findPreference(getString(R.string.nuclearKey));
 				nukePref.setChecked(true);
 				
-				CheckBoxPreference speedPref = (CheckBoxPreference) findPreference(getString(R.string.speedKey));
+				CheckBoxPreference speedPref =
+						(CheckBoxPreference) findPreference(getString(R.string.speedKey));
 				speedPref.setChecked(true);
 				
-				CheckBoxPreference shieldPref = (CheckBoxPreference) findPreference(getString(R.string.shieldKey));
+				CheckBoxPreference shieldPref =
+						(CheckBoxPreference) findPreference(getString(R.string.shieldKey));
 				shieldPref.setChecked(true);
+				return false;
+			}
+		});
+		
+		Preference showAllRoutingPref = findPreference(getString(R.string.showAllRoutingButton));
+		showAllRoutingPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+			@Override
+			public boolean onPreferenceClick(Preference arg0) {
+				SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+				sharedPreferences.edit()
+				.putBoolean(getString(R.string.energyKey), true)
+				.putBoolean(getString(R.string.hasTorpsKey), true)
+				.putBoolean(getString(R.string.needEnergyKey), true)
+				.putBoolean(getString(R.string.needDamConKey), true)
+				.putBoolean(getString(R.string.malfunctionKey), true)
+				.putBoolean(getString(R.string.hostageKey), true)
+				.putBoolean(getString(R.string.commandeeredKey), true)
+				.commit();
+				
+				CheckBoxPreference hasEnergyPref =
+						(CheckBoxPreference) findPreference(getString(R.string.energyKey));
+				hasEnergyPref.setChecked(true);
+				
+				CheckBoxPreference hasTorpsPref =
+						(CheckBoxPreference) findPreference(getString(R.string.hasTorpsKey));
+				hasTorpsPref.setChecked(true);
+				
+				CheckBoxPreference needEnergyPref =
+						(CheckBoxPreference) findPreference(getString(R.string.needEnergyKey));
+				needEnergyPref.setChecked(true);
+				
+				CheckBoxPreference needDamConPref =
+						(CheckBoxPreference) findPreference(getString(R.string.needDamConKey));
+				needDamConPref.setChecked(true);
+				
+				CheckBoxPreference malfunctionPref =
+						(CheckBoxPreference) findPreference(getString(R.string.malfunctionKey));
+				malfunctionPref.setChecked(true);
+				
+				CheckBoxPreference hostagePref =
+						(CheckBoxPreference) findPreference(getString(R.string.hostageKey));
+				hostagePref.setChecked(true);
+				
+				CheckBoxPreference commandeeredPref =
+						(CheckBoxPreference) findPreference(getString(R.string.commandeeredKey));
+				commandeeredPref.setChecked(true);
+				
+				return false;
+			}
+		});
+		
+		Preference showNoneRoutingPref = findPreference(getString(R.string.showNoneRoutingButton));
+		showNoneRoutingPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+			@Override
+			public boolean onPreferenceClick(Preference arg0) {
+				SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+				sharedPreferences.edit()
+				.putBoolean(getString(R.string.energyKey), false)
+				.putBoolean(getString(R.string.hasTorpsKey), false)
+				.putBoolean(getString(R.string.needEnergyKey), false)
+				.putBoolean(getString(R.string.needDamConKey), false)
+				.putBoolean(getString(R.string.malfunctionKey), false)
+				.putBoolean(getString(R.string.hostageKey), false)
+				.putBoolean(getString(R.string.commandeeredKey), false)
+				.commit();
+				
+				CheckBoxPreference hasEnergyPref =
+						(CheckBoxPreference) findPreference(getString(R.string.energyKey));
+				hasEnergyPref.setChecked(false);
+				
+				CheckBoxPreference hasTorpsPref =
+						(CheckBoxPreference) findPreference(getString(R.string.hasTorpsKey));
+				hasTorpsPref.setChecked(false);
+				
+				CheckBoxPreference needEnergyPref =
+						(CheckBoxPreference) findPreference(getString(R.string.needEnergyKey));
+				needEnergyPref.setChecked(false);
+				
+				CheckBoxPreference needDamConPref =
+						(CheckBoxPreference) findPreference(getString(R.string.needDamConKey));
+				needDamConPref.setChecked(false);
+				
+				CheckBoxPreference malfunctionPref =
+						(CheckBoxPreference) findPreference(getString(R.string.malfunctionKey));
+				malfunctionPref.setChecked(false);
+				
+				CheckBoxPreference hostagePref =
+						(CheckBoxPreference) findPreference(getString(R.string.hostageKey));
+				hostagePref.setChecked(false);
+				
+				CheckBoxPreference commandeeredPref =
+						(CheckBoxPreference) findPreference(getString(R.string.commandeeredKey));
+				commandeeredPref.setChecked(false);
+				
+				return false;
+			}
+		});
+		
+		Preference defaultPref = (Preference) findPreference(getString(R.string.restoreDefaultButton));
+		defaultPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+			@Override
+			public boolean onPreferenceClick(Preference pref) {
+				SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+				sharedPreferences.edit().clear().commit();
+				PreferenceManager.setDefaultValues(getBaseContext(), R.xml.preference, true);
+				
+				CheckBoxPreference batteryPref =
+						(CheckBoxPreference) findPreference(getString(R.string.batteryChargeKey));
+				batteryPref.setChecked(sharedPreferences.getBoolean(getString(R.string.batteryChargeKey), true));
+				
+				CheckBoxPreference coolantPref =
+						(CheckBoxPreference) findPreference(getString(R.string.extraCoolantKey));
+				coolantPref.setChecked(sharedPreferences.getBoolean(getString(R.string.extraCoolantKey), true));
+				
+				CheckBoxPreference nukePref =
+						(CheckBoxPreference) findPreference(getString(R.string.nuclearKey));
+				nukePref.setChecked(sharedPreferences.getBoolean(getString(R.string.nuclearKey), true));
+				
+				CheckBoxPreference speedPref =
+						(CheckBoxPreference) findPreference(getString(R.string.speedKey));
+				speedPref.setChecked(sharedPreferences.getBoolean(getString(R.string.speedKey), true));
+				
+				CheckBoxPreference shieldPref =
+						(CheckBoxPreference) findPreference(getString(R.string.shieldKey));
+				shieldPref.setChecked(sharedPreferences.getBoolean(getString(R.string.shieldKey), true));
+				
+				CheckBoxPreference energyFirstPref =
+						(CheckBoxPreference) findPreference(getString(R.string.energyFirstKey));
+				energyFirstPref.setChecked(sharedPreferences.getBoolean(getString(R.string.energyFirstKey), true));
+				
+				CheckBoxPreference hasEnergyPref =
+						(CheckBoxPreference) findPreference(getString(R.string.energyKey));
+				hasEnergyPref.setChecked(sharedPreferences.getBoolean(getString(R.string.energyKey), false));
+				
+				CheckBoxPreference hasTorpsPref =
+						(CheckBoxPreference) findPreference(getString(R.string.hasTorpsKey));
+				hasTorpsPref.setChecked(sharedPreferences.getBoolean(getString(R.string.hasTorpsKey), false));
+				
+				CheckBoxPreference needEnergyPref =
+						(CheckBoxPreference) findPreference(getString(R.string.needEnergyKey));
+				needEnergyPref.setChecked(sharedPreferences.getBoolean(getString(R.string.needEnergyKey), false));
+				
+				CheckBoxPreference needDamConPref =
+						(CheckBoxPreference) findPreference(getString(R.string.needDamConKey));
+				needDamConPref.setChecked(sharedPreferences.getBoolean(getString(R.string.needDamConKey), false));
+				
+				CheckBoxPreference malfunctionPref =
+						(CheckBoxPreference) findPreference(getString(R.string.malfunctionKey));
+				malfunctionPref.setChecked(sharedPreferences.getBoolean(getString(R.string.malfunctionKey), false));
+				
+				CheckBoxPreference hostagePref =
+						(CheckBoxPreference) findPreference(getString(R.string.hostageKey));
+				hostagePref.setChecked(sharedPreferences.getBoolean(getString(R.string.hostageKey), false));
+				
+				CheckBoxPreference commandeeredPref =
+						(CheckBoxPreference) findPreference(getString(R.string.commandeeredKey));
+				commandeeredPref.setChecked(sharedPreferences.getBoolean(getString(R.string.commandeeredKey), false));
+				
+				CheckBoxPreference helpStartupPref =
+						(CheckBoxPreference) findPreference(getString(R.string.helpStartupKey));
+				helpStartupPref.setChecked(sharedPreferences.getBoolean(getString(R.string.helpStartupKey), true));
+				
 				return false;
 			}
 		});

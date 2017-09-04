@@ -57,11 +57,13 @@
             android:enabled="true"/>
         
     </PreferenceCategory><PreferenceCategory android:title="@string/allySortPrefCategory" android:key="pref_key_allies_sort">
-        <ListPreference android:entries="@array/allySortMethodPrefList" android:entryValues="@array/allySortMethodValueList" android:positiveButtonText="OK" android:dialogTitle="Ally sorting method" android:negativeButtonText="Cancel" android:enabled="true" android:selectable="true" android:defaultValue="0" android:key="@string/allySortKey" android:summary="@string/allySortSummary" android:title="Choose method"/><CheckBoxPreference android:enabled="true" android:title="Ships w/energy first" android:defaultValue="false" android:selectable="true" android:key="@string/energyFirstKey"/>
+        <ListPreference android:entries="@array/allySortMethodPrefList" android:entryValues="@array/allySortMethodValueList" android:positiveButtonText="OK" android:dialogTitle="Ally sorting method" android:negativeButtonText="Cancel" android:enabled="true" android:selectable="true" android:defaultValue="0" android:key="@string/allySortKey" android:summary="@string/allySortSummary" android:title="Choose method"/><CheckBoxPreference android:enabled="true" android:title="Ships w/energy first" android:defaultValue="true" android:selectable="true" android:key="@string/energyFirstKey"/>
         
     </PreferenceCategory>
     <PreferenceCategory android:key="pref_key_routing" android:summary="Include ally ships that:" android:title="@string/routingPrefCategory"><Preference android:key="@string/includeAlliesKey" android:title="Include ally ships that:" android:enabled="false" android:selectable="false"/><CheckBoxPreference android:title="Have energy" android:key="@string/energyKey" android:selectable="true" android:enabled="true" android:defaultValue="false" /><CheckBoxPreference android:key="@string/hasTorpsKey" android:title="Have torpedoes (Deep Strike)"/><CheckBoxPreference android:selectable="true" android:defaultValue="false" android:enabled="true" android:key="@string/needEnergyKey" android:title="Need energy" /><CheckBoxPreference android:selectable="true" android:defaultValue="false" android:title="Need DamCon teams" android:enabled="true" android:key="@string/needDamConKey" /><CheckBoxPreference android:selectable="true" android:defaultValue="false" android:title="Are malfunctioning" android:enabled="true" android:key="@string/malfunctionKey" /><CheckBoxPreference android:selectable="true" android:defaultValue="false" android:title="Are hostages" android:enabled="true" android:key="@string/hostageKey" />
-    <CheckBoxPreference android:title="Are commandeered" android:key="@string/commandeeredKey"/>
+    <CheckBoxPreference android:title="Are commandeered" android:key="@string/commandeeredKey"/><Preference android:title="Show All" android:selectable="true" android:enabled="true" android:key="@string/showAllRoutingButton" android:summary="All ally ships that meet any of these criteria will be shown."/>
+    
+    <Preference android:title="Show None" android:key="@string/showNoneRoutingButton" android:summary="Only allies with side missions will be shown." android:selectable="true" android:enabled="true"/>
     
     
 </PreferenceCategory><PreferenceCategory
@@ -82,7 +84,10 @@
     <PreferenceCategory android:title="Help" android:key="pref_key_help">
         <Preference android:summary="Learn to use Artemis Messenger." android:key="@string/helpTopicsKey" android:title="Show help topics" android:selectable="true" android:enabled="true"/>
         
-        <CheckBoxPreference android:title="@string/helpStartupTitle" android:key="@string/helpStartupKey"/>
+        <CheckBoxPreference android:title="@string/helpStartupTitle" android:key="@string/helpStartupKey" android:selectable="true" android:enabled="true" android:defaultValue="true"/>
+        
+    </PreferenceCategory><PreferenceCategory android:key="pref_key_settings" android:title="@string/settingsPrefCategory">
+        <Preference android:title="Restore default settings" android:selectable="true" android:enabled="true" android:key="@string/restoreDefaultButton"/>
     </PreferenceCategory>
     
     

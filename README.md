@@ -1,8 +1,8 @@
-# Artemis Messenger 4.3.0
+# Artemis Messenger 4.3.1
 
 ## What is Artemis Messenger?
 
-Artemis Messenger is an Android app designed to be used as a partial Comms client for Artemis Spaceship Bridge Simulator. Its original purpose was to receive and parse incoming Comms messages about side missions and organize the information into a neat, accessible and readable table, making it much easier to keep track of what side missions are available, what rewards they offer, and how much progress has been made. Eventually, it was expanded to include status details reported from ally ships and stations as well.
+Artemis Messenger is an Android app designed to be used as a partial Comms client for Artemis Spaceship Bridge Simulator. Its original purpose was to receive and parse incoming Comms messages about side missions and organize the information into a neat, accessible and readable table, making it much easier to keep track of what side missions are available, what rewards they offer, and how much progress has been made. Eventually, it was expanded to include status details reported from ally ships and stations as well. Later, it was expanded further to calculate an efficient route to complete all side missions and assist ally ships that need help.
 
 ## What is a side mission?
 
@@ -20,7 +20,11 @@ This app also has the ability to monitor the statuses of ally ships and stations
 
 The stations are managed using a similar system. Instead of interval updates, the stations give status updates when various events occur, such as docking, undocking, and the completion of missile production. There are two columns in this table: Station and Ordnance. The Station column includes the name and type of the station, its shield strength and any side missions or replacement fighters it has. Like ally ships, stations' shield strengths are updated in real time. The Ordnance column includes stock information on a station's Homing, Nuke, Mine, EMP and Plasma shock torpedoes, as well as a listing of what ordnance is currently being built, how much longer it is expected to take to finish, and how much faster than normal it is being built. At any time, a station's row in the table can be touched in order to send a request to stand by for docking; the Station column indicates when the crew is standing by or when you are docked there.
 
-## Can I contibute to this project?
+## How do I know where to go to make all the stops?
+
+The app can calculate the most efficient route to take between stops in a reasonable amount of time. The stops are listed in the order that they should be visited according to the calculated route. The app also shows the direction and distance to travel in order to reach each point from where the player is currently located. Originally, the routing algorithm was only intended for side missions, but now it is possible to include ally ships with various needs that require a visit in order to fill them.
+
+## Can I contribute to this project?
 
 Absolutely! This project is open-source, so you can fork it and make your own changes. If you have any issues or detect any bugs, you can report them in the Issues section on GitHub.
 

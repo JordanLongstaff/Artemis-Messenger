@@ -43,7 +43,7 @@ import com.walkertribe.ian.world.ArtemisObject;
 import com.walkertribe.ian.world.ArtemisPlayer;
 import com.walkertribe.ian.world.BaseArtemisShielded;
 import com.walkertribe.ian.world.SystemManager;
-
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ComponentName;
@@ -109,6 +109,7 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 	private boolean assetsFail;
 	private boolean gameRunning;
 	private RoutingGraph graph;
+	private Toast toast;
 	
 	// Constants
 	private static final String dataFile = "server.dat";
@@ -148,6 +149,7 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 		}
 	}
 
+	@SuppressLint("ShowToast")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// Initialize layout
@@ -382,11 +384,17 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
 		preferences.registerOnSharedPreferenceChangeListener(this);
 		
+		// Initialize preferences
+		PreferenceManager.setDefaultValues(this, R.xml.preference, false);
+		
 		// Start up help activity if set
 		if (preferences.getBoolean(getString(R.string.helpStartupKey), true)) {
 			Intent helpIntent = new Intent(this, HelpActivity.class);
 			startActivity(helpIntent);
 		}
+		
+		// Initialize Toast message display
+		toast = Toast.makeText(this, "", Toast.LENGTH_SHORT);
 	}
 	
 	// Set all views in app layout to have the same font
@@ -437,7 +445,9 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 			resolver = new AssetsResolver(getAssets());
 		} else {
 			// Otherwise, point to location and unpack from assets if necessary
-			Toast.makeText(this, "Unpacking assets...", Toast.LENGTH_SHORT).show();
+			toast.setText("Unpacking assets...");
+			toast.setDuration(Toast.LENGTH_SHORT);
+			toast.show();
 			String filesDir;
 			
 			// Point to either internal or external storage
@@ -467,9 +477,9 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 			} catch (IOException e) {
 				// If something went wrong, fall back on assets
 				assetsFail = true;
-				Toast.makeText(this,
-						"Failed to unpack assets, switching location to Default...",
-						Toast.LENGTH_SHORT).show();
+				toast.setText("Failed to unpack assets, switching location to Default...");
+				toast.setDuration(Toast.LENGTH_SHORT);
+				toast.show();
 				pref.edit().putString(getString(R.string.vesselDataKey), "0").commit();
 				resolver = new AssetsResolver(getAssets());
 			}
@@ -477,7 +487,9 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 		
 		context = new com.walkertribe.ian.Context(resolver);
 		
-		Toast.makeText(this, "Connecting to " + url + "...", Toast.LENGTH_LONG).show();
+		toast.setText("Connecting to " + url + "...");
+		toast.setDuration(Toast.LENGTH_LONG);
+		toast.show();
 		
 		// Try setting up a connection
 		new Thread(new Runnable() {
@@ -494,7 +506,9 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 					uiThreadControl(new Runnable() {
 						@Override
 						public void run() {
-							Toast.makeText(ListActivity.this, "Connection failed", Toast.LENGTH_LONG).show();
+							toast.setDuration(Toast.LENGTH_LONG);
+							toast.setText("Connection failed");
+							toast.show();
 							addressRow.setBackgroundColor(Color.parseColor("#c00000"));
 							shipSpinner.setAdapter(adapter);
 						}
@@ -1639,8 +1653,10 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 		super.onResume();
 		
 		// App resumed, stop Comms service
-		unbindService(connection);
-		service = null;
+		if (service != null) {
+			unbindService(connection);
+			service = null;
+		}
 	}
 	
 	// Empty out Missions view
@@ -1979,16 +1995,11 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 		graph.purgePaths();
 		keepMinCost &= graph.size() <= routeTable.getChildCount();
 		
-		double minCost = Double.POSITIVE_INFINITY;
-		int minPoints = Integer.MAX_VALUE;
-		
-		if (keepMinCost) {
-			minCost = graph.getMinimumCost();
-			minPoints = graph.getMinimumPoints();
+		if (!keepMinCost) {
+			graph.resetMinimumPoints();
 		}
 		
-		graph.setMinimumCost(minCost);
-		graph.setMinimumPoints(minPoints);
+		graph.recalculateCurrentRoute();
 	}
 	
 	// Updates Routing table
@@ -2223,7 +2234,11 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 
 	@Override
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-		Toast.makeText(this, "Updating preferences...", Toast.LENGTH_SHORT).show();
+		if (toast != null) {
+			toast.setText("Updating preferences...");
+			toast.setDuration(Toast.LENGTH_SHORT);
+			toast.show();
+		}
 		if (key.equals(getString(R.string.vesselDataKey))) {
 			if (assetsFail) assetsFail = false;
 			else if (server != null && server.isConnected()) createConnection();

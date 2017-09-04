@@ -7,6 +7,8 @@
     <string name="addressRow">addressRow</string>
     <string name="appLayout">appLayout</string>
     <string name="showAllButton">showAllPrefButton</string>
+    <string name="showAllRoutingButton">showAllRoutingPrefButton</string>
+    <string name="showNoneRoutingButton">showNoneRoutingPrefButton</string>
     <string name="addressLabel">Address</string>
     <string name="showMissions">Missions</string>
     <string name="showAllies">Allies</string>
@@ -17,6 +19,8 @@
     <string name="stationHeader">Station</string>
     <string name="ordnanceHeader">Ordnance</string>
     <string name="vesselDataPrefCategory">Vessel Data</string>
+    <string name="settingsPrefCategory">Default Settings</string>
+    <string name="restoreDefaultButton">restoreDefaultPrefButton</string>
     <string name="missionDispPrefCategory">Mission Display</string>
     <string name="batteryChargePref">Battery Charge</string>
     <string name="extraCoolantPref">Extra Coolant</string>

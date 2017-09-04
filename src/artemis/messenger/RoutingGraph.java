@@ -21,7 +21,7 @@ public class RoutingGraph {
 	private final SystemManager manager;
 	private final int shipId;
 	private double minCost;
-	private int minPoints;
+	private final ArrayList<Integer> pointsList;
 	private final Random random;
 
 	// Set up a new routing graph, with player ship as the only node
@@ -30,7 +30,7 @@ public class RoutingGraph {
 		manager = m;
 		shipId = playerShip;
 		minCost = Double.POSITIVE_INFINITY;
-		minPoints = Integer.MAX_VALUE;
+		pointsList = new ArrayList<Integer>();
 		random = new Random();
 	}
 	
@@ -52,7 +52,8 @@ public class RoutingGraph {
 		minCost = previous.minCost - getDistance(previous.shipId, currentNode);
 		
 		// Update minimum number of points
-		minPoints = previous.minPoints - 1;
+		pointsList = new ArrayList<Integer>(previous.pointsList);
+		if (!pointsList.isEmpty()) pointsList.remove(0);
 		
 		// Put player ship where we specify
 		shipId = currentNode;
@@ -102,15 +103,16 @@ public class RoutingGraph {
 	 * @return the current minimum number of points to visit
 	 */
 	public int getMinimumPoints() {
-		return minPoints;
+		if (pointsList.isEmpty()) return Integer.MAX_VALUE;
+		else return pointsList.size();
 	}
 	
 	/**
 	 * Sets the minimum point contact threshold for the graph.
 	 * @param points the minimum contact threshold
 	 */
-	public void setMinimumPoints(int points) {
-		minPoints = points;
+	public void resetMinimumPoints() {
+		pointsList.clear();
 	}
 	
 	/**
@@ -184,6 +186,17 @@ public class RoutingGraph {
 		}
 	}
 	
+	public void recalculateCurrentRoute() {
+		int currentPoint = shipId;
+		double cost = 0.0;
+		if (pointsList.isEmpty()) cost = Double.POSITIVE_INFINITY;
+		else for (int i: pointsList) {
+			cost += getDistance(currentPoint, i);
+			currentPoint = i;
+		}
+		minCost = cost;
+	}
+	
 	/**
 	 * Calculates the route of minimum distance to all points in the graph so that all currently running side missions
 	 * will be completed. The {@code minCost} parameter is used for pruning purposes; when called by the app, it is
@@ -197,12 +210,11 @@ public class RoutingGraph {
 		if (minCost <= 0) return null;
 		
 		// If we have to visit too many points, snap it off
-		if (paths.size() > minPoints) return null;
+		if (minCost < Double.POSITIVE_INFINITY && paths.size() > pointsList.size()) return null;
 		
 		// If route is finished, accept it
 		if (paths.size() == 0) {
 			minCost = 0;
-			minPoints = 0;
 			return new ArrayList<Integer>();
 		}
 		
@@ -228,7 +240,8 @@ public class RoutingGraph {
 		
 		// Update minimum cost and number of points
 		minCost = dist;
-		minPoints = route.size();
+		pointsList.clear();
+		pointsList.addAll(route);
 		
 		// Return what we ended up with
 		return route;
