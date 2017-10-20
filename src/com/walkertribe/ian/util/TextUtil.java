@@ -77,7 +77,7 @@ public class TextUtil {
     public static byte[] hexToByteArray(String hex) {
     	int len = hex.length();
 
-    	if (len % 2 == 1) {
+    	if ((len & 1) == 1) {
     		throw new IllegalArgumentException(
     				"Hex strings must contain two characters per byte: " + hex
     		);

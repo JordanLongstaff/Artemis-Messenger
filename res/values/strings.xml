@@ -55,6 +55,7 @@
     <string name="newMissionPrefKey">newMissionPrefKey</string>
     <string name="foundSrcPrefKey">foundSrcPrefKey</string>
     <string name="foundDestPrefKey">foundDestPrefKey</string>
+    <string name="underAttackPrefKey">underAttackPrefKey</string>
     <string name="connect">Connect</string>
     <string name="showRoute">Route</string>
     <string name="helpButton">Help</string>
@@ -108,7 +109,7 @@
     <string name="alliesParagraph14">Mine trap: The ship is programmed to self-destruct when your ship approaches. Do not approach the ship under any circumstances. Destroy it from a distance.</string>
     <string name="alliesParagraph11">Hostages: The ship has been taken over and the crew is being held hostage. To save them, fly near the ship with at least 900 units of energy, which will be given to the captors, and the ship will reward you by enhancing your shield generators. If you have less than 900 units of energy, the ship will self-destruct.</string>
     <string name="alliesParagraph12">Commandeered: The ship has been taken over by a hostile force. To save the ship, you must approach the ship while it is in a nebula. If you approach while the ship is not in a nebula, it will self-destruct.</string>
-    <string name="alliesParagraph3">As with the Missions view, Artemis Messenger obtains information about the status of the ship via incoming Comms messages. Whenever it connects to a running simulation, it sends a hail message to all ally ships, and then they respond with their status. The status information includes whether or not they have energy to spare, which can be acquired by simply flying near them. In Deep Strike, the ship will also tell you if it has extra torpedoes on board. For this purpose, Artemis Messenger sends a hail message every 5 minutes.</string>
+    <string name="alliesParagraph3">As with the Missions view, Artemis Messenger obtains information about the status of the ship via incoming Comms messages. Whenever it connects to a running simulation, it sends a hail message to all ally ships, and then they respond with their status. The status information includes whether or not they have energy to spare, which can be acquired by simply flying near them. In Deep Strike, the ship will also tell you if it has extra torpedoes on board. You can touch a row in the table to manually send a hail message to that ship.</string>
     <string name="alliesParagraph6">Delivering reward: The ship is headed to a station to drop off some extra torpedoes. Interact at your own discretion.</string>
     <string name="alliesParagraph7">Flying blind: The ship is stuck. You can fix this by sending it to a station.</string>
     <string name="alliesParagraph10">Malfunction: The ship\'s computers are down, leaving the ship stranded. You can fix this by firing a Type 9 EMP torpedo at the ship, which will reboot its computer system.</string>

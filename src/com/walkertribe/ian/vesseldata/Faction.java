@@ -60,6 +60,6 @@ public class Faction {
 	 * Returns this Faction's Taunts.
 	 */
 	public Taunt[] getTaunts() {
-		return (Taunt[]) taunts.toArray();
+		return taunts.toArray(new Taunt[taunts.size()]);
 	}
 }

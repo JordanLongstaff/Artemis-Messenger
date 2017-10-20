@@ -100,8 +100,14 @@ public class SideMissionRow extends TableRow {
 		}
 		if (rewards.containsKey(reward)) rewards.put(reward, rewards.get(reward) + 1);
 		else rewards.put(reward, 1);
-		TextView rewardText = (TextView) getChildAt(2);
-		rewardText.setText(getRewardList());
+		final TextView rewardText = (TextView) getChildAt(2);
+		final String rewardString = getRewardList();
+		post(new Runnable() {
+			@Override
+			public void run() {
+				rewardText.setText(rewardString);
+			}
+		});
 	}
 	
 	// String formatter
@@ -122,9 +128,14 @@ public class SideMissionRow extends TableRow {
 	}
 	
 	// Need to change source text if source was previously ambiguous
-	public void updateSource(String src) {
-		TextView sourceText = (TextView) getChildAt(0);
-		sourceText.setText(src);
+	public void updateSource(final String src) {
+		final TextView sourceText = (TextView) getChildAt(0);
+		post(new Runnable() {
+			@Override
+			public void run() {
+				sourceText.setText(src);
+			}
+		});
 	}
 	
 	// Mark mission as started
@@ -141,15 +152,25 @@ public class SideMissionRow extends TableRow {
 	// Update row design based on progress
 	public void updateProgress() {
 		if (completed) {
-			int green = Color.parseColor("#008000");
-			for (int i = 0; i < getChildCount(); i++) getChildAt(i).setBackgroundColor(green);
-			TextView rewardText = (TextView) getChildAt(2);
-			rewardText.setText(getRewardList() + " (Acquired)");
+			final int green = Color.parseColor("#008000");
+			final TextView rewardText = (TextView) getChildAt(2);
+			post(new Runnable() {
+				@Override
+				public void run() {
+					for (int i = 0; i < getChildCount(); i++) getChildAt(i).setBackgroundColor(green);
+					rewardText.setText(getRewardList() + " (Acquired)");
+				}
+			});
 		} else if (started) {
-			TextView sourceText = (TextView) getChildAt(0);
-			sourceText.setBackgroundColor(Color.parseColor("#002060"));
-			TextView destText = (TextView) getChildAt(1);
-			destText.setBackgroundColor(Color.parseColor("#bf9000"));
+			final TextView sourceText = (TextView) getChildAt(0);
+			final TextView destText = (TextView) getChildAt(1);
+			post(new Runnable() {
+				@Override
+				public void run() {
+					sourceText.setBackgroundColor(Color.parseColor("#002060"));
+					destText.setBackgroundColor(Color.parseColor("#bf9000"));
+				}
+			});
 		}
 	}
 }

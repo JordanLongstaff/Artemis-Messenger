@@ -4,22 +4,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map.Entry;
-import java.util.Set;
 
 import com.walkertribe.ian.Context;
 import com.walkertribe.ian.enums.ObjectType;
-import com.walkertribe.ian.enums.ShipSystem;
 import com.walkertribe.ian.iface.Listener;
-import com.walkertribe.ian.protocol.core.eng.EngGridUpdatePacket;
-import com.walkertribe.ian.protocol.core.eng.EngGridUpdatePacket.DamconStatus;
-import com.walkertribe.ian.protocol.core.eng.EngGridUpdatePacket.GridDamage;
 import com.walkertribe.ian.protocol.core.world.DestroyObjectPacket;
 import com.walkertribe.ian.protocol.core.world.IntelPacket;
 import com.walkertribe.ian.protocol.core.world.ObjectUpdatePacket;
-import com.walkertribe.ian.util.GridCoord;
-import com.walkertribe.ian.util.ShipSystemGrid;
-import com.walkertribe.ian.util.ShipSystemGrid.GridEntry;
 
 /**
  * A repository of Artemis world objects. Register an instance of SystemManager
@@ -44,12 +35,6 @@ public class SystemManager {
     private final HashMap<Integer, ArtemisObject> mObjects = 
             new HashMap<Integer, ArtemisObject>();
     private OnObjectCountChangeListener mListener = sDummyListener;
-
-    private HashMap<GridCoord, Float> mGridDamage;
-    private ShipSystemGrid mGrid;
-    
-    private final HashMap<Integer, DamconStatus> mDamcons =
-            new HashMap<Integer, DamconStatus>();
     
     private final ArtemisPlayer[] mPlayers = new ArtemisPlayer[Artemis.SHIP_COUNT];
     
@@ -88,30 +73,6 @@ public class SystemManager {
 
         mListener.onObjectCountChanged(mObjects.size());
         return;
-    }
-
-    @Listener
-    public void onPacket(EngGridUpdatePacket pkt) {
-        // this ONLY goes to the appropriate ship's engineer console
-        List<GridDamage> damages = pkt.getDamage();
-
-        if (damages.size() > 0 && mGridDamage != null) {
-            for (GridDamage d : damages) {
-                mGridDamage.put(d.getCoord(), Float.valueOf(d.getDamage()));
-            }
-        }
-        
-        // update/init damcon teams
-        for (DamconStatus s : pkt.getDamcons()) {
-            final Integer team = Integer.valueOf(s.getTeamNumber());
-
-            if (mDamcons.containsKey(team)) {
-                DamconStatus old = mDamcons.get(team);
-                old.updateFrom(s);
-            } else {
-                mDamcons.put(team, s);
-            }
-        }
     }
 
     @Listener
@@ -238,72 +199,6 @@ public class SystemManager {
     }
     
     /**
-     * Get the status of the given Damcon Team
-     *  if we have it, else null. It would be
-     *  great to have a good first guess, but
-     *  I can't seem to find any pattern, nor
-     *  does there seem to be an init data---even
-     *  the native client just uses a first guess
-     *  on connect 
-     *  
-     * @param teamNumber
-     * @return
-     */
-    public DamconStatus getDamcon(int teamNumber) {
-        return mDamcons.get(Integer.valueOf(teamNumber));
-    }
-    
-    public GridEntry getGridAt(int x, int y, int z) {
-        return getGridAt(GridCoord.getInstance(x, y, z));
-    }
-
-    public GridEntry getGridAt(GridCoord key) {
-        if (mGrid == null) {
-            throw new IllegalStateException("SystemManager must have a ShipSystemGrid");
-        }
-        
-        return mGrid.getGridAt(key);
-    }
-
-    /**
-     * Get the type of System at the grid coordinates,
-     *  or NULL if it's just a hallway
-     * @param x
-     * @param y
-     * @param z
-     * @return
-     */
-    public ShipSystem getSystemTypeAt(int x, int y, int z) {
-        return mGrid.getSystemTypeAt(GridCoord.getInstance(x, y, z));
-    }
-
-    /**
-     * Get the overall health of the given system
-     * @param sys
-     * @return A float [0, 1] indicating percentage health
-     * @throws IllegalStateException if the SystemManager doesn't
-     *  yet have a ShipSystemGrid
-     */
-    public float getHealthOfSystem(ShipSystem sys) {
-        if (mGrid == null) {
-            throw new IllegalStateException("SystemManager must have a ShipSystemGrid");
-        }
-        
-        final float total = mGrid.getSystemCount(sys);
-        float current = total;
-
-        for (GridCoord c : mGrid.getCoordsFor(sys)) {
-            final float damage = getGridDamageAt(c);
-        
-            if (damage != -1) {
-                current -= damage;
-            }
-        }
-        
-        return current / total;
-    }
-    
-    /**
      * Get the first object with the given name
      * @param type
      * @return null if no such object or if name is null
@@ -321,73 +216,13 @@ public class SystemManager {
         
         return null;
     }
-    
-    public boolean hasSystemGrid() {
-        return mGrid != null;
-    }
 
     public void setOnObjectCountChangedListener(OnObjectCountChangeListener listener) {
         mListener = (listener == null) ? sDummyListener : listener;
-    }
-    
-    /**
-     * Get the damage at a specific grid coord
-     * @param coord
-     * @return The damage as a value [0, 1] or -1
-     *  if we don't have the any entry for the coord
-     */
-    public float getGridDamageAt(GridCoord coord) {
-        if (mGridDamage == null) {
-            return -1f;
-        }
-
-        Float value = mGridDamage.get(coord);
-        return value != null ? value.floatValue() : -1f;
-    }
-
-    /**
-     * Convenience 
-     * @param x
-     * @param y
-     * @param z
-     * @return
-     */
-    public float getGridDamageAt(int x, int y, int z) {
-        return getGridDamageAt(GridCoord.getInstance(x, y, z));
-    }
-
-    public Set<Entry<GridCoord, Float>> getGridDamages() {
-        return mGridDamage.entrySet();
-    }
-
-    /**
-     * Set the current ship's (fully loaded) grid
-     * @param grid
-     */
-    public void setSystemGrid(ShipSystemGrid grid) {
-        if (mGridDamage == null) {
-            mGridDamage = new HashMap<GridCoord, Float>();
-        } else {
-            mGridDamage.clear(); // just in case
-        }
-        mGrid = grid;
-        
-        // fill some default values
-        for (GridCoord c : grid.getCoords()) {
-            mGridDamage.put(c, Float.valueOf(0f)); // default
-        }
     }
 
     public synchronized void clear() {
         mObjects.clear();
         Arrays.fill(mPlayers, null);
-        
-        mGrid = null;
-
-        if (mGridDamage != null) {
-            mGridDamage.clear();
-        }
-        
-        mDamcons.clear();
     }
 }

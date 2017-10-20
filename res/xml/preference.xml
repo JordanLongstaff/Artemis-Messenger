@@ -80,6 +80,7 @@
             android:enabled="true"/>
         <RingtonePreference android:title="Arrived at source" android:showSilent="true" android:showDefault="true" android:ringtoneType="notification" android:key="@string/foundSrcPrefKey" android:selectable="true" android:enabled="true"/>
         <RingtonePreference android:selectable="true" android:title="Arrived at destination" android:enabled="true" android:showSilent="true" android:showDefault="true" android:ringtoneType="notification" android:key="@string/foundDestPrefKey"/>
+        <RingtonePreference android:showDefault="true" android:showSilent="true" android:ringtoneType="notification" android:selectable="true" android:title="Station under attack" android:enabled="true" android:key="@string/underAttackPrefKey"/>
     </PreferenceCategory>
     <PreferenceCategory android:title="Help" android:key="pref_key_help">
         <Preference android:summary="Learn to use Artemis Messenger." android:key="@string/helpTopicsKey" android:title="Show help topics" android:selectable="true" android:enabled="true"/>

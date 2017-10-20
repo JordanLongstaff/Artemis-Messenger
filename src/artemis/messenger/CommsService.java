@@ -175,8 +175,6 @@ public class CommsService extends Service {
 			ringtone.play();
 			
 			// Refresh top notification
-			senders.add(sender);
-			messages.add(message);
 			builder
 			.setStyle(new NotificationCompat.BigTextStyle()
 					.bigText(getMainMessage())
@@ -209,6 +207,26 @@ public class CommsService extends Service {
 				return;
 			}
 			manager.notify(messages.size(), builder.build());
+			senders.add(sender);
+			messages.add(message);
+		} else if (message.startsWith("We're under") || message.contains("%!")) {
+			// Play "station under attack" ringtone
+			Uri ringtoneUri = Uri.parse(pref.getString(getString(R.string.underAttackPrefKey), "Default"));
+			Ringtone ringtone = RingtoneManager.getRingtone(this, ringtoneUri);
+			ringtone.play();
+			
+			// Create notification containing message
+			builder
+			.setStyle(new NotificationCompat.BigTextStyle()
+					.bigText(message)
+					.setBigContentTitle(sender))
+			.setContentTitle(sender)
+			.setContentText(message)
+			.setContentIntent(pending)
+			.setOngoing(false);
+			manager.notify(messages.size(), builder.build());
+			senders.add(sender);
+			messages.add(message);
 		}
 	}
 	

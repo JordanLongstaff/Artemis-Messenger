@@ -68,7 +68,8 @@ public class AllyStatusRow extends TableRow {
 		
 		// Update text
 		updateShields();
-		updateStatus();
+		updateStatus(getStatusText());
+		updateColor();
 	}
 	
 	// Get ally ship reference
@@ -79,13 +80,11 @@ public class AllyStatusRow extends TableRow {
 	// Add mission
 	public void addMission() {
 		missions++;
-		updateStatus();
 	}
 	
 	// Remove mission
 	public void removeMission() {
 		if (--missions < 0) missions = 0;
-		updateStatus();
 	}
 	
 	// Number of missions ship is involved with
@@ -95,20 +94,17 @@ public class AllyStatusRow extends TableRow {
 	public void setFront(int f) {
 		if (f < 0) front = 0;
 		else front = f;
-		updateShields();
 	}
 	
 	// Set rear shields - minimum 0
 	public void setRear(int r) {
 		if (r < 0) rear = 0;
 		else rear = r;
-		updateShields();
 	}
 	
 	// Does ship have energy to spare?
 	public void setEnergy(boolean e) {
 		energy = e;
-		updateStatus();
 	}
 	public boolean hasEnergy() { return energy; }
 	
@@ -116,7 +112,6 @@ public class AllyStatusRow extends TableRow {
 	public void setTorpedoes(boolean t) {
 		torps = t;
 		building |= t;
-		updateStatus();
 	}
 	
 	public boolean hasTorpedoes() { return torps; }
@@ -128,7 +123,6 @@ public class AllyStatusRow extends TableRow {
 	public void setStatus(AllyStatus as) {
 		status = as;
 		if (as == AllyStatus.FLYING_BLIND || as == AllyStatus.REWARD) blind = true;
-		updateStatus();
 	}
 	public AllyStatus getStatus() { return status; }
 	
@@ -137,10 +131,7 @@ public class AllyStatusRow extends TableRow {
 	public void setBlind(boolean b) { blind = b; }
 	
 	// Update status text
-	public void updateStatus() {
-		for (int i = 0; i < getChildCount(); i++)
-			getChildAt(i).setBackgroundColor(statusColors[status.ordinal() >> 1]);
-		TextView statusText = (TextView) getChildAt(2);
+	public String getStatusText() {
 		String line2 = status.m2;
 		if (status.ordinal() < AllyStatus.FIGHTERS.ordinal()) {
 			if (energy) {
@@ -155,12 +146,22 @@ public class AllyStatusRow extends TableRow {
 			} else if (missions == 1) line2 = "Mission";
 			else if (missions > 0) line2 = missions + " missions";
 		}
-		statusText.setText(status.m1 + "\n" + line2);
+		return status.m1 + "\n" + line2;
+	}
+	
+	public void updateStatus(String statusString) {
+		final TextView statusText = (TextView) getChildAt(2);
+		statusText.setText(statusString);
+	}
+	
+	public void updateColor() {
+		for (int i = 0; i < getChildCount(); i++)
+			getChildAt(i).setBackgroundColor(statusColors[status.ordinal() >> 1]);
 	}
 	
 	// Update shields text
 	public void updateShields() {
-		TextView shieldsText = (TextView) getChildAt(1);
+		final TextView shieldsText = (TextView) getChildAt(1);
 		shieldsText.setText(String.format("F %d/%d%nR %d/%d", front, fMax, rear, rMax));
 	}
 }

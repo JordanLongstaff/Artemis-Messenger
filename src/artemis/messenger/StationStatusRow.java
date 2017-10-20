@@ -3,15 +3,11 @@ package artemis.messenger;
 import java.util.Date;
 import java.util.HashMap;
 
-import com.walkertribe.ian.enums.BaseMessage;
 import com.walkertribe.ian.enums.OrdnanceType;
-import com.walkertribe.ian.iface.ArtemisNetworkInterface;
-import com.walkertribe.ian.protocol.core.comm.CommsOutgoingPacket;
 import com.walkertribe.ian.world.ArtemisBase;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.view.View;
 import android.widget.TableRow;
 import android.widget.TextView;
 
@@ -29,10 +25,9 @@ public class StationStatusRow extends TableRow {
 	private OrdnanceType building;
 	private boolean setMissile, firstMissile;
 	private long startTime, endTime;
-	private final ArtemisBase station;
 	private final String name;
-	private boolean docking, ready, paused, closest;
-	private int readySignals, speed;
+	private boolean docking, docked, ready, paused, closest;
+	private int speed, rowColor;
 	
 	private static final int ONE_MINUTE = 60000;
 	
@@ -44,15 +39,17 @@ public class StationStatusRow extends TableRow {
 	
 	private static final HashMap<String, Integer> buildFactors = new HashMap<String, Integer>(); 
 
-	public StationStatusRow(Context base, ArtemisBase ab, final ArtemisNetworkInterface server,
-			final com.walkertribe.ian.Context context) {
+	public StationStatusRow(Context base, ArtemisBase ab, com.walkertribe.ian.Context context) {
 		super(base);
 		
 		// Set up final fields
-		station = ab;
 		shields = (int) ab.getShieldsFront();
 		maxShields = (int) ab.getShieldsRear();
 		ordnance = new int[OrdnanceType.COUNT];
+		
+		// Set color
+		if (shields < maxShields) rowColor = Color.parseColor("#bf9000");
+		else rowColor = Color.parseColor("#008000");
 		
 		// Set up build factor map
 		if (buildFactors.isEmpty()) {
@@ -84,15 +81,7 @@ public class StationStatusRow extends TableRow {
 		firstMissile = false;
 		speed = 1;
 		
-		updateStatus();
-
-		// Add touch function to request docking procedure
-		setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				server.send(new CommsOutgoingPacket(station, BaseMessage.STAND_BY_FOR_DOCKING, context));
-			}
-		});
+		updateStatus(getStatusText());
 	}
 	
 	public void setShields(int sh) {
@@ -101,24 +90,18 @@ public class StationStatusRow extends TableRow {
 		if (sh < 0) shields = 0;
 		
 		// If station has been hit, turn row yellow, otherwise green
-		for (int i = 0; i < getChildCount(); i++)
-			if (shields < maxShields) getChildAt(i).setBackgroundColor(Color.parseColor("#bf9000"));
-			else getChildAt(i).setBackgroundColor(Color.parseColor("#008000"));
-		
-		// Update text
-		updateStatus();
+		if (shields < maxShields) rowColor = Color.parseColor("#bf9000");
+		else rowColor = Color.parseColor("#008000");
 	}
 	
 	// Add mission
 	public void addMission() {
 		missions++;
-		updateStatus();
 	}
 	
 	// Remove mission
 	public void removeMission() {
 		if (--missions < 0) missions = 0;
-		updateStatus();
 	}
 	
 	// Number of missions station is involved with
@@ -127,7 +110,6 @@ public class StationStatusRow extends TableRow {
 	// Increase production speed
 	public void incProductionSpeed() {
 		speed++;
-		updateOrdnance();
 	}
 	
 	// Ordnance type station is building
@@ -144,7 +126,6 @@ public class StationStatusRow extends TableRow {
 		}
 		firstMissile = true;
 		setMissile = true;
-		updateOrdnance();
 	}
 	
 	// Override previous missile type we were building
@@ -172,43 +153,33 @@ public class StationStatusRow extends TableRow {
 	// Number of fighters on the station
 	public void setFighters(int f) {
 		fighters = f;
-		updateStatus();
 	}
 	
 	// Number of each ordnance type in stock
 	public void setStock(OrdnanceType type, int stock) {
 		ordnance[type.ordinal()] = stock;
-		updateOrdnance();
 	}
 	
 	// Is ship docked here?
 	public void setDocking(boolean dock) {
 		docking = dock;
-		if (dock) {
-			if (ready) readySignals++;
-			ready = false;
-		}
-		updateStatus();
+		docked &= dock;
+	}
+	
+	public boolean completeDock() {
+		if (!docking) return false;
+		docked = true;
+		return true;
 	}
 	
 	// Is station ready for a ship?
 	public void setReady(boolean crewReady) {
-		if (!crewReady && readySignals > 0) {
-			readySignals--;
-			return;
-		}
-		if (docking) {
-			if (crewReady) readySignals++;
-			return;
-		}
 		ready = crewReady;
-		updateStatus();
 	}
 	
 	// Is station the closest to you?
 	public void setClosest(boolean close) {
 		closest = close;
-		updateStatus();
 	}
 	
 	// Is the game paused?
@@ -221,21 +192,32 @@ public class StationStatusRow extends TableRow {
 	}
 	
 	// Update status text
-	public void updateStatus() {
-		TextView statusText = (TextView) getChildAt(0);
+	public String getStatusText() {
 		String status = name + "\nShields " + shields + "/" + maxShields;
 		if (missions == 1) status += ", 1 mission";
 		else if (missions > 1) status += ", " + missions + " missions";
 		if (fighters == 1) status += ", 1 fighter";
 		else if (fighters > 1) status += ", " + fighters + " fighters";
-		if (docking) status += " (docked)";
+		if (docked) status += " (docked)";
+		else if (docking) status += " (docking)";
 		else if (ready) status += " (standby)";
 		else if (closest) status += " (closest)";
+		return status;
+	}
+	
+	public void updateStatus(String status) {
+		final TextView statusText = (TextView) getChildAt(0);
 		statusText.setText(status);
 	}
 	
+	public void updateColor() {
+		for (int i = 0; i < getChildCount(); i++) {
+			getChildAt(i).setBackgroundColor(rowColor);
+		}
+	}
+	
 	// Update ordnance text
-	public void updateOrdnance() {
+	public String getOrdnanceText() {
 		String stock = "";
 		for (OrdnanceType t: OrdnanceType.values()) {
 			if (!stock.equals("")) stock += "/";
@@ -244,15 +226,7 @@ public class StationStatusRow extends TableRow {
 		if (speed > 1) {
 			stock += " (speed x" + speed + ")";
 		}
-		updateTime(stock);
-	}
-	
-	// Update missile-building text
-	public void updateTime(String stock) {
-		TextView ordnanceText = (TextView) getChildAt(1);
-		if (stock == null) {
-			stock = ordnanceText.getText().toString().split("\n")[0];
-		}
+		
 		if (building != null) {
 			int eta = (int)(endTime - new Date().getTime());
 			int millis = eta % 1000;
@@ -272,6 +246,11 @@ public class StationStatusRow extends TableRow {
 			}
 			stock += String.format("\nType %d %s ready in %d:%02d", building.getType(), building.toString(), minutes, seconds);
 		}
+		return stock;
+	}
+	
+	public void updateOrdnance(String stock) {
+		final TextView ordnanceText = (TextView) getChildAt(1);
 		ordnanceText.setText(stock);
 	}
 }
