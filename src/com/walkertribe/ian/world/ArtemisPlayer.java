@@ -24,7 +24,7 @@ public class ArtemisPlayer extends BaseArtemisShip {
 	private TargetingMode mTargetingMode;
 	private AlertStatus mAlertStatus;
     private BoolState mShields;
-    private int mShipNumber = -1;
+    private byte mShipNumber = -1;
     private final float[] mHeat = new float[Artemis.SYSTEM_COUNT];
     private final float[] mSystems = new float[Artemis.SYSTEM_COUNT];
     private final int[] mCoolant = new int[Artemis.SYSTEM_COUNT];
@@ -47,7 +47,7 @@ public class ArtemisPlayer extends BaseArtemisShip {
     private int mScanningId = -1;
     private final byte[] mUpgrades = new byte[Upgrade.STORABLE_UPGRADE_COUNT];
     private int mCapitalShipId = -1;
-    private int mAccentColor = -1;
+    private float mAccentColor = 0f;
 
     public ArtemisPlayer(int objId) {
         super(objId);
@@ -85,11 +85,11 @@ public class ArtemisPlayer extends BaseArtemisShip {
      * Unspecified: -1
      * @return int in [1,Artemis.SHIP_COUNT], or -1 if undefined
      */
-    public int getShipNumber() {
-        return mShipNumber == -1 ? -1 : mShipNumber;
+    public byte getShipNumber() {
+        return mShipNumber;
     }
 
-    public void setShipNumber(int shipNumber) {
+    public void setShipNumber(byte shipNumber) {
     	mShipNumber = shipNumber;
     }
 
@@ -450,11 +450,11 @@ public class ArtemisPlayer extends BaseArtemisShip {
      * Returns this ship's accent color as an ARGB value.
      * Unspecified: -1
      */
-    public int getAccentColor() {
+    public float getAccentColor() {
     	return mAccentColor;
     }
 
-    public void setAccentColor(int accentColor) {
+    public void setAccentColor(float accentColor) {
     	mAccentColor = accentColor;
     }
 
@@ -480,6 +480,9 @@ public class ArtemisPlayer extends BaseArtemisShip {
 
             if (mShipNumber == -1) {
                 mShipNumber = plr.mShipNumber;
+                if (mShipNumber == -1) {
+                	mShipNumber = 0;
+                }
             }
             
             if (plr.mTargetingMode != null) {

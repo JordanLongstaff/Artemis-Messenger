@@ -234,7 +234,7 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 				while (server == null);
 				
 				// Set up Comms and Main Screen connection from selected ship
-				playerShip = position + 1;
+				playerShip = position;
 				server.send(new SetShipPacket(position + 1));
 				server.send(new SetConsolePacket(Console.COMMUNICATIONS, true));
 				server.send(new SetConsolePacket(Console.MAIN_SCREEN, true));
@@ -1072,19 +1072,14 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 						}
 					} else if (message.startsWith("Docking complete")) {
 						// Docking at a station
-						for (ArtemisObject o: manager.getObjects(ObjectType.BASE)) {
-							ArtemisBase base = (ArtemisBase) o;
-							if (base.getId() == manager.getPlayerShip(playerShip).getDockingBase()) {
-								dockingStation = sender.split(" ")[0];
-								updateDockedRow();
-								for (StationStatusRow row: bases.get(dockingStation).values()) {
-									if (row.completeDock()) {
-										postStatusUpdate(row);
-									}
-								}
-								stationHandler.postDelayed(waitForUndock, updateInterval);
-								break;
+						if (message.substring(18).startsWith(manager.getPlayerShip(playerShip).getName())) {
+							dockingStation = sender.split(" ")[0];
+							for (StationStatusRow row: bases.get(dockingStation).values()) {
+								row.setDocking(true);
+								row.completeDock();
 							}
+							updateDockedRow();
+							stationHandler.postDelayed(waitForUndock, updateInterval);
 						}
 					} else if (message.startsWith("We've produced") || message.contains("ing production of")) {
 						// Production of previous ordnance ended

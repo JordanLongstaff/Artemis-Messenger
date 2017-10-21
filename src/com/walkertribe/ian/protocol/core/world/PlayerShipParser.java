@@ -8,7 +8,7 @@ import com.walkertribe.ian.enums.ObjectType;
 import com.walkertribe.ian.enums.TargetingMode;
 import com.walkertribe.ian.iface.PacketReader;
 import com.walkertribe.ian.iface.PacketWriter;
-import com.walkertribe.ian.vesseldata.VesselAttribute;
+import com.walkertribe.ian.util.Version;
 import com.walkertribe.ian.world.ArtemisObject;
 import com.walkertribe.ian.world.ArtemisPlayer;
 
@@ -24,7 +24,7 @@ public class PlayerShipParser extends AbstractObjectParser {
     	ENERGY,
 
     	SHIELD_STATE,
-    	SHIP_NUMBER,
+    	UNK_2_2,
     	SHIP_TYPE,
     	X,
     	Y,
@@ -57,7 +57,7 @@ public class PlayerShipParser extends AbstractObjectParser {
     	UNK_5_5,
     	UNK_5_6,
     	UNK_5_7,
-    	UNK_5_8,
+    	SHIP_NUMBER,
 
     	CAPITAL_SHIP_ID,
     	ACCENT_COLOR,
@@ -94,7 +94,7 @@ public class PlayerShipParser extends AbstractObjectParser {
         	player.setShields(reader.readBool(Bit.SHIELD_STATE, 2).getBooleanValue());
         }
 
-        player.setShipNumber(reader.readInt(Bit.SHIP_NUMBER));
+        reader.readObjectUnknown(Bit.UNK_2_2, 4);
         player.setHullId(reader.readInt(Bit.SHIP_TYPE));
         player.setX(reader.readFloat(Bit.X, Float.MIN_VALUE));
         player.setY(reader.readFloat(Bit.Y, Float.MIN_VALUE));
@@ -140,15 +140,15 @@ public class PlayerShipParser extends AbstractObjectParser {
         player.setReverse(reader.readBool(Bit.REVERSE_STATE, 1));
 
         reader.readObjectUnknown(Bit.UNK_5_5, 4);
-        reader.readObjectUnknown(Bit.UNK_5_6, 5);
+        reader.readObjectUnknown(Bit.UNK_5_6, 1);
         reader.readObjectUnknown(Bit.UNK_5_7, 4);
-        reader.readObjectUnknown(Bit.UNK_5_8, 1);
-        if (player.getVessel(reader.getContext()) != null &&
-        		(player.getVessel(reader.getContext()).is(VesselAttribute.FIGHTER) ||
-        				player.getVessel(reader.getContext()).is(VesselAttribute.SINGLESEAT))) {
+        player.setShipNumber(reader.readByte(Bit.SHIP_NUMBER, (byte) -1));
+        
+        if (reader.getVersion().ge(new Version("2.3.0"))) {
         	player.setCapitalShipId(reader.readInt(Bit.CAPITAL_SHIP_ID, -1));
         }
-        player.setAccentColor(reader.readInt(Bit.ACCENT_COLOR, -1));
+        
+        player.setAccentColor(reader.readFloat(Bit.ACCENT_COLOR, -1));
         reader.readObjectUnknown(Bit.UNK_6_3, 4);
         return player;
 	}
@@ -156,8 +156,6 @@ public class PlayerShipParser extends AbstractObjectParser {
 	@Override
 	public void write(ArtemisObject obj, PacketWriter writer) {
 		ArtemisPlayer player = (ArtemisPlayer) obj;
-		int shipIndex = player.getShipNumber();
-		int shipNumber = shipIndex == -1 ? -1 : shipIndex + 1;
 		writer	.writeInt(Bit.WEAPONS_TARGET, player.getWeaponsTarget(), -1)
 				.writeFloat(Bit.IMPULSE, player.getImpulse(), -1)
 				.writeFloat(Bit.RUDDER, player.getSteering(), -1)
@@ -173,7 +171,7 @@ public class PlayerShipParser extends AbstractObjectParser {
 		writer	.writeByte(Bit.WARP, player.getWarp(), (byte) -1)
 				.writeFloat(Bit.ENERGY, player.getEnergy(), -1)
 				.writeBool(Bit.SHIELD_STATE, player.getShieldsState(), 2)
-				.writeInt(Bit.SHIP_NUMBER, shipNumber, -1)
+				.writeUnknown(Bit.UNK_2_2)
 				.writeInt(Bit.SHIP_TYPE, player.getHullId(), -1)
 				.writeFloat(Bit.X, player.getX(), Float.MIN_VALUE)
 				.writeFloat(Bit.Y, player.getY(), Float.MIN_VALUE)
@@ -226,8 +224,8 @@ public class PlayerShipParser extends AbstractObjectParser {
 				.writeUnknown(Bit.UNK_5_5)
 				.writeUnknown(Bit.UNK_5_6)
 				.writeUnknown(Bit.UNK_5_7)
-				.writeUnknown(Bit.UNK_5_8)
-				.writeInt(Bit.ACCENT_COLOR, player.getAccentColor(), -1)
+				.writeByte(Bit.SHIP_NUMBER, player.getShipNumber(), (byte) -1)
+				.writeFloat(Bit.ACCENT_COLOR, player.getAccentColor(), -1)
 				.writeInt(Bit.CAPITAL_SHIP_ID, player.getCapitalShipId(), -1)
 				.writeUnknown(Bit.UNK_6_3);
 	}

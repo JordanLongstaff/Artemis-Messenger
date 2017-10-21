@@ -106,7 +106,7 @@ public class SystemManager {
                 ArtemisPlayer plr = (ArtemisPlayer) o;
 
                 if (plr.getShipNumber() != -1) {
-                    mPlayers[plr.getShipNumber() - 1] = (ArtemisPlayer) p;
+                    mPlayers[plr.getShipNumber()] = (ArtemisPlayer) p;
                 }
             }
             
@@ -121,7 +121,7 @@ public class SystemManager {
             ArtemisPlayer plr = (ArtemisPlayer) o;
 
             if (plr.getShipNumber() >= 0) {
-                mPlayers[plr.getShipNumber() - 1] = plr;
+                mPlayers[plr.getShipNumber()] = plr;
             }
         }
 
@@ -191,11 +191,11 @@ public class SystemManager {
      * @return
      */
     public ArtemisPlayer getPlayerShip(int shipNumber) {
-        if (shipNumber < 1 || shipNumber > 8) {
+        if (shipNumber < 0 || shipNumber > 7) {
             throw new IllegalArgumentException("Invalid ship number: " + shipNumber);
         }
         
-        return mPlayers[shipNumber - 1];
+        return mPlayers[shipNumber];
     }
     
     /**

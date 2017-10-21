@@ -166,10 +166,8 @@ public class StationStatusRow extends TableRow {
 		docked &= dock;
 	}
 	
-	public boolean completeDock() {
-		if (!docking) return false;
+	public void completeDock() {
 		docked = true;
-		return true;
 	}
 	
 	// Is station ready for a ship?
