@@ -64,6 +64,11 @@ public class PlayerShipParser extends AbstractObjectParser {
     	UNK_6_3
     }
 	private static final Bit[] BITS = Bit.values();
+	
+	private static final Bit[] ACCEPTED_BITS = new Bit[] {
+		Bit.NAME,
+		Bit.DOCKING_BASE
+	};
 
     protected PlayerShipParser() {
 		super(ObjectType.PLAYER_SHIP);
@@ -72,6 +77,11 @@ public class PlayerShipParser extends AbstractObjectParser {
 	@Override
 	public Bit[] getBits() {
 		return BITS;
+	}
+	
+	@Override
+	public Bit[] getAcceptedBits() {
+		return ACCEPTED_BITS;
 	}
 
 	@Override

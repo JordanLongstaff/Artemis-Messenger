@@ -66,6 +66,19 @@ public class NpcShipParser extends AbstractObjectParser {
 		SHIELD_FREQUENCY_E
 	}
 	private static final Bit[] BITS = Bit.values();
+	
+	private static final Bit[] ACCEPTED_BITS = new Bit[] {
+		Bit.NAME,
+		Bit.IS_ENEMY,
+		Bit.SHIP_TYPE,
+		Bit.FORE_SHIELD,
+		Bit.FORE_SHIELD_MAX,
+		Bit.AFT_SHIELD,
+		Bit.AFT_SHIELD_MAX,
+		Bit.X,
+		Bit.Y,
+		Bit.Z
+	};
 
 	private static final Bit[] SYSTEM_DAMAGES = new Bit[] {
 		Bit.BEAM_SYSTEM_DAMAGE,
@@ -93,6 +106,11 @@ public class NpcShipParser extends AbstractObjectParser {
 	@Override
 	public Bit[] getBits() {
 		return BITS;
+	}
+	
+	@Override
+	public Bit[] getAcceptedBits() {
+		return ACCEPTED_BITS;
 	}
 
 	@Override

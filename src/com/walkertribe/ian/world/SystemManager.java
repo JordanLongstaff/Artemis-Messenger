@@ -111,6 +111,12 @@ public class SystemManager {
             }
             
             return false;
+        } else if (o instanceof ArtemisNpc) {
+        	ArtemisNpc npc = (ArtemisNpc) o;
+        	if (npc.getVessel(mCtx) == null ||
+					npc.getVessel(mCtx).getFaction() == null ||
+					npc.getVessel(mCtx).getFaction().getId() > 1)
+        		return false;
         }
 
         synchronized(this) {

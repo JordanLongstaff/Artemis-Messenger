@@ -142,6 +142,11 @@ public class ThreadedArtemisNetworkInterface implements ArtemisNetworkInterface 
     public void setTimeout(int timeout) throws SocketException {
     	mSendThread.mSkt.setSoTimeout(timeout);
     }
+    
+    @Override
+    public void setIgnoreTimeout(boolean ignore) {
+    	mReceiveThread.mIgnoreTimeout = ignore;
+    }
 
     @Override
     public void start() {
@@ -304,6 +309,7 @@ public class ThreadedArtemisNetworkInterface implements ArtemisNetworkInterface 
         private final ThreadedArtemisNetworkInterface mInterface;
         private PacketReader mReader;
         private boolean mStarted;
+        private boolean mIgnoreTimeout;
         
         public ReceiverThread(final ThreadedArtemisNetworkInterface net, final Socket skt) throws IOException {
             mInterface = net;
@@ -358,6 +364,11 @@ public class ThreadedArtemisNetworkInterface implements ArtemisNetworkInterface 
                     	if (cause instanceof EOFException ||
                     			cause instanceof SocketException ||
                     			cause instanceof SocketTimeoutException) {
+                    		if (mIgnoreTimeout && cause instanceof SocketTimeoutException) {
+                    			mIgnoreTimeout = false;
+                    			continue;
+                    		}
+                    		
                     		// Parse failed because the connection was lost
                     		mInterface.disconnectCause = DisconnectEvent.Cause.REMOTE_DISCONNECT;
                         	mInterface.exception = (Exception) cause;

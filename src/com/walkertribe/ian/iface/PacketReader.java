@@ -474,7 +474,7 @@ public class PacketReader {
 	}
 
 	/**
-	 * Starts reading an object from an ObjectUpdatingPacket. This will read off
+	 * Starts reading an object from an ObjectUpdatePacket. This will read off
 	 * an object ID (int) and (if a bits enum value array is given) a BitField
 	 * from the current packet's payload. This also clears the
 	 * unknownObjectProps property. The ObjectType is then returned.

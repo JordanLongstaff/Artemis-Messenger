@@ -24,20 +24,8 @@ public class ObjectUpdatePacket extends BaseArtemisPacket {
 	static {
 		PARSERS = new HashMap<ObjectType, ObjectParser>();
 		PARSERS.put(ObjectType.PLAYER_SHIP, new PlayerShipParser());
-		PARSERS.put(ObjectType.WEAPONS_CONSOLE, new WeapParser());
-		PARSERS.put(ObjectType.ENGINEERING_CONSOLE, new EngParser());
-		PARSERS.put(ObjectType.UPGRADES, new UpgradesParser());
 		PARSERS.put(ObjectType.BASE, new BaseParser());
 		PARSERS.put(ObjectType.NPC_SHIP, new NpcShipParser());
-		PARSERS.put(ObjectType.MINE, new OtherParser(ObjectType.MINE));
-		PARSERS.put(ObjectType.ANOMALY, new AnomalyParser());
-		PARSERS.put(ObjectType.NEBULA, new NebulaParser());
-		PARSERS.put(ObjectType.TORPEDO, new TorpedoParser());
-		PARSERS.put(ObjectType.BLACK_HOLE, new OtherParser(ObjectType.BLACK_HOLE));
-		PARSERS.put(ObjectType.ASTEROID, new OtherParser(ObjectType.ASTEROID));
-		PARSERS.put(ObjectType.GENERIC_MESH, new GenericMeshParser());
-		PARSERS.put(ObjectType.CREATURE, new CreatureParser());
-		PARSERS.put(ObjectType.DRONE, new DroneParser());
 	}
 
 	public static void register(PacketFactoryRegistry registry) {
@@ -96,6 +84,10 @@ public class ObjectUpdatePacket extends BaseArtemisPacket {
 
 	public List<ArtemisObject> getObjects() {
 		return new LinkedList<ArtemisObject>(objects);
+	}
+	
+	public ObjectType getObjectType() {
+		return objectType;
 	}
 
 	@Override

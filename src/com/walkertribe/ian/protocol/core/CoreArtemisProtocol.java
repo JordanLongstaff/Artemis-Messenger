@@ -24,7 +24,6 @@ public class CoreArtemisProtocol extends AbstractProtocol {
 			DestroyObjectPacket.class,
 			GameOverPacket.class,
 			GameOverReasonPacket.class,
-			HeartbeatPacket.class,
 			PausePacket.class,
 			VersionPacket.class,
 			WelcomePacket.class,

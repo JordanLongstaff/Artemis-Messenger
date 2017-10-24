@@ -85,4 +85,6 @@ public interface ArtemisNetworkInterface {
      * @param timeout the timeout value
      */
     public void setTimeout(int timeout) throws IOException;
+    
+    public void setIgnoreTimeout(boolean ignore);
 }

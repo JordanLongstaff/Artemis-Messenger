@@ -6,6 +6,7 @@ import com.walkertribe.ian.world.ArtemisObject;
 
 public abstract class AbstractObjectParser implements ObjectParser {
 	protected abstract ArtemisObject parseImpl(PacketReader reader);
+	protected abstract Enum<?>[] getAcceptedBits();
 
 	protected ObjectType objectType;
 
@@ -30,9 +31,15 @@ public abstract class AbstractObjectParser implements ObjectParser {
 		}
 
 		reader.startObject(objectType, getBits());
-		ArtemisObject obj = parseImpl(reader);
-		obj.setUnknownProps(reader.getUnknownObjectProps());
-		return obj;
+		for (Enum<?> bit: getAcceptedBits()) {
+			if (reader.has(bit)) {
+				ArtemisObject obj = parseImpl(reader);
+				obj.setUnknownProps(reader.getUnknownObjectProps());
+				return obj;
+			}
+		}
+		
+		return null;
 	}
 
 	@Override

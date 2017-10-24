@@ -25,6 +25,13 @@ public class BaseParser extends AbstractObjectParser {
 		UNK_2_6
 	}
 	private static final Bit[] BITS = Bit.values();
+	
+	private static final Bit[] ACCEPTED_BITS = new Bit[] {
+		Bit.NAME,
+		Bit.FORE_SHIELDS,
+		Bit.INDEX,
+		Bit.HULL_ID
+	};
 
 	BaseParser() {
 		super(ObjectType.BASE);
@@ -33,6 +40,11 @@ public class BaseParser extends AbstractObjectParser {
 	@Override
 	public Bit[] getBits() {
 		return BITS;
+	}
+	
+	@Override
+	public Bit[] getAcceptedBits() {
+		return ACCEPTED_BITS;
 	}
 
 	@Override

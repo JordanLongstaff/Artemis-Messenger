@@ -84,7 +84,7 @@ public class SettingsActivity extends PreferenceActivity {
 		helpPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
 			@Override
 			public boolean onPreferenceClick(Preference pref) {
-				Intent helpIntent = new Intent(SettingsActivity.this, HelpActivity.class);
+				Intent helpIntent = new Intent(getApplicationContext(), HelpActivity.class);
 				startActivity(helpIntent);
 				return false;
 			}
@@ -94,7 +94,7 @@ public class SettingsActivity extends PreferenceActivity {
 		showAllPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
 			@Override
 			public boolean onPreferenceClick(Preference arg0) {
-				SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+				SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 				sharedPreferences.edit()
 				.putBoolean(getString(R.string.batteryChargeKey), true)
 				.putBoolean(getString(R.string.extraCoolantKey), true)
@@ -130,7 +130,7 @@ public class SettingsActivity extends PreferenceActivity {
 		showAllRoutingPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
 			@Override
 			public boolean onPreferenceClick(Preference arg0) {
-				SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+				SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 				sharedPreferences.edit()
 				.putBoolean(getString(R.string.energyKey), true)
 				.putBoolean(getString(R.string.hasTorpsKey), true)
@@ -177,7 +177,7 @@ public class SettingsActivity extends PreferenceActivity {
 		showNoneRoutingPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
 			@Override
 			public boolean onPreferenceClick(Preference arg0) {
-				SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+				SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 				sharedPreferences.edit()
 				.putBoolean(getString(R.string.energyKey), false)
 				.putBoolean(getString(R.string.hasTorpsKey), false)
@@ -224,9 +224,9 @@ public class SettingsActivity extends PreferenceActivity {
 		defaultPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
 			@Override
 			public boolean onPreferenceClick(Preference pref) {
-				SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+				SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 				sharedPreferences.edit().clear().commit();
-				PreferenceManager.setDefaultValues(getBaseContext(), R.xml.preference, true);
+				PreferenceManager.setDefaultValues(getApplicationContext(), R.xml.preference, true);
 				
 				CheckBoxPreference batteryPref =
 						(CheckBoxPreference) findPreference(getString(R.string.batteryChargeKey));
@@ -288,17 +288,29 @@ public class SettingsActivity extends PreferenceActivity {
 			}
 		});
 		
-		RingtonePreference newMissionPref = (RingtonePreference) findPreference(getString(R.string.newMissionPrefKey));
+		RingtonePreference newMissionPref = (RingtonePreference)
+				findPreference(getString(R.string.newMissionPrefKey));
 		bindPreferenceSummaryToValue(newMissionPref);
 		
-		RingtonePreference atSrcPref = (RingtonePreference) findPreference(getString(R.string.foundSrcPrefKey));
+		RingtonePreference atSrcPref = (RingtonePreference)
+				findPreference(getString(R.string.foundSrcPrefKey));
 		bindPreferenceSummaryToValue(atSrcPref);
 		
-		RingtonePreference atDestPref = (RingtonePreference) findPreference(getString(R.string.foundDestPrefKey));
+		RingtonePreference atDestPref = (RingtonePreference)
+				findPreference(getString(R.string.foundDestPrefKey));
 		bindPreferenceSummaryToValue(atDestPref);
+		
+		RingtonePreference underAttackPref = (RingtonePreference)
+				findPreference(getString(R.string.underAttackPrefKey));
+		bindPreferenceSummaryToValue(underAttackPref);
+		
+		RingtonePreference baseDestroyedPref = (RingtonePreference)
+				findPreference(getString(R.string.baseDestroyedPrefKey));
+		bindPreferenceSummaryToValue(baseDestroyedPref);
 	}
 	
-	private static Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = new Preference.OnPreferenceChangeListener() {
+	private static Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener =
+			new Preference.OnPreferenceChangeListener() {
 		@Override
 		public boolean onPreferenceChange(Preference preference, Object value) {
 			String stringValue = value.toString();
