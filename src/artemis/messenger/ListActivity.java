@@ -146,7 +146,7 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 		
 		// Otherwise, tie to an alert dialog
 		else {
-			new AlertDialog.Builder(getApplicationContext())
+			new AlertDialog.Builder(this)
 	        	.setMessage("You are still connected to a server. Are you sure you want to exit?")
 	        	.setCancelable(false)
 	        	.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
