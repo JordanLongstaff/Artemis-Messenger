@@ -155,6 +155,10 @@ public class StationStatusRow extends TableRow {
 		fighters = f;
 	}
 	
+	public void incFighters(int f) {
+		fighters += f;
+	}
+	
 	// Number of each ordnance type in stock
 	public void setStock(OrdnanceType type, int stock) {
 		ordnance[type.ordinal()] = stock;

@@ -1151,6 +1151,14 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 							outPackets.add(new CommsOutgoingPacket(o, BaseMessage.PLEASE_REPORT_STATUS, context));
 							break;
 						}
+					} else if (message.startsWith("We had an extra")) {
+						String base = sender.split(" ")[0];
+						if (bases.containsKey(base)) {
+							for (StationStatusRow row: bases.get(base).values()) {
+								row.incFighters(-1);
+								postStatusUpdate(row);
+							}
+						}
 					} else if (message.contains("Our stores are")) {
 						// Docking station status report
 						final String[] list = message.split("\n");
