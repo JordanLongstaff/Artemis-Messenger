@@ -2,15 +2,14 @@ package com.walkertribe.ian.world;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 
-import com.walkertribe.ian.Context;
 import com.walkertribe.ian.enums.ObjectType;
 import com.walkertribe.ian.iface.Listener;
 import com.walkertribe.ian.protocol.core.world.DestroyObjectPacket;
-import com.walkertribe.ian.protocol.core.world.IntelPacket;
 import com.walkertribe.ian.protocol.core.world.ObjectUpdatePacket;
+
+import android.util.SparseArray;
 
 /**
  * A repository of Artemis world objects. Register an instance of SystemManager
@@ -31,15 +30,13 @@ public class SystemManager {
 
     private static final boolean DEBUG = false;
 
-    private final Context mCtx;
-    private final HashMap<Integer, ArtemisObject> mObjects = 
-            new HashMap<Integer, ArtemisObject>();
+    private int mShipIndex = -1;
+    private final SparseArray<ArtemisObject> mObjects = new SparseArray<ArtemisObject>();
     private OnObjectCountChangeListener mListener = sDummyListener;
     
     private final ArtemisPlayer[] mPlayers = new ArtemisPlayer[Artemis.SHIP_COUNT];
     
-    public SystemManager(Context ctx) {
-    	mCtx = ctx;
+    public SystemManager() {
         clear();
     }
     
@@ -60,7 +57,7 @@ public class SystemManager {
 
         // signal change
         if (mObjects.size() == 1) {
-            ArtemisObject last = mObjects.values().iterator().next();
+            ArtemisObject last = mObjects.valueAt(0);
 
             if ("Artemis".equals(last.getName())) {
                 // special (hack?) case;
@@ -82,22 +79,13 @@ public class SystemManager {
         }
     }
 
-    @Listener
-    public void onPacket(IntelPacket pkt) {
-    	ArtemisNpc npc = (ArtemisNpc) mObjects.get(Integer.valueOf(pkt.getId()));
-
-    	if (npc != null) {
-    		npc.setIntel(pkt.getIntel());
-    	}
-    }
-
     @SuppressWarnings("unused")
     private boolean updateOrCreate(ArtemisObject o) {
     	Integer id = Integer.valueOf(o.getId());
         ArtemisObject p = mObjects.get(id);
 
         if (p != null) {
-            p.updateFrom(o, mCtx);
+            p.updateFrom(o);
             
             if (o instanceof ArtemisPlayer) {
                 // just in case we get the ship number AFTER
@@ -105,17 +93,15 @@ public class SystemManager {
                 //  updated ORIGINAL with the new ship number
                 ArtemisPlayer plr = (ArtemisPlayer) o;
 
-                if (plr.getShipNumber() != -1) {
-                    mPlayers[plr.getShipNumber()] = (ArtemisPlayer) p;
+                if (plr.getShipIndex() != -1) {
+                    mPlayers[plr.getShipIndex()] = (ArtemisPlayer) p;
                 }
             }
             
             return false;
         } else if (o instanceof ArtemisNpc) {
         	ArtemisNpc npc = (ArtemisNpc) o;
-        	if (npc.getVessel(mCtx) == null ||
-					npc.getVessel(mCtx).getFaction() == null ||
-					npc.getVessel(mCtx).getFaction().getId() > 1)
+        	if (npc.getSide() != getSide())
         		return false;
         }
 
@@ -126,10 +112,14 @@ public class SystemManager {
         if (o instanceof ArtemisPlayer) {
             ArtemisPlayer plr = (ArtemisPlayer) o;
 
-            if (plr.getShipNumber() >= 0) {
-                mPlayers[plr.getShipNumber()] = plr;
+            if (plr.getShipIndex() >= 0) {
+                mPlayers[plr.getShipIndex()] = plr;
             }
         }
+
+        if (o.getX() == Float.MIN_VALUE) o.setX(0);
+        if (o.getY() == Float.MIN_VALUE) o.setY(0);
+        if (o.getZ() == Float.MIN_VALUE) o.setZ(0);
 
         if (DEBUG && o.getName() == null) {
             throw new IllegalStateException("Creating " + p +" without name! " + 
@@ -141,29 +131,18 @@ public class SystemManager {
     }
 
     public synchronized void getAll(List<ArtemisObject> dest) {
-        dest.addAll(mObjects.values());
-    }
-
-    public synchronized void getAllSelectable(List<ArtemisObject> dest) {
-        for (ArtemisObject obj : mObjects.values()) {
-            // tentative
-            if (!(obj instanceof ArtemisGenericObject)) {
-                dest.add(obj);
-            }
-        }
+        for (int i = 0; i < mObjects.size(); i++)
+        	dest.add(mObjects.valueAt(i));
     }
 
     /**
-     * Add objects of the given type to the given list 
-     * 
-     * @param dest
-     * @param type One of the ArtemisObject#TYPE_* constants
-     * @return The number of objects added to "dest"
+     * Add objects of the given type to the given list.
      */
     public synchronized int getObjects(List<ArtemisObject> dest, ObjectType type) {
         int count = 0;
 
-        for (ArtemisObject obj : mObjects.values()) {
+        for (int i = 0; i < mObjects.size(); i++) {
+        	ArtemisObject obj = mObjects.valueAt(i);
             if (obj.getType() == type) {
                 dest.add(obj);
                 count++;
@@ -175,10 +154,7 @@ public class SystemManager {
 
     /**
      * If you don't want/need to reuse a List, this
-     *  will create a list for you
-     *  
-     * @param type
-     * @return
+     * will create a list for you.
      * @see #getObjects(List, int)
      */
     public List<ArtemisObject> getObjects(ObjectType type) {
@@ -193,15 +169,38 @@ public class SystemManager {
     
     /**
      * Get the player ship by number. Ship values range from 1 to 8.
-     * @param shipNumber
+     * @param shipIndex
      * @return
      */
-    public ArtemisPlayer getPlayerShip(int shipNumber) {
-        if (shipNumber < 0 || shipNumber > 7) {
-            throw new IllegalArgumentException("Invalid ship number: " + shipNumber);
+    public ArtemisPlayer getPlayerShip(int shipIndex) {
+        if (shipIndex < 0 || shipIndex >= Artemis.SHIP_COUNT) {
+            throw new IllegalArgumentException("Invalid ship index: " + shipIndex);
         }
         
-        return mPlayers[shipNumber];
+        return mPlayers[shipIndex];
+    }
+    
+    /**
+     * Get the current player ship.
+     */
+    public ArtemisPlayer getPlayerShip() {
+    	try { return getPlayerShip(mShipIndex); }
+    	catch (IllegalArgumentException ex) { return null; }
+    }
+    
+    /**
+     * Updates the current player ship index.
+     */
+    public void setShipIndex(int shipIndex) {
+    	mShipIndex = shipIndex;
+    }
+    
+    /**
+     * Get the side the current player ship is on.
+     */
+    public byte getSide() {
+    	try { return getPlayerShip().getSide(); }
+    	catch (NullPointerException ex) { return (byte) -1; }
     }
     
     /**
@@ -210,16 +209,12 @@ public class SystemManager {
      * @return null if no such object or if name is null
      */
     public synchronized ArtemisObject getObjectByName(final String name) {
-        if (name == null) {
-            return null;
-        }
+        if (name == null) return null;
         
-        for (ArtemisObject obj : mObjects.values()) {
-            if (name.equals(obj.getName())) {
-                return obj;
-            }
+        for (int i = 0; i < mObjects.size(); i++) {
+        	ArtemisObject obj = mObjects.valueAt(i);
+            if (name.equals(obj.getName())) return obj;
         }
-        
         return null;
     }
 

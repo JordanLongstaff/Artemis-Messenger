@@ -2,15 +2,18 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="artemis.messenger"
     android:installLocation="preferExternal"
-    android:revisionCode="35"
-    android:versionCode="36"
-    android:versionName="4.4.3" >
+    android:revisionCode="37"
+    android:versionCode="38"
+    android:versionName="5.0.1" >
 
     <uses-sdk
-        android:minSdkVersion="8"
+        android:minSdkVersion="9"
         android:targetSdkVersion="22" />
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
@@ -32,13 +35,12 @@
 
         <service
             android:name=".CommsService"
-            android:stopWithTask="false"
-            android:exported="false" />
-
+            android:exported="false"
+            android:stopWithTask="false" />
         <service
             android:name=".NotificationCleanupService"
-            android:stopWithTask="false"
-            android:exported="false" />
+            android:exported="false"
+            android:stopWithTask="false" />
 
         <activity
             android:name=".SettingsActivity"
@@ -55,6 +57,10 @@
         <activity
             android:name=".HelpPageActivity"
             android:label="@string/title_activity_help_page" >
+        </activity>
+        <activity
+            android:name=".ConnectActivity"
+            android:label="@string/title_activity_connect" >
         </activity>
     </application>
 

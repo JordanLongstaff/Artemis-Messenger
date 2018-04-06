@@ -2,17 +2,17 @@ package com.walkertribe.ian.world;
 
 import java.util.SortedMap;
 
-import com.walkertribe.ian.Context;
+import com.walkertribe.ian.ArtemisContext;
 import com.walkertribe.ian.vesseldata.Vessel;
 
 /**
  * Base implementation of a shielded world object.
  */
-public abstract class BaseArtemisShielded extends BaseArtemisOrientable
+public abstract class BaseArtemisShielded extends BaseArtemisObject
 		implements ArtemisShielded {
     private int mHullId = -1;
-    private float mShieldsFront = Float.MIN_VALUE;
-    private float mShieldsRear = Float.MIN_VALUE;
+    private float mShieldsFront = Float.NaN;
+    private float mShieldsRear = Float.NaN;
 
     public BaseArtemisShielded(int objId) {
         super(objId);
@@ -24,14 +24,8 @@ public abstract class BaseArtemisShielded extends BaseArtemisOrientable
     }
 
     @Override
-    public Vessel getVessel(Context ctx) {
+    public Vessel getVessel(ArtemisContext ctx) {
    		return mHullId != -1 ? ctx.getVesselData().getVessel(mHullId) : null;
-    }
-
-    @Override
-    public float getScale(Context ctx) {
-    	Vessel vessel = getVessel(ctx);
-    	return vessel != null ? vessel.getScale() : super.getScale(ctx);
     }
 
     @Override
@@ -63,37 +57,36 @@ public abstract class BaseArtemisShielded extends BaseArtemisOrientable
     }
 
     @Override
-    public void updateFrom(ArtemisObject obj, Context ctx) {
-        super.updateFrom(obj, ctx);
+    public void updateFrom(ArtemisObject obj) {
+        super.updateFrom(obj);
         
         if (obj instanceof BaseArtemisShielded) {
             ArtemisShielded ship = (ArtemisShielded) obj;
+            
             int hullId = ship.getHullId();
+            if (hullId != -1) mHullId = hullId;
 
-            if (hullId != -1) {
-                mHullId = hullId;
-            }
+            float front = ship.getShieldsFront();
+            if (!Float.isNaN(front)) mShieldsFront = front;
 
-            float shields = ship.getShieldsFront();
-
-            if (shields != Float.MIN_VALUE) {
-                mShieldsFront = shields;
-            }
-
-            shields = ship.getShieldsRear();
-
-            if (shields != Float.MIN_VALUE) {
-                mShieldsRear = shields;
-            }
+            float rear = ship.getShieldsRear();
+            if (!Float.isNaN(rear)) mShieldsRear = rear;
         }
     }
 
     @Override
-	public void appendObjectProps(SortedMap<String, Object> props, boolean includeUnspecified) {
-    	super.appendObjectProps(props, includeUnspecified);
-    	putProp(props, "Hull ID", mHullId, -1, includeUnspecified);
-		putProp(props, "Vessel type", Integer.toString(mHullId), includeUnspecified);
-    	putProp(props, "Shields: fore", mShieldsFront, Float.MIN_VALUE, includeUnspecified);
-    	putProp(props, "Shields: aft", mShieldsRear, Float.MIN_VALUE, includeUnspecified);
+	public void appendObjectProps(SortedMap<String, Object> props) {
+    	super.appendObjectProps(props);
+    	putProp(props, "Hull ID", mHullId, -1);
+		putProp(props, "Vessel type", Integer.toString(mHullId));
+    	putProp(props, "Shields: fore", mShieldsFront, Float.NaN);
+    	putProp(props, "Shields: aft", mShieldsRear, Float.NaN);
+    }
+    
+    /**
+     * Returns true if this object contains any data.
+     */
+    protected boolean hasData() {
+    	return super.hasData() || mHullId != -1 || !Float.isNaN(mShieldsFront) || !Float.isNaN(mShieldsRear);
     }
 }

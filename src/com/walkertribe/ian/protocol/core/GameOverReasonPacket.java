@@ -4,73 +4,53 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.walkertribe.ian.enums.ConnectionType;
-import com.walkertribe.ian.iface.PacketFactory;
-import com.walkertribe.ian.iface.PacketFactoryRegistry;
+import com.walkertribe.ian.enums.Origin;
 import com.walkertribe.ian.iface.PacketReader;
 import com.walkertribe.ian.iface.PacketWriter;
-import com.walkertribe.ian.protocol.ArtemisPacket;
-import com.walkertribe.ian.protocol.ArtemisPacketException;
-import com.walkertribe.ian.protocol.BaseArtemisPacket;
+import com.walkertribe.ian.protocol.Packet;
+import com.walkertribe.ian.util.Util;
 
-public class GameOverReasonPacket extends BaseArtemisPacket {
-    private static final int TYPE = 0xf754c8fe;
-    private static final byte MSG_TYPE = 0x14;
+/**
+ * Describes why the game ended.
+ * @author rjwut
+ */
+@Packet(origin = Origin.SERVER, type = CorePacketType.SIMPLE_EVENT, subtype = SimpleEventPacket.Subtype.GAME_REASON)
+public class GameOverReasonPacket extends SimpleEventPacket {
+	private final List<CharSequence> mText;
 
-	public static void register(PacketFactoryRegistry registry) {
-		registry.register(ConnectionType.SERVER, TYPE, MSG_TYPE,
-				new PacketFactory() {
-			@Override
-			public Class<? extends ArtemisPacket> getFactoryClass() {
-				return GameOverReasonPacket.class;
-			}
-
-			@Override
-			public ArtemisPacket build(PacketReader reader)
-					throws ArtemisPacketException {
-				return new GameOverReasonPacket(reader);
-			}
-		});
-	}
-
-	private List<String> mText;
-
-	private GameOverReasonPacket(PacketReader reader) {
-    	super(ConnectionType.SERVER, TYPE);
-        reader.skip(4); // subtype
-        mText = new LinkedList<String>();
-
-        while (reader.hasMore()) {
-        	mText.add(reader.readString());
-        }
-    }
-
-    public GameOverReasonPacket(String... text) {
-    	super(ConnectionType.SERVER, TYPE);
+    public GameOverReasonPacket(CharSequence... text) {
+    	if (text.length == 0)
+    		throw new IllegalArgumentException("You must provide a reason why the game ended");
+    	
+    	for (CharSequence line: text) {
+    		if (Util.isBlank(line))
+    			throw new IllegalArgumentException("No blank lines allowed");
+    	}
+    	
     	mText = Arrays.asList(text);
+    }
+    
+    public GameOverReasonPacket(PacketReader reader) {
+    	super(reader);
+    	mText = new LinkedList<CharSequence>();
+    	while (reader.hasMore()) mText.add(reader.readString());
     }
 
     /**
-     * The text describing why the game ended. Each String in the List is one
-     * line.
+     * The text describing why the game ended. Each CharSequence in the List is one line.
      */
-    public List<String> getText() {
-        return new LinkedList<String>(mText);
+    public List<CharSequence> getText() {
+        return mText;
     }
 
 	@Override
 	protected void writePayload(PacketWriter writer) {
-		writer.writeInt(MSG_TYPE);
-
-		for (String line : mText) {
-			writer.writeString(line);
-		}
+		super.writePayload(writer);
+		for (CharSequence line: mText) writer.writeString(line);
 	}
 
 	@Override
 	protected void appendPacketDetail(StringBuilder b) {
-		for (String line : mText) {
-			b.append("\n\t").append(line);
-		}
+		for (CharSequence line: mText) b.append("\n\t").append(line);
 	}
 }

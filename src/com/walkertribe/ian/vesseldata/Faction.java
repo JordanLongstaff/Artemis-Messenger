@@ -1,8 +1,8 @@
 package com.walkertribe.ian.vesseldata;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
+
+import com.walkertribe.ian.util.Version;
 
 /**
  * Corresponds to the <hullRace> element in vesselData.xml.
@@ -11,8 +11,10 @@ import java.util.Set;
 public class Faction {
 	private int id;
 	private String name;
-	private Set<FactionAttribute> attributes;
-	List<Taunt> taunts = new ArrayList<Taunt>(3);
+	private Set<String> attributes;
+	
+	private static Version version;
+	private static final Version TERRAN_VERSION = new Version("2.3.0");
 
 	Faction(int id, String name, String keys) {
 		this.id = id;
@@ -31,15 +33,15 @@ public class Faction {
 	 * Returns the faction's name.
 	 */
 	public String getName() {
-		return name;
+		return version.ge(TERRAN_VERSION) ? name : name.replaceAll("Terran", "TSN");
 	}
 
 	/**
 	 * Returns an array containing the FactionAttributes that correspond to this
 	 * Faction.
 	 */
-	public FactionAttribute[] getAttributes() {
-		return attributes.toArray(new FactionAttribute[attributes.size()]);
+	public String[] getAttributes() {
+		return attributes.toArray(new String[attributes.size()]);
 	}
 
 	/**
@@ -47,19 +49,16 @@ public class Faction {
 	 * otherwise.
 	 */
 	public boolean is(String... attrs) {
-		for (String attr : attrs) {
-			if (!attributes.contains(FactionAttribute.get(attr))) {
-				return false;
-			}
+		for (String attr: attrs) {
+			if (!attributes.contains(attr)) return false;
 		}
-
 		return true;
 	}
-
+	
 	/**
-	 * Returns this Faction's Taunts.
+	 * Sets the Artemis version.
 	 */
-	public Taunt[] getTaunts() {
-		return taunts.toArray(new Taunt[taunts.size()]);
+	public static void setVersion(Version v) {
+		version = v;
 	}
 }

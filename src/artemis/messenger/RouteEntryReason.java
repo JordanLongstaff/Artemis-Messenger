@@ -7,6 +7,7 @@ public enum RouteEntryReason {
 	NEEDS_ENERGY,
 	DAMCON,
 	MALFUNCTION,
+	AMBASSADOR,
 	HOSTAGE,
 	COMMANDEERED
 }

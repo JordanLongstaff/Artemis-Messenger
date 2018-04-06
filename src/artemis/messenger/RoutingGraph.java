@@ -16,11 +16,13 @@ import android.util.SparseArray;
  *
  */
 public class RoutingGraph {
+	private static final int NO_DESTINATION = -1;
+	
 	// Variables used by the graph
 	private final SparseArray<HashSet<Integer>> paths;
 	private final SystemManager manager;
 	private final int shipId;
-	private double minCost;
+	private float minCost;
 	private final ArrayList<Integer> pointsList;
 	private final Random random;
 
@@ -29,7 +31,7 @@ public class RoutingGraph {
 		paths = new SparseArray<HashSet<Integer>>();
 		manager = m;
 		shipId = playerShip;
-		minCost = Double.POSITIVE_INFINITY;
+		minCost = Float.POSITIVE_INFINITY;
 		pointsList = new ArrayList<Integer>();
 		random = new Random();
 	}
@@ -75,18 +77,15 @@ public class RoutingGraph {
 	 * @param dest the destination object
 	 * @return the distance between the source and destination objects
 	 */
-	public double getDistance(int src, int dest) {
-		double distX = manager.getObject(src).getX() - manager.getObject(dest).getX();
-		double distY = manager.getObject(src).getY() - manager.getObject(dest).getY();
-		double distZ = manager.getObject(src).getZ() - manager.getObject(dest).getZ();
-		return Math.sqrt(distX * distX + distY * distY + distZ * distZ);
+	public float getDistance(int src, int dest) {
+		return manager.getObject(src).distance(manager.getObject(dest));
 	}
 	
 	/**
 	 * Returns the current minimum cost calculated by the graph.
 	 * @return the current minimum cost threshold
 	 */
-	public double getMinimumCost() {
+	public float getMinimumCost() {
 		return minCost;
 	}
 	
@@ -94,7 +93,7 @@ public class RoutingGraph {
 	 * Sets the minimum cost threshold for the graph.
 	 * @param cost the minimum cost threshold
 	 */
-	public void setMinimumCost(double cost) {
+	public void setMinimumCost(float cost) {
 		minCost = cost;
 	}
 	
@@ -135,18 +134,35 @@ public class RoutingGraph {
 	 * go to {@code src} at some point.
 	 * @param src the point to go from
 	 * @param dest the point to go to
+	 * @throws IllegalArgumentException if either {@code src} or {@code dest} is null
 	 */
-	public void addPath(ArtemisObject src, ArtemisObject dest) {
+	public void addPath(ArtemisObject src, ArtemisObject dest) throws IllegalArgumentException {
+		// Assert that neither source nor destination is null
+		if (src  == null) throw new IllegalArgumentException("Path source cannot be null");
+		if (dest == null) throw new IllegalArgumentException("Path destination cannot be null");
+		
 		// Add src to list of points to go to
 		if (paths.indexOfKey(src.getId()) < 0)
 			paths.put(src.getId(), new HashSet<Integer>());
 		
 		// Add dest to list of points to go to after going to src, if not null
-		int destId = -1;
-		if (dest != null) {
-			destId = dest.getId();
-		}
-		paths.get(src.getId()).add(destId);
+		paths.get(src.getId()).add(dest.getId());
+	}
+	
+	/**
+	 * Adds a requisite path to the graph. Paths added using this method indicate that we must go to {@code dest} at
+	 * some point.
+	 * @param dest the point to go to
+	 * @throws IllegalArgumentException if {@code dest} is null
+	 */
+	public void addPath(ArtemisObject dest) {
+		// Assert that destination is not null
+		if (dest == null) throw new IllegalArgumentException("Path destination cannot be null");
+		
+		// Add dest to list of points to go to
+		if (paths.indexOfKey(dest.getId()) < 0)
+			paths.put(dest.getId(), new HashSet<Integer>());
+		paths.get(dest.getId()).add(NO_DESTINATION);
 	}
 	
 	/**
@@ -188,8 +204,8 @@ public class RoutingGraph {
 	
 	public void recalculateCurrentRoute() {
 		int currentPoint = shipId;
-		double cost = 0.0;
-		if (pointsList.isEmpty()) cost = Double.POSITIVE_INFINITY;
+		float cost = 0f;
+		if (pointsList.isEmpty()) cost = Float.POSITIVE_INFINITY;
 		else for (int i: pointsList) {
 			cost += getDistance(currentPoint, i);
 			currentPoint = i;
@@ -236,7 +252,7 @@ public class RoutingGraph {
 		route.addAll(subRoute);
 		
 		// Calculate total distance traveled
-		double dist = getDistance(shipId, paths.keyAt(nextNode)) + next.minCost;
+		float dist = getDistance(shipId, paths.keyAt(nextNode)) + next.minCost;
 		
 		// Update minimum cost and number of points
 		minCost = dist;

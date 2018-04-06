@@ -1,4 +1,91 @@
-﻿<!-- vessel_data is the big wrapper for all the vessel objects -->
+<!-- **************************************************************************************** -->
+<!-- ***                                                                                  *** -->
+<!-- ***                      Ben Fornshell's Custom Ship Designs                         *** -->
+<!-- ***                      (circa December 10th, 2016)                                 *** -->
+<!-- ***                                                                                  *** -->
+<!-- ***                      Fan edits & fixes by UEAdmiral                              *** -->
+<!-- ***                      Version 4.2.12                                              *** -->
+<!-- ***                      Updated February 25th 2018                                  *** -->
+<!-- ***                                                                                  *** -->
+<!-- ***                                                                                  *** -->
+<!-- **************************************************************************************** -->
+
+<!-- ************************************************************************************ -->
+<!-- ***                                                                              *** -->
+<!-- ***                               Starship Classes                               *** -->
+<!-- ***                                                                              *** -->
+<!-- ***                                                                              *** -->
+<!-- ***        Class Name    Slots    Mnvr   Speed   Fghtrs Efficiency               *** -->
+<!-- ***        __________________________________________________________            *** -->
+<!-- ***        Corvette        4       6       8       0       .8                    *** -->
+<!-- ***        Destroyer       8       5       7       0       .9                    *** -->
+<!-- ***        Cruiser         12      4       6       0       1.0                   *** -->
+<!-- ***        Battlecruiser   16      3.5     5       0       1.1                   *** -->
+<!-- ***        Battleship      26      3       4.5     2       1.2                   *** -->
+<!-- ***        Dreadnought     36      2.5     4       4       1.3                   *** -->
+<!-- ***        Impulse only, move slots up to next class                             *** -->
+<!-- ***                                                                              *** -->
+<!-- ***        Shields         Fore    Aft                                           *** -->
+<!-- ***        __________________________________________________________            *** -->
+<!-- ***        Corvette        40      40                                            *** -->
+<!-- ***        Destroyer       80      80                                            *** -->
+<!-- ***        Cruiser         120     120                                           *** -->
+<!-- ***        Battlecruiser   160     160                                           *** -->
+<!-- ***        Battleship      240     240                                           *** -->
+<!-- ***        Dreadnought     320     320                                           *** -->
+<!-- ***        Impulse only, move shields up to next class                           *** -->
+<!-- ***                                                                              *** -->
+<!-- ***                                                                              *** -->
+<!-- ***                                                                              *** -->
+<!-- ***                                                                              *** -->
+<!-- ***        Beam          Slots   Damage  Cycle     Arc     Range                 *** -->                                     
+<!-- ***        __________________________________________________________            *** -->
+<!-- ***        Forward         1       12       6       .4      1000                 *** -->
+<!-- ***        Focused         1       12       6       .05     1500                 *** -->
+<!-- ***        Turreted        1       12       6       1       667                  *** -->
+<!-- ***        Sidearm         1       12       6       .2      1200 Side only       *** -->
+<!-- ***        Fore/Aft        1       12       6       .6      1000                 *** -->
+<!-- ***        Heavy           x2      x2                                            *** -->
+<!-- ***        Rapid           x1      x.5     x.5                                   *** -->
+<!-- ***        Massive         x8      x8                                            *** -->
+<!-- ***        Wide Angle      x1.5                    1                             *** -->
+<!-- ***        Narrow Angle    x2/3                    .05                           *** -->
+<!-- ***        Range           xA                              xA                    *** -->
+<!-- ***                                                                              *** -->
+<!-- ***        Torpedo        Slots   Torpedo Points                                 *** -->
+<!-- ***        ______________________________________                                *** -->
+<!-- ***        Torpedo Slot    1       39                                            *** -->
+<!-- ***        Torpedo Tube    NA      6                                             *** -->
+<!-- ***        Homing          NA      1                                             *** -->
+<!-- ***        Nuke            NA      6                                             *** -->
+<!-- ***        Mine            NA      2                                             *** -->
+<!-- ***        EMP             NA      4                                             *** -->
+<!-- ***        PShock          NA      1                                             *** -->
+<!-- ***        Beacon          NA      2                                             *** -->
+<!-- ***        Probe           NA      0.5                                           *** -->
+<!-- ***        Tag             NA      0.5                                           *** -->
+<!-- ***                                                                              *** -->
+<!-- ***                                                                              *** -->
+<!-- ***                                                                              *** -->
+<!-- ***                                                                              *** -->
+<!-- ***                                                                              *** -->
+<!-- ***        Note: Standard ammo complement per Torpedo Tube:                      *** -->
+<!-- ***    4 Homing, 1 Nuke, 3 Mines, 2 EMP, 2 PShock, 2 Beacon, 4 Probe, 2 Tag      *** -->
+<!-- ***                                                                              *** -->
+<!-- ***        Extra Fighter Bays:                                                   *** -->
+<!-- ***        ______________________________________                                *** -->
+<!-- ***        For every 2 fighters in additon to standard class complement,         *** -->
+<!-- ***        a. reduce mothership fore & aft shields by 20, and                    *** -->
+<!-- ***        b. reduce mothership armament by:                                     *** -->
+<!-- ***             - 1 beam                                                         *** -->
+<!-- ***                or                                                            *** -->
+<!-- ***             - 1 torpedo tube and 33 points-worth of ordnance                 *** -->
+<!-- ***                                                                              *** -->
+<!-- ***                                                                              *** -->
+<!-- ***                                                                              *** -->
+<!-- ***                                                                              *** -->
+<!-- ************************************************************************************ -->
+<!-- vessel_data is the big wrapper for all the vessel objects -->
 <vessel_data version="2.1">
 
   <hullRace ID="0" name="TSN" keys="player">
@@ -13,44 +100,51 @@
     <taunt immunity="is decorated for strategic thinking and is not interested in offering a challenge in battle" text="You chicken-hearted cowards! I've had more challenging battles with a space bug!"/>
   </hullRace>
   <hullRace ID="2" name="Kralien" keys="enemy standard">
-    <taunt immunity="does not practice the Kralien religion faithfully" text="Hey wormface! Can I borrow your Holy Scroll of Amborax? I need to wipe my stinky feet!"/>
-    <taunt immunity="complained to Kralien High Command that Kralien ships are too weak" text="You call that a warship? I could crush that toy with my bare hands."/>
-    <taunt immunity="is unmarried" text="You're so ugly that your wife will thank me for killing you!"/>
+    <taunt immunity="falls asleep during readings of the Holy Scrolls" text="You call yourself pious, I bet you don't even face Galactic North when you pray!"/>
+    <taunt immunity="bribed the shipyards to add upgraded targetting systems and shields" text="Thank you for providing a target drone for us to shoot at!"/>
+    <taunt immunity="loves the bachelor life" text="Your kids will miss you when I get done blowing you into space dust!"/>
   </hullRace>
   <hullRace ID="3" name="Arvonian" keys="enemy support whalelover">
-    <taunt immunity="openly dislikes the Arvonian Royal Family" text="Queen Marah looks like a hideous pustule and smells like a flatulent Space Whale."/>
-    <taunt immunity="is unmarried" text="Your husband dresses like a Situlan scum slug!"/>
-    <taunt immunity="does not care about space whales" text="I'll kill you later, Arvonian. Right now I'm enjoying a bowl of space whale soup."/>
+    <taunt immunity="thinks all Arvonians should have equal standing" text="Your Princess Azmadine couldn't run a party, never mind a fleet."/>
+    <taunt immunity="is married to the navy" text="Your husband doesn't even know how to cook!"/>
+    <taunt immunity="thinks space whales are a danger to the space lanes" text="Have you seen any space whales?  We killed all the ones back home and are looking for new hunting grounds."/>
   </hullRace>
   <hullRace ID="4" name="Torgoth" keys="enemy support whalehater">
-    <taunt immunity="runs a tidy ship and has no insecurity about hygiene" text="Do us all a favor and take a bath, you fungus-infested pachyderm!"/>
-    <taunt immunity="has already mourned his dead father and will not react to taunts about him" text="Your father is a Space Whale!"/>
-    <taunt immunity="has the highest Torgoth efficiency rating and will not react to taunts about his ship's condition" text="That broken down rust bucket guarantees victory for Earth."/>
+    <taunt immunity="requires his entire crew to shower twice daily and pumps air freshner through the life support system." text="Do you smell something?  Oh wait, that's you!"/>
+    <taunt immunity="grew up an orphan" text="Your father is a Whale hugger!"/>
+    <taunt immunity="personally polishes the main gun every day" text="Let me get out my microscope so I can look at your puny gun."/>
   </hullRace>
   <hullRace ID="5" name="Skaraan" keys="enemy loner hasspecials">
-    <taunt immunity="has no living family" text="Your father is a flea-bitten Laparian mule!"/>
-    <taunt immunity="does not care about his ship's appearance" text="Your ship is so ugly my eyeballs burn just looking at it!"/>
-    <taunt immunity="often disagrees with Skaraan corporate leadership" text="Your corporate bosses are dimwitted, money-losing morons!"/>
+    <taunt immunity="is batting for the home team" text="Looks like I'll be doing the ladies a favor taking you out of the gene pool!"/>
+    <taunt immunity="has just finished repainting his warship" text="You flew through space in that bucket of bolts?"/>
+    <taunt immunity="thinks corporations are endless red tape" text="You'll be lucky if you ever get a promotion working like that!"/>
   </hullRace>
   <hullRace ID="6" name="BioMech" keys="enemy loner biomech">
-    <taunt immunity="smnewi4f5jH#5ld3@(#k"     text="3.14159265358979"/>
-    <taunt immunity="Mk40gH(*HGl45gj3p;32ll0-" text="We are not your enemy!"/>
-    <taunt immunity="NNRnjh3h49@98%^km%%%m"    text="Please communicate with us."/>
+    <taunt immunity="smpdoinewijn't4f5jsayH#5ldpi3@(#k"     text="3.14159265358979"/>
+    <taunt immunity="Mkwe40gH(li3ke*HGl45gtOj3;32fiGghtellt0-" text="We are not your enemy!"/>
+    <taunt immunity="NdiNRtnjh3tah49st4es@98%^bakm%o%%Dm"    text="You actually eat asteroids?  Disgusting!."/>
   </hullRace>
   <hullRace ID="7" name="Ximni" keys="player jumpmaster">
-    <taunt immunity="has no visible mutations on his face" text="The deadliest weapon on your ship is your ugly, mutant face!"/>
-    <taunt immunity="is a decorated hero who ignores taunts about her bravery" text="Only a coward hides in a massive battlewagon like that!"/>
-    <taunt immunity="is a human who has never even seen the Ximni homeworld" text="The only thing that smells worse than dragon breath is the Ximni home planet!"/>
+    <taunt immunity="looks sharp, and dresses sharper" text="You're never getting a date dressed like that!"/>
+    <taunt immunity="fought in five campaigns, is covered in battle won scars." text="You'll be running when the first salvo explodes a parsec away."/>
+    <taunt immunity="has lived their entire life in a spaceship" text="Don't worry, we'd never attack the Ximni homeworld, it's already a dump!"/>
   </hullRace>
+
   <hullRace ID="8" name="Pirate" keys="player jumpmaster">
     <taunt immunity="is proud of his laid back crew with lax discipline" text="Your crew is a sloppy bunch of disrespectful layabouts!"/>
     <taunt immunity="isn't familiar with Terran animals" text="You're nothing but pirhana bait!"/>
     <taunt immunity="has a well maintained personal appearance" text="Your breath could kill a space whale!"/>
   </hullRace>
-
-
+  
+  <hullRace ID="9" name="Ambrosian" keys="player jumpmaster">
+      <taunt immunity="grew up next to a major information hub" text="Why don't you move to someplace more civilized, like Kralia!"/>
+      <taunt immunity="keeps a small community together for fun" text="Nobody cares about you and your friends!"/>
+      <taunt immunity="has no regard for basic human decency" text="Your parents were truly exceptional to raise such a brilliant talking anus!"/>
+  </hullRace>
+  
+  
   <!-- vessel is the definition for a single type of vessel -->
-  <vessel    uniqueID="0"    side="0"       classname="Light Cruiser" broadType="player">
+  <vessel    uniqueID="0"    side="0"       classname="Light Cruiser" broadType="player tsnvanillalightcruiser">
     <art     meshfile="dat/artemis.dxs"    diffuseFile="dat/LightCruiser_Diffuse.png"
              glowFile="dat/LightCruiser_Glow.png"    specularFile="dat/LightCruiser_Specular.png" scale="0.2" pushRadius="150"/>
     <internal_data file="dat/artemis.snt"/>
@@ -60,11 +154,14 @@
     <beam_port x=" 102.14" y="8.35" z="258.74" damage="1" playerdamage="12" arcwidth="0.4" cycletime="6.0" range="1000"/>
     <torpedo_tube x="0" y="8.35" z="258.74"/>
     <torpedo_tube x="0" y="8.35" z="258.74"/>
-    <torpedo_storage type="0" amount="8"/>  <!-- Type 1 Homing"-->
-    <torpedo_storage type="1" amount="2"/>  <!-- Type 4 LR Nuke-->
-    <torpedo_storage type="2" amount="6"/>  <!-- Type 6 Mine"-->
-    <torpedo_storage type="3" amount="4"/>  <!-- Type 9 ECM"-->
-    <torpedo_storage type="4" amount="2"/>  <!-- Type 8 Pshock"-->
+    <torpedo_storage type="trp" amount="8"/>  <!-- Type 1 Homing"-->
+    <torpedo_storage type="nuk" amount="2"/>  <!-- Type 4 LR Nuke-->
+    <torpedo_storage type="min" amount="6"/>  <!-- Type 6 Mine"-->
+    <torpedo_storage type="emp" amount="4"/>  <!-- Type 9 ECM"-->
+    <torpedo_storage type="shk" amount="2"/>  <!-- Type 8 Pshock"-->
+    <torpedo_storage type="bea" amount="5"/>  <!-- Beacon"-->
+    <torpedo_storage type="pro" amount="5"/>  <!-- Probe"-->
+    <torpedo_storage type="tag" amount="5"/>  <!-- Tag"-->
     <engine_port x=" 82.93" y="5" z="-240.89"/>
     <engine_port x="-82.93" y="5" z="-240.89"/>
     <engine_port x="0" y="-9.22" z="-300"/>
@@ -72,7 +169,7 @@
     <long_desc text="TSN Cruiser^Standard long patrol vessel of the TSN.^2 forward beams^2 Torpedo tubes^Stores for 2 nukes, 8 homing, 6 mines, 4 ECM, 2 PShock."/>
   </vessel>
 
-  <vessel    uniqueID="1"    side="0"       classname="Scout" broadType="player">
+  <vessel    uniqueID="1"    side="0"       classname="Scout" broadType="player tsnvanillascout">
     <art     meshfile="dat/artemis-scout.dxs"    diffuseFile="dat/artemis_diffuse.png"
              glowFile="dat/artemis_illum.png"    specularFile="dat/artemis_specular.png" scale="0.2" pushRadius="150"/>
     <internal_data file="dat/artemis-scout.snt"/>
@@ -80,17 +177,20 @@
     <performance turnrate="0.006" topspeed="0.8"  shipefficiency="0.7" warpefficiency="0.7" jumpefficiency="1.0"/>
     <beam_port x="0" y="17.8" z="289.0" damage="1" playerdamage="12" arcwidth="0.4" cycletime="6.0" range="1000"/>
     <torpedo_tube x="0" y="8.35" z="258.74"/>
-    <torpedo_storage type="0" amount="6"/>   <!-- Type 1 Homing"-->
-    <torpedo_storage type="1" amount="0"/>   <!-- Type 4 LR Nuke-->
-    <torpedo_storage type="2" amount="2"/>   <!-- Type 6 Mine"-->
-    <torpedo_storage type="3" amount="2"/>   <!-- Type 9 ECM"-->
-    <torpedo_storage type="4" amount="1"/>   <!-- Type 8 Pshock"-->
+    <torpedo_storage type="trp" amount="6"/>   <!-- Type 1 Homing"-->
+    <torpedo_storage type="nuk" amount="0"/>   <!-- Type 4 LR Nuke-->
+    <torpedo_storage type="min" amount="2"/>   <!-- Type 6 Mine"-->
+    <torpedo_storage type="emp" amount="2"/>   <!-- Type 9 ECM"-->
+    <torpedo_storage type="shk" amount="1"/>   <!-- Type 8 Pshock"-->
+    <torpedo_storage type="bea" amount="3"/>  <!-- Beacon"-->
+    <torpedo_storage type="pro" amount="3"/>  <!-- Probe"-->
+    <torpedo_storage type="tag" amount="3"/>  <!-- Tag"-->
     <engine_port x="0" y="-9.22" z="-300"/>
     <engine_port x="0" y="29.64" z="-300"/>
     <long_desc text="TSN Scout^Long range scout vessel of the TSN.^1 forward beam^1 Torpedo tube^Stores for 6 homing, 2 mines, 2 ECM, 1 PShock."/>
   </vessel>
 
-  <vessel    uniqueID="2"    side="0"       classname="Battleship" broadType="player">
+  <vessel    uniqueID="2"    side="0"       classname="Battleship" broadType="player tsnvanillabattleship">
     <art     meshfile="dat/artemis-3.dxs"    diffuseFile="dat/artemis_diffuse.png"
              glowFile="dat/artemis_illum.png"    specularFile="dat/artemis_specular.png" scale="0.2"/>
     <internal_data file="dat/artemis-3.snt"/>
@@ -102,11 +202,14 @@
     <beam_port x=" 41.764229" y="20.665134" z="282.250519" damage="1" playerdamage="12" arcwidth="0.4" cycletime="6.0" range="1000"/>
     <torpedo_tube x="0" y="8.35" z="258.74"/>
     <torpedo_tube x="0" y="8.35" z="258.74"/>
-    <torpedo_storage type="0" amount="8"/>    <!-- Type 1 Homing"-->
-    <torpedo_storage type="1" amount="2"/>    <!-- Type 4 LR Nuke-->
-    <torpedo_storage type="2" amount="6"/>    <!-- Type 6 Mine"-->
-    <torpedo_storage type="3" amount="4"/>    <!-- Type 9 ECM"-->
-    <torpedo_storage type="4" amount="5"/>    <!-- Type 8 Pshock"-->
+    <torpedo_storage type="trp" amount="8"/>    <!-- Type 1 Homing"-->
+    <torpedo_storage type="nuk" amount="2"/>    <!-- Type 4 LR Nuke-->
+    <torpedo_storage type="min" amount="6"/>    <!-- Type 6 Mine"-->
+    <torpedo_storage type="emp" amount="4"/>    <!-- Type 9 ECM"-->
+    <torpedo_storage type="shk" amount="5"/>    <!-- Type 8 Pshock"-->
+    <torpedo_storage type="bea" amount="2"/>  <!-- Beacon"-->
+    <torpedo_storage type="pro" amount="8"/>  <!-- Probe"-->
+    <torpedo_storage type="tag" amount="2"/>  <!-- Tag"-->
     <engine_port x="0" y="-9.22" z="-300"/>
     <engine_port x="0" y="29.64" z="-300"/>
     <engine_port x="-111.755783" y="-44.202168" z="-242.740082"/>
@@ -115,7 +218,7 @@
     <long_desc text="TSN Battleship^Beam-heavy combat vessel of the TSN.^4 forward beams^2 Torpedo tubes^Stores for 2 nukes, 8 homing, 6 mines, 4 ECM, 5 PShock."/>
   </vessel>
 
-  <vessel    uniqueID="3"    side="0"       classname="Missile Cruiser" broadType="player">
+  <vessel    uniqueID="3"    side="0"       classname="Missile Cruiser" broadType="player tsnvanillamissilecruiser">
     <art     meshfile="dat/artemis-4.dxs"    diffuseFile="dat/artemis_diffuse.png"
              glowFile="dat/artemis_illum.png"    specularFile="dat/artemis_specular.png" scale="0.2" pushRadius="150"/>
     <internal_data file="dat/artemis-4.snt"/>
@@ -125,11 +228,14 @@
     <torpedo_tube x="0" y="8.35" z="258.74"/>
     <torpedo_tube x="0" y="8.35" z="258.74"/>
     <torpedo_tube x="0" y="8.35" z="258.74"/>
-    <torpedo_storage type="0" amount="20"/>    <!-- Type 1 Homing"-->
-    <torpedo_storage type="1" amount="8"/>    <!-- Type 4 LR Nuke-->
-    <torpedo_storage type="2" amount="14"/>    <!-- Type 6 Mine"-->
-    <torpedo_storage type="3" amount="12"/>    <!-- Type 9 ECM"-->
-    <torpedo_storage type="4" amount="6"/>    <!-- Type 8 Pshock"-->
+    <torpedo_storage type="trp" amount="20"/>    <!-- Type 1 Homing"-->
+    <torpedo_storage type="nuk" amount="8"/>    <!-- Type 4 LR Nuke-->
+    <torpedo_storage type="min" amount="14"/>    <!-- Type 6 Mine"-->
+    <torpedo_storage type="emp" amount="12"/>    <!-- Type 9 ECM"-->
+    <torpedo_storage type="shk" amount="6"/>    <!-- Type 8 Pshock"-->
+    <torpedo_storage type="bea" amount="12"/>  <!-- Beacon"-->
+    <torpedo_storage type="pro" amount="15"/>  <!-- Probe"-->
+    <torpedo_storage type="tag" amount="6"/>  <!-- Tag"-->
     <engine_port x=" 82.93" y="5" z="-240.89"/>
     <engine_port x="-82.93" y="5" z="-240.89"/>
     <engine_port x="0" y="-9.22" z="-300"/>
@@ -139,7 +245,7 @@
     <long_desc text="TSN Missile Cruiser^Specialized vessel of the TSN.^4 Torpedo tubes^Stores for 8 nukes, 20 homing, 14 mines, 12 ECM, 6 PShock."/>
   </vessel>
 
-  <vessel    uniqueID="4"    side="0"       classname="Dreadnought" broadType="player carrier">
+  <vessel    uniqueID="4"    side="0"       classname="Dreadnought" broadType="player carrier tsnvanilladreadnought">
     <art     meshfile="dat/artemis-5.dxs"    diffuseFile="dat/artemis_diffuse.png"
              glowFile="dat/artemis_illum.png"    specularFile="dat/artemis_specular.png" scale="0.25" pushRadius="150"/>
     <internal_data file="dat/artemis-5.snt"/>
@@ -152,16 +258,14 @@
     <torpedo_tube x="0" y="8.35" z="258.74"/>
     <torpedo_tube x="0" y="8.35" z="258.74"/>
     <torpedo_tube x="0" y="8.35" z="258.74"/>
-    <torpedo_storage type="0" amount="10"/>
-    <!-- Type 1 Homing"-->
-    <torpedo_storage type="1" amount="4"/>
-    <!-- Type 4 LR Nuke-->
-    <torpedo_storage type="2" amount="8"/>
-    <!-- Type 6 Mine"-->
-    <torpedo_storage type="3" amount="5"/>
-    <!-- Type 9 ECM"-->
-    <torpedo_storage type="4" amount="4"/>
-    <!-- Type 8 Pshock"-->
+    <torpedo_storage type="trp" amount="10"/> <!-- Type 1 Homing"-->
+    <torpedo_storage type="nuk" amount="4"/> <!-- Type 4 LR Nuke-->
+    <torpedo_storage type="min" amount="8"/> <!-- Type 6 Mine"-->
+    <torpedo_storage type="emp" amount="5"/> <!-- Type 9 ECM"-->
+    <torpedo_storage type="shk" amount="4"/> <!-- Type 8 Pshock"-->
+    <torpedo_storage type="bea" amount="6"/>  <!-- Beacon"-->
+    <torpedo_storage type="pro" amount="10"/>  <!-- Probe"-->
+    <torpedo_storage type="tag" amount="2"/>  <!-- Tag"-->
     <engine_port x="0" y="-9.22" z="-300"/>
     <engine_port x="0" y="29.64" z="-300"/>
     <engine_port x="-81.6" y="5.1" z="-235.4"/>
@@ -174,7 +278,7 @@
 
   </vessel>
 
-  <vessel    uniqueID="5"    side="0"       classname="Carrier" broadType="player carrier">
+  <vessel    uniqueID="5"    side="0"       classname="Carrier" broadType="player carrier tsnvanillacarrier">
     <art     meshfile="dat/TSNMediumCarrier.dxs"    diffuseFile="dat/CarrierDiffuse.png"
              glowFile="dat/CarrierGlow.png"    specularFile="dat/CarrierGlow.png" scale="0.25" pushRadius="150"/>
     <internal_data file="dat/TSNMediumCarrier.snt"/>
@@ -184,16 +288,19 @@
     <beam_port x="0" y="-22" z="143"  damage="1" playerdamage="12" arcwidth="0.48" cycletime="6.0" range="1000"/>
     <beam_port x="0" y="57" z="-262"  damage="1" playerdamage="12" arcwidth="0.48" cycletime="6.0" range="1000"/>
     <torpedo_tube x="0" y="8.35" z="258.74"/>
-    <torpedo_storage type="0" amount="6"/>
+    <torpedo_storage type="trp" amount="6"/>
     <!-- Type 1 Homing"-->
-    <torpedo_storage type="1" amount="1"/>
+    <torpedo_storage type="nuk" amount="1"/>
     <!-- Type 4 LR Nuke-->
-    <torpedo_storage type="2" amount="4"/>
+    <torpedo_storage type="min" amount="4"/>
     <!-- Type 6 Mine"-->
-    <torpedo_storage type="3" amount="2"/>
+    <torpedo_storage type="emp" amount="2"/>
     <!-- Type 9 ECM"-->
-    <torpedo_storage type="4" amount="2"/>
+    <torpedo_storage type="shk" amount="2"/>
     <!-- Type 8 Pshock"-->
+    <torpedo_storage type="bea" amount="4"/>  <!-- Beacon"-->
+    <torpedo_storage type="pro" amount="6"/>  <!-- Probe"-->
+    <torpedo_storage type="tag" amount="4"/>  <!-- Tag"-->
     <engine_port x="-96.104828" y="-3.736436" z="-206.067001"/>
     <engine_port x="-49.342007" y="13.807057" z="-246.574982"/>
     <engine_port x="-47.541462" y="-9.202737" z="-245.196808"/>
@@ -208,7 +315,7 @@
       <long_desc text="TSN Medium Carrier^Standard carrier of the TSN.^2 primary beams^1 Torpedo tube^Stores for 1 nukes, 6 homing, 4 mines, 2 ECM, 2 PShock."/>
   </vessel>
 
-  <vessel    uniqueID="6"    side="0"       classname="Mine Layer" broadType="player">
+  <vessel    uniqueID="6"    side="0"       classname="Mine Layer" broadType="player tsnvanillaminelayer">
     <art     meshfile="dat/TSNMineLayer.dxs"    diffuseFile="dat/CarrierDiffuse.png"
              glowFile="dat/CarrierGlow.png"    specularFile="dat/CarrierGlow.png" scale="0.22" pushRadius="150"/>
     <internal_data file="dat/TSNMineLayer.snt"/>
@@ -219,16 +326,19 @@
     <torpedo_tube x="-5" y="8.35" z="258.74"/>
     <torpedo_tube x="5" y="8.35" z="258.74"/>
     <torpedo_tube x="10" y="8.35" z="258.74"/>
-    <torpedo_storage type="0" amount="10"/>
+    <torpedo_storage type="trp" amount="10"/>
     <!-- Type 1 Homing"-->
-    <torpedo_storage type="1" amount="0"/>
+    <torpedo_storage type="nuk" amount="0"/>
     <!-- Type 4 LR Nuke-->
-    <torpedo_storage type="2" amount="25"/>
+    <torpedo_storage type="min" amount="25"/>
     <!-- Type 6 Mine"-->
-    <torpedo_storage type="3" amount="0"/>
+    <torpedo_storage type="emp" amount="0"/>
     <!-- Type 9 ECM"-->
-    <torpedo_storage type="4" amount="0"/>
+    <torpedo_storage type="shk" amount="0"/>
     <!-- Type 8 Pshock"-->
+    <torpedo_storage type="bea" amount="0"/>  <!-- Beacon"-->
+    <torpedo_storage type="pro" amount="5"/>  <!-- Probe"-->
+    <torpedo_storage type="tag" amount="0"/>  <!-- Tag"-->
     <engine_port x="0" y="26.783722" z="-195.166214"/>
     <engine_port x="0" y="-19.618479" z="-191.015793"/>
     <engine_port x="-67.803383" y="-4.989450" z="-238.086441"/>
@@ -239,7 +349,7 @@
   </vessel>
 
 
-  <vessel    uniqueID="7"    side="0"       classname="Juggernaut" broadType="player carrier">
+  <vessel    uniqueID="7"    side="0"       classname="Juggernaut" broadType="player carrier tsnvanillajuggernaut">
     <art     meshfile="dat/TSNSuperDread.dxs"    diffuseFile="dat/CarrierDiffuse.png"
              glowFile="dat/CarrierGlow.png"    specularFile="dat/CarrierGlow.png" scale="0.27" pushRadius="170"/>
     <internal_data file="dat/TSNSuperDread.snt"/>
@@ -253,16 +363,19 @@
     <torpedo_tube x="0" y="8.35" z="258.74"/>
     <torpedo_tube x="0" y="8.35" z="258.74"/>
     <torpedo_tube x="0" y="8.35" z="258.74"/>
-    <torpedo_storage type="0" amount="16"/>
+    <torpedo_storage type="trp" amount="16"/>
     <!-- Type 1 Homing"-->
-    <torpedo_storage type="1" amount="7"/>
+    <torpedo_storage type="nuk" amount="7"/>
     <!-- Type 4 LR Nuke-->
-    <torpedo_storage type="2" amount="10"/>
+    <torpedo_storage type="min" amount="10"/>
     <!-- Type 6 Mine"-->
-    <torpedo_storage type="3" amount="7"/>
+    <torpedo_storage type="emp" amount="7"/>
     <!-- Type 9 ECM"-->
-    <torpedo_storage type="4" amount="6"/>
+    <torpedo_storage type="shk" amount="6"/>
     <!-- Type 8 Pshock"-->
+    <torpedo_storage type="bea" amount="2"/>  <!-- Beacon"-->
+    <torpedo_storage type="pro" amount="10"/>  <!-- Probe"-->
+    <torpedo_storage type="tag" amount="2"/>  <!-- Tag"-->
     <engine_port x="0" y="24.975101" z="-236.371490"/>
     <engine_port x="0" y="-10.557181" z="-233.345779"/>
 
@@ -287,7 +400,7 @@
   </vessel>
 
   <!-- ****************************** Ximni capitol ships **************************************** -->
-  <vessel    uniqueID="8"    side="7"       classname="Light Cruiser"  broadType="player">
+  <vessel    uniqueID="8"    side="7"       classname="Light Cruiser"  broadType="player ximnivanillalightcruiser">
     <art     meshfile="dat/ximni-light-cruiser.dxs"    diffuseFile="dat/XimniDiffuse.png"
              glowFile="dat/XimniGlow.png"    specularFile="dat/XimniSpecular.png" scale="0.2" pushRadius="150"/>
     <internal_data file="dat/ximni-light-cruiser.snt"/>
@@ -298,23 +411,26 @@
     <beam_port x="-214" y="-24" z="41" damage="1" playerdamage="12" arcwidth="0.4" cycletime="6.0" range="1000"/>
     <torpedo_tube x="53" y="41" z="175"/>
     <torpedo_tube x="-53" y="41" z="175"/>
-    <torpedo_storage type="0" amount="8"/>
+    <torpedo_storage type="trp" amount="8"/>
     <!-- Type 1 Homing"-->
-    <torpedo_storage type="1" amount="2"/>
+    <torpedo_storage type="nuk" amount="2"/>
     <!-- Type 4 LR Nuke-->
-    <torpedo_storage type="2" amount="6"/>
+    <torpedo_storage type="min" amount="6"/>
     <!-- Type 6 Mine"-->
-    <torpedo_storage type="3" amount="4"/>
+    <torpedo_storage type="emp" amount="4"/>
     <!-- Type 9 ECM"-->
-    <torpedo_storage type="4" amount="2"/>
+    <torpedo_storage type="shk" amount="2"/>
     <!-- Type 8 Pshock"-->
+    <torpedo_storage type="bea" amount="5"/>  <!-- Beacon"-->
+    <torpedo_storage type="pro" amount="5"/>  <!-- Probe"-->
+    <torpedo_storage type="tag" amount="5"/>  <!-- Tag"-->
     <engine_port x="-82" y="2" z="-249"/>
     <engine_port x="82" y="2" z="-249"/>
     <long_desc text="Ximni Cruiser^Standard vessel of the Ximni.^3 beams^2 Torpedo tubes^Stores for 2 nukes, 8 homing, 6 mines, 4 ECM, 2 PShock."/>
   </vessel>
 
 
-  <vessel    uniqueID="9"    side="7"       classname="Scout"  broadType="player">
+  <vessel    uniqueID="9"    side="7"       classname="Scout"  broadType="player ximnivanillascout">
     <art     meshfile="dat/ximni-scout.dxs"    diffuseFile="dat/XimniDiffuse.png"
              glowFile="dat/XimniGlow.png"    specularFile="dat/XimniSpecular.png" scale="0.2" pushRadius="150"/>
     <internal_data file="dat/ximni-scout.snt"/>
@@ -322,16 +438,19 @@
     <performance turnrate="0.006" topspeed="0.8"  shipefficiency="0.7" warpefficiency="1.0" jumpefficiency="0.4"/>
     <beam_port x="0" y="9.9" z="235.5" damage="1" playerdamage="12" arcwidth="0.4" cycletime="6.0" range="1000"/>
     <torpedo_tube x="0" y="47.817837" z="122.778183"/>
-    <torpedo_storage type="0" amount="6"/>
+    <torpedo_storage type="trp" amount="6"/>
     <!-- Type 1 Homing"-->
-    <torpedo_storage type="1" amount="0"/>
+    <torpedo_storage type="nuk" amount="0"/>
     <!-- Type 4 LR Nuke-->
-    <torpedo_storage type="2" amount="2"/>
+    <torpedo_storage type="min" amount="2"/>
     <!-- Type 6 Mine"-->
-    <torpedo_storage type="3" amount="2"/>
+    <torpedo_storage type="emp" amount="2"/>
     <!-- Type 9 ECM"-->
-    <torpedo_storage type="4" amount="1"/>
+    <torpedo_storage type="shk" amount="1"/>
     <!-- Type 8 Pshock"-->
+    <torpedo_storage type="bea" amount="5"/>  <!-- Beacon"-->
+    <torpedo_storage type="pro" amount="5"/>  <!-- Probe"-->
+    <torpedo_storage type="tag" amount="5"/>  <!-- Tag"-->
     <engine_port x="-48" y="0" z="0"/>
     <engine_port x=" 48" y="0" z="0"/>
     <engine_port x="0" y="-48" z="0"/>
@@ -340,7 +459,7 @@
   </vessel>
 
 
-  <vessel    uniqueID="10"    side="7"       classname="Missile Cruiser"  broadType="player">
+  <vessel    uniqueID="10"    side="7"       classname="Missile Cruiser"  broadType="player ximnivanillamissilecruiser">
     <art     meshfile="dat/ximni-missile.dxs"    diffuseFile="dat/XimniDiffuse.png"
              glowFile="dat/XimniGlow.png"    specularFile="dat/XimniSpecular.png" scale="0.2" pushRadius="150"/>
     <internal_data file="dat/ximni-missile.snt"/>
@@ -350,16 +469,19 @@
     <torpedo_tube x="0" y="34" z="152"/>
     <torpedo_tube x="0" y="34" z="152"/>
     <torpedo_tube x="0" y="34" z="152"/>
-    <torpedo_storage type="0" amount="20"/>
+    <torpedo_storage type="trp" amount="20"/>
     <!-- Type 1 Homing"-->
-    <torpedo_storage type="1" amount="8"/>
+    <torpedo_storage type="nuk" amount="8"/>
     <!-- Type 4 LR Nuke-->
-    <torpedo_storage type="2" amount="14"/>
+    <torpedo_storage type="min" amount="14"/>
     <!-- Type 6 Mine"-->
-    <torpedo_storage type="3" amount="12"/>
+    <torpedo_storage type="emp" amount="12"/>
     <!-- Type 9 ECM"-->
-    <torpedo_storage type="4" amount="6"/>
+    <torpedo_storage type="shk" amount="6"/>
     <!-- Type 8 Pshock"-->
+    <torpedo_storage type="bea" amount="5"/>  <!-- Beacon"-->
+    <torpedo_storage type="pro" amount="10"/>  <!-- Probe"-->
+    <torpedo_storage type="tag" amount="5"/>  <!-- Tag"-->
     <engine_port x="-85.449120" y="-8.132334" z="-201.552475"/>
     <engine_port x="-45.808228" y="-1.427677" z="-189.611588"/>
     <engine_port x="-67.651352" y="-6.247528" z="-195.777618"/>
@@ -370,7 +492,7 @@
   </vessel>
 
 
-  <vessel    uniqueID="11"    side="7"       classname="Battleship"  broadType="player">
+  <vessel    uniqueID="11"    side="7"       classname="Battleship"  broadType="player ximnivanillabattleship">
     <art     meshfile="dat/ximni-battleship.dxs"    diffuseFile="dat/XimniDiffuse.png"
              glowFile="dat/XimniGlow.png"    specularFile="dat/XimniSpecular.png" scale="0.2" pushRadius="150"/>
     <internal_data file="dat/ximni-battleship.snt"/>
@@ -382,16 +504,19 @@
     <beam_port x=" 90" y="-25.715204" z="234.597458" damage="0.4" playerdamage="5" arcwidth="0.5" cycletime="1.5" range="2600"/>
     <torpedo_tube x="-63.581463" y="15.482112" z="47.002419"/>
     <torpedo_tube x=" 63.581463" y="15.482112" z="47.002419"/>
-    <torpedo_storage type="0" amount="8"/>
+    <torpedo_storage type="trp" amount="8"/>
     <!-- Type 1 Homing"-->
-    <torpedo_storage type="1" amount="2"/>
+    <torpedo_storage type="nuk" amount="2"/>
     <!-- Type 4 LR Nuke-->
-    <torpedo_storage type="2" amount="6"/>
+    <torpedo_storage type="min" amount="6"/>
     <!-- Type 6 Mine"-->
-    <torpedo_storage type="3" amount="4"/>
+    <torpedo_storage type="emp" amount="4"/>
     <!-- Type 9 ECM"-->
-    <torpedo_storage type="4" amount="5"/>
+    <torpedo_storage type="shk" amount="5"/>
     <!-- Type 8 Pshock"-->
+    <torpedo_storage type="bea" amount="2"/>  <!-- Beacon"-->
+    <torpedo_storage type="pro" amount="5"/>  <!-- Probe"-->
+    <torpedo_storage type="tag" amount="2"/>  <!-- Tag"-->
     <engine_port x="-52" y="-20" z="-34.943451"/>
     <engine_port x=" 52" y="-20" z="-34.943451"/>
     <engine_port x="-109" y="-21.496468" z="-249.583313"/>
@@ -402,7 +527,7 @@
   </vessel>
 
 
-  <vessel    uniqueID="12"    side="7"       classname="Carrier"  broadType="player carrier">
+  <vessel    uniqueID="12"    side="7"       classname="Carrier"  broadType="player carrier ximnivanillacarrier">
     <art     meshfile="dat/ximni-carrier.dxs"    diffuseFile="dat/XimniDiffuse.png"
              glowFile="dat/XimniGlow.png"    specularFile="dat/XimniSpecular.png" scale="0.2" pushRadius="150"/>
     <internal_data file="dat/ximni-carrier.snt"/>
@@ -412,16 +537,19 @@
     <beam_port x= "262" y="-33" z="108" damage="1" playerdamage="12" arcwidth="0.4" cycletime="6.0" range="1000"/>
     <beam_port x="-262" y="-33" z="108" damage="1" playerdamage="12" arcwidth="0.4" cycletime="6.0" range="1000"/>
     <torpedo_tube x="0" y="8.35" z="258.74"/>
-    <torpedo_storage type="0" amount="6"/>
+    <torpedo_storage type="trp" amount="6"/>
     <!-- Type 1 Homing"-->
-    <torpedo_storage type="1" amount="1"/>
+    <torpedo_storage type="nuk" amount="1"/>
     <!-- Type 4 LR Nuke-->
-    <torpedo_storage type="2" amount="4"/>
+    <torpedo_storage type="min" amount="4"/>
     <!-- Type 6 Mine"-->
-    <torpedo_storage type="3" amount="2"/>
+    <torpedo_storage type="emp" amount="2"/>
     <!-- Type 9 ECM"-->
-    <torpedo_storage type="4" amount="2"/>
+    <torpedo_storage type="shk" amount="2"/>
     <!-- Type 8 Pshock"-->
+    <torpedo_storage type="bea" amount="5"/>  <!-- Beacon"-->
+    <torpedo_storage type="pro" amount="5"/>  <!-- Probe"-->
+    <torpedo_storage type="tag" amount="5"/>  <!-- Tag"-->
     <engine_port x="-111" y="0" z="-96"/>
     <engine_port x= "111" y="0" z="-96"/>
     <engine_port x="-64" y="-39" z="-128"/>
@@ -430,7 +558,7 @@
   </vessel>
 
 
-  <vessel    uniqueID="13"    side="7"       classname="Dreadnought" broadType="player carrier">
+  <vessel    uniqueID="13"    side="7"       classname="Dreadnought" broadType="player carrier ximnivanilladreadnought">
  <art     meshfile="dat/ximni-dread.dxs"    diffuseFile="dat/XimniDiffuse.png"
              glowFile="dat/XimniGlow.png"    specularFile="dat/XimniSpecular.png" scale="0.23" pushRadius="150"/>
     <internal_data file="dat/ximni-dread.snt"/>
@@ -442,17 +570,20 @@
     <torpedo_tube x="0" y="8.35" z="258.74"/>
     <torpedo_tube x="0" y="8.35" z="258.74"/>
     
-    <torpedo_storage type="0" amount="10"/>
+    <torpedo_storage type="trp" amount="10"/>
     <!-- Type 1 Homing"-->
-    <torpedo_storage type="1" amount="4"/>
+    <torpedo_storage type="nuk" amount="4"/>
     <!-- Type 4 LR Nuke-->
-    <torpedo_storage type="2" amount="8"/>
+    <torpedo_storage type="min" amount="8"/>
     <!-- Type 6 Mine"-->
-    <torpedo_storage type="3" amount="5"/>
+    <torpedo_storage type="emp" amount="5"/>
     <!-- Type 9 ECM"-->
-    <torpedo_storage type="4" amount="4"/>
+    <torpedo_storage type="shk" amount="4"/>
     <!-- Type 8 Pshock"-->
-
+    <torpedo_storage type="bea" amount="2"/>  <!-- Beacon"-->
+    <torpedo_storage type="pro" amount="8"/>  <!-- Probe"-->
+    <torpedo_storage type="tag" amount="2"/>  <!-- Tag"-->
+    
     <engine_port x="-183.435486" y="-8.119685" z="-228.164200"/>
     <engine_port x= "183.435486" y="-8.119685" z="-228.164200"/>
     <engine_port x="-158.559570" y="-5.290986" z="-227.645966"/>
@@ -472,7 +603,7 @@
   </vessel>
 
   <!-- ******************** Pirate capital ships *********************************** -->
-  <vessel    uniqueID="14"    side="8"       classname="Strongbow" broadType="player">
+  <vessel    uniqueID="14"    side="8"       classname="Strongbow" broadType="player piratevanillastrongbow">
     <art     meshfile="dat/PirateStrongbow.dxs"    diffuseFile="dat/PirateBulky_Diffuse.png"
              glowFile="dat/PirateBulky_Glow.png"    specularFile="dat/PirateBulky_Specular.png" scale="0.20" pushRadius="150"/>
     <internal_data file="dat/PirateStrongbow.snt"/>
@@ -484,16 +615,19 @@
     <beam_port x=" 127.33" y="17.83" z="62.44" damage="1" playerdamage="8" arcwidth="0.2" cycletime="4.0" range="1200"/>
     <torpedo_tube x="0" y="63.71" z="-33.23"/>
     <torpedo_tube x="0" y="63.71" z="-33.23"/>
-    <torpedo_storage type="0" amount="12"/>
+    <torpedo_storage type="trp" amount="12"/>
     <!-- Type 1 Homing"-->
-    <torpedo_storage type="1" amount="0"/>
+    <torpedo_storage type="nuk" amount="0"/>
     <!-- Type 4 LR Nuke-->
-    <torpedo_storage type="2" amount="2"/>
+    <torpedo_storage type="min" amount="2"/>
     <!-- Type 6 Mine"-->
-    <torpedo_storage type="3" amount="12"/>
+    <torpedo_storage type="emp" amount="12"/>
     <!-- Type 9 ECM"-->
-    <torpedo_storage type="4" amount="8"/>
+    <torpedo_storage type="shk" amount="8"/>
     <!-- Type 8 Pshock"-->
+    <torpedo_storage type="bea" amount="5"/>  <!-- Beacon"-->
+    <torpedo_storage type="pro" amount="5"/>  <!-- Probe"-->
+    <torpedo_storage type="tag" amount="5"/>  <!-- Tag"-->
     <engine_port x="-43.07" y="20.83" z="-209.94"/>
     <engine_port x=" 43.07" y="20.83" z="-209.94"/>
     <engine_port x="0" y="36.04" z="-233.71"/>
@@ -501,10 +635,10 @@
     <engine_port x=" 101.81" y="-9.80" z="-218.69"/>
     <engine_port x="-175.28" y="-47.70" z="-219.93"/>
     <engine_port x=" 175.28" y="-47.70" z="-219.93"/>
-    <long_desc text="Pirate Strongbow^Pirate raider.^4 forward beams^2 Torpedo tubes^Stores for 12 homing, 2 Mines, 12 ECM, 8 PShock."/>
+    <long_desc text="Pirate Strongbow^Pirate raider.^4 forward beams^2 Torpedo tubes^Stores for 12 homing, 12 ECM, 8 PShock."/>
   </vessel>
 
-   <vessel    uniqueID="15"    side="8"       classname="Longbow" broadType="player">
+   <vessel    uniqueID="15"    side="8"       classname="Longbow" broadType="player piratevanillalongbow">
     <art     meshfile="dat/PirateLongbow.dxs"    diffuseFile="dat/Pirate_Diffuse.png"
              glowFile="dat/Pirate_Glow.png"    specularFile="dat/Pirate_Specular.png" scale="0.18" pushRadius="150"/>
     <internal_data file="dat/PirateLongbow.snt"/>
@@ -512,25 +646,27 @@
     <performance turnrate="0.0065" topspeed="0.85" shipefficiency="1.0" warpefficiency="1.0" jumpefficiency="0.8"/>
     <beam_port x="0.00" y="-31.27" z="287.07" damage="1" playerdamage="12" arcwidth="0.4" cycletime="6.0" range="1000"/>
     <torpedo_tube x="0" y="63.71" z="-33.23"/>
-    <torpedo_storage type="0" amount="8"/>
+    <torpedo_storage type="trp" amount="8"/>
     <!-- Type 1 Homing"-->
-    <torpedo_storage type="1" amount="0"/>
+    <torpedo_storage type="nuk" amount="0"/>
     <!-- Type 4 LR Nuke-->
-    <torpedo_storage type="2" amount="1"/>
+    <torpedo_storage type="min" amount="1"/>
     <!-- Type 6 Mine"-->
-    <torpedo_storage type="3" amount="2"/>
+    <torpedo_storage type="emp" amount="2"/>
     <!-- Type 9 ECM"-->
-    <torpedo_storage type="4" amount="1"/>
+    <torpedo_storage type="shk" amount="1"/>
     <!-- Type 8 Pshock"-->
+    <torpedo_storage type="bea" amount="5"/>  <!-- Beacon"-->
+    <torpedo_storage type="pro" amount="5"/>  <!-- Probe"-->
+    <torpedo_storage type="tag" amount="5"/>  <!-- Tag"-->
     <engine_port x="-50" y="-25.72" z="-217.79"/>
    <engine_port x="-50" y="-58.39" z="-217.30"/>
     <engine_port x=" 50" y="-25.72" z="-217.79"/>
    <engine_port x=" 50" y="-58.39" z="-217.30"/>
     <long_desc text="Pirate Longbow^Pirate scout.^1 forward beams^1 Torpedo tube^Stores for 8 homing, 1 Mine, 2 ECM, 1 PShock."/>
   </vessel>
- 
-  
-  <vessel    uniqueID="16"    side="8"       classname="Brigantine" broadType="player carrier">
+
+  <vessel    uniqueID="16"    side="8"       classname="Brigantine" broadType="player carrier piratevanillabrigantine">
     <art     meshfile="dat/PirateBrigantine.dxs"    diffuseFile="dat/PirateBulky_Diffuse.png"
              glowFile="dat/PirateBulky_Glow.png"    specularFile="dat/PirateBulky_Specular.png" scale="0.23" pushRadius="200"/>
     <internal_data file="dat/PirateBrigantine.snt"/>
@@ -542,16 +678,19 @@
     <torpedo_tube x="0" y="70.22" z="-81"/>
     <torpedo_tube x="0" y="70.22" z="-81"/>
     <torpedo_tube x="0" y="70.22" z="-81"/>
-    <torpedo_storage type="0" amount="12"/>
+    <torpedo_storage type="trp" amount="12"/>
     <!-- Type 1 Homing"-->
-    <torpedo_storage type="1" amount="0"/>
+    <torpedo_storage type="nuk" amount="0"/>
     <!-- Type 4 LR Nuke-->
-    <torpedo_storage type="2" amount="4"/>
+    <torpedo_storage type="min" amount="4"/>
     <!-- Type 6 Mine"-->
-    <torpedo_storage type="3" amount="12"/>
+    <torpedo_storage type="emp" amount="12"/>
     <!-- Type 9 ECM"-->
-    <torpedo_storage type="4" amount="8"/>
+    <torpedo_storage type="shk" amount="8"/>
     <!-- Type 8 Pshock"-->
+    <torpedo_storage type="bea" amount="5"/>  <!-- Beacon"-->
+    <torpedo_storage type="pro" amount="5"/>  <!-- Probe"-->
+    <torpedo_storage type="tag" amount="5"/>  <!-- Tag"-->
     <engine_port x="0" y="34.68" z="-270.55"/>
     <engine_port x="0" y="-5.32" z="-267.06"/>
     <engine_port x="-55.82" y="19.90" z="-300.48"/>
@@ -562,100 +701,1243 @@
     <engine_port x=" 139.85" y="0" z="-272.95"/>
     <carrierload baycount="4" bomber="2"/>
 
-    <long_desc text="Pirate Brigantine^Pirate corvette and light carrier.^2 forward beams, 1 rear beam^3 Torpedo tubes^Stores for 12 homing, 4 Mines, 12 ECM, 8 PShock."/>
+    <long_desc text="Pirate Brigantine^Pirate corvette and light carrier.^2 forward beams, 1 rear beam^3 Torpedo tubes^Stores for 12 homing, 12 ECM, 8 PShock."/>
+  </vessel>
+
+ 
+
+<!-- **************************************************************************************** -->
+<!-- ***                                Begin Ben's New Player Starships                                 *** -->
+<!-- **************************************************************************************** -->
+
+
+<!-- ***                                  Turreted Corvette                    *** -->
+
+  <vessel    uniqueID="17"    side="0"       classname="Infiltrator Corvette" broadType="player corvette turreted tsnbeninfiltratorcorvette">
+    <art     meshfile="dat/civilian1.dxs"    diffuseFile="dat/civilian1_diffuse.png"
+             glowFile="dat/artemis_illum.png"    specularFile="dat/artemis_specular.png" scale="0.2" pushRadius="150"/>
+    <internal_data file="Ben/civilian1.snt"/>
+    <engine_port x="0" y="-9.22" z="-300"/>
+    <engine_port x="0" y="-9.22" z="-300"/>
+    <engine_port x="0" y="29.64" z="-300"/>
+    <shields front="40" back="40"/>
+    <performance turnrate="0.006" topspeed="0.8"  shipefficiency="0.7" warpefficiency="0.93" jumpefficiency="0.35"/>
+    <beam_port x="0" y="17.8" z="289.0" damage="1" playerdamage="12" arcwidth="1.0" cycletime="6.0" range="667"/>
+    <torpedo_tube x="0" y="8.35" z="258.74"/>
+    <torpedo_storage type="trp" amount="4"/>    <!-- Type 1 Homing"-->
+    <torpedo_storage type="nuk" amount="1"/>    <!-- Type 4 LR Nuke-->
+    <torpedo_storage type="min" amount="3"/>    <!-- Type 6 Mine"-->
+    <torpedo_storage type="emp" amount="2"/>    <!-- Type 9 EMP"-->
+    <torpedo_storage type="shk" amount="1"/>    <!-- Type 8 Pshock"-->
+    <torpedo_storage type="bea" amount="2"/>  <!-- Beacon"-->
+    <torpedo_storage type="pro" amount="4"/>  <!-- Probe"-->
+    <torpedo_storage type="tag" amount="2"/>  <!-- Tag"-->
+    <long_desc text="Infiltrator Corvette^1 Beam Turret^1 Torpedo Tube^Stores for 4 Homing, 1 Nuke, 3 Mines, 2 EMP, 1 PShock^Shields Front 40 Rear 40"/>
+  </vessel>
+
+<!-- ***                                  Beam Corvette                    *** -->
+
+  <vessel    uniqueID="18"    side="0"       classname="Vanguard Corvette" broadType="player corvette beam tsnbenvanguardcorvette">
+    <art     meshfile="dat/civilian2.dxs"    diffuseFile="dat/civilian2_diffuse.png"
+             glowFile="dat/artemis_illum.png"    specularFile="dat/artemis_specular.png" scale="0.2" pushRadius="150"/>
+    <internal_data file="Ben/civilian2.snt"/>
+    <shields front="40" back="40"/>
+    <performance turnrate="0.006" topspeed="0.8"  shipefficiency="0.7" warpefficiency="0.93" jumpefficiency="0.35"/>
+    <beam_port x="0" y="17.8" z="289.0" damage="1" playerdamage="12" arcwidth="0.4" cycletime="6.0" range="1000"/>
+    <torpedo_tube x="0" y="8.35" z="258.74"/>
+    <torpedo_storage type="trp" amount="4"/>    <!-- Type 1 Homing"-->
+    <torpedo_storage type="nuk" amount="1"/>    <!-- Type 4 LR Nuke-->
+    <torpedo_storage type="min" amount="3"/>    <!-- Type 6 Mine"-->
+    <torpedo_storage type="emp" amount="2"/>    <!-- Type 9 EMP"-->
+    <torpedo_storage type="shk" amount="1"/>    <!-- Type 8 Pshock"-->
+    <torpedo_storage type="bea" amount="2"/>  <!-- Beacon"-->
+    <torpedo_storage type="pro" amount="4"/>  <!-- Probe"-->
+    <torpedo_storage type="tag" amount="2"/>  <!-- Tag"-->
+    <engine_port x="0" y="29.64" z="-200"/>
+    <long_desc text="Vanguard Corvette^1 Forward Beam^1 Torpedo Tube^Stores for 4 Homing, 1 Nuke, 3 Mines, 2 EMP, 1 PShock^Shields Front 40 Rear 40"/>
+  </vessel>
+
+<!-- ***                                  Sniper Corvette                    *** -->
+
+<vessel    uniqueID="19"    side="0"       classname="Eliminator Corvette" broadType="player corvette sniper tsnbeneliminatorcorvette">
+    <art     meshfile="dat/artemis-scout.dxs"    diffuseFile="dat/artemis_diffuse.png"
+             glowFile="dat/artemis_illum.png"    specularFile="dat/artemis_specular.png" scale="0.2" pushRadius="150"/>
+    <internal_data file="dat/artemis-scout.snt"/>
+    <shields front="40" back="40"/>
+    <performance turnrate="0.006" topspeed="0.8"  shipefficiency="0.7" warpefficiency="0.93" jumpefficiency="0.35"/>
+    <beam_port x="0" y="17.8" z="289.0" damage="1" playerdamage="12" arcwidth="0.05" cycletime="6.0" range="1500"/>
+    <torpedo_tube x="0" y="8.35" z="258.74"/>
+    <torpedo_storage type="trp" amount="4"/>   <!-- Type 1 Homing"-->
+    <torpedo_storage type="nuk" amount="1"/>   <!-- Type 4 LR Nuke-->
+    <torpedo_storage type="min" amount="3"/>   <!-- Type 6 Mine"-->
+    <torpedo_storage type="emp" amount="2"/>   <!-- Type 9 EMP"-->
+    <torpedo_storage type="shk" amount="1"/>   <!-- Type 8 Pshock"-->
+    <torpedo_storage type="bea" amount="2"/>  <!-- Beacon"-->
+    <torpedo_storage type="pro" amount="4"/>  <!-- Probe"-->
+    <torpedo_storage type="tag" amount="2"/>  <!-- Tag"-->
+    <engine_port x="0" y="-9.22" z="-300"/>
+    <engine_port x="0" y="29.64" z="-300"/>
+    <long_desc text="Eliminator Corvette^1 Focused Beam^1 Torpedo Tube^Stores for 4 Homing, 1 Nuke, 3 Mines, 2 EMP, 1 PShock^Shields Front 40 Rear 40"/>
+  </vessel>
+
+<!-- ***                                  Missile Corvette                    *** -->
+
+  <vessel    uniqueID="20"    side="7"       classname="Harrier Corvette" broadType="player corvette sniper ximnibenharriercorvette">
+    <art     meshfile="dat/ximni-scout.dxs"    diffuseFile="dat/XimniDiffuse.png"
+             glowFile="dat/XimniGlow.png"    specularFile="dat/XimniSpecular.png" scale="0.2" pushRadius="150"/>
+    <internal_data file="dat/ximni-scout.snt"/>
+    <shields front="40" back="40"/>
+    <performance turnrate="0.008" topspeed="0.6"  shipefficiency="0.7" warpefficiency="0.93" jumpefficiency="0.35"/>
+    <torpedo_tube x="0" y="8.35" z="258.74"/>
+    <torpedo_tube x="0" y="8.35" z="258.74"/>
+    <torpedo_storage type="trp" amount="8"/>  <!-- Type 1 Homing"-->
+    <torpedo_storage type="nuk" amount="2"/>  <!-- Type 4 LR Nuke-->
+    <torpedo_storage type="min" amount="6"/>  <!-- Type 6 Mine"-->
+    <torpedo_storage type="emp" amount="4"/>  <!-- Type 9 EMP"-->
+    <torpedo_storage type="shk" amount="2"/>  <!-- Type 8 Pshock"-->
+    <torpedo_storage type="bea" amount="4"/>  <!-- Beacon"-->
+    <torpedo_storage type="pro" amount="8"/>  <!-- Probe"-->
+    <torpedo_storage type="tag" amount="4"/>  <!-- Tag"-->
+    <long_desc text="Harrier Missile Corvette^2 Torpedo Tubes^Stores for 8 Homing, 2 Nukes, 6 Mines, 4 EMP, 2 PShock.^Shields Front 40 Rear 40"/>
+  </vessel>
+
+<!-- ***                                   Corvette Carrier                                *** -->
+
+  <vessel    uniqueID="21"    side="0"       classname="Corvette Carrier" broadType="player corvette carrier tsnbenvipercarrier">
+    <art     meshfile="dat/civilian2.dxs"    diffuseFile="dat/civilian2_diffuse.png"
+             glowFile="dat/artemis_illum.png"    specularFile="dat/artemis_specular.png" scale="0.2" pushRadius="150"/>
+    <internal_data file="Ben/civilian2.snt"/>
+    <shields front="0" back="0"/>
+    <performance turnrate="0.008" topspeed="0.6"  shipefficiency="0.7" warpefficiency="0.93" jumpefficiency="0.35"/>
+    <engine_port x="0" y="29.64" z="-200"/>
+    <torpedo_storage type="trp" amount="0"/>    <!-- Type 1 Homing"-->
+    <torpedo_storage type="nuk" amount="0"/>    <!-- Type 4 LR Nuke-->
+    <torpedo_storage type="min" amount="0"/>    <!-- Type 6 Mine"-->
+    <torpedo_storage type="emp" amount="0"/>    <!-- Type 9 EMP"-->
+    <torpedo_storage type="shk" amount="0"/>    <!-- Type 8 Pshock"-->
+    <carrierload baycount="4"/>
+    <long_desc text="Viper Tactical Support Carrier^4 Fighters.^Shields [None] Front 0 Rear 0"/>
+  </vessel>
+  
+  <!-- ***                                 Delphi's Broadside Frigate                             *** -->
+  <!-- ***                         Not Configured For Ben's Class Balance Scheme                  *** -->
+  <vessel uniqueID="22" side="8" classname="Loki class" broadType="player tsnbenlokifrigate">
+      
+      <art meshfile="Ben/artemis-frigate.dxs" diffuseFile="dat/artemis_diffuse.png" glowFile="dat/artemis_illum.png" specularFile="dat/artemis_specular.png" scale="0.2" pushRadius="150" />
+      <internal_data file="Ben/artemis-broadfrig.snt" />
+      
+      <shields front="60" back="60" />
+      <performance turnrate="0.004" topspeed="0.6" shipefficiency="1.0" warpefficiency="0.6" jumpefficiency="0.75" />
+      
+      <beam_port x="0.17" y="0" z="0.02" damage="1.2" playerdamage="12" arcwidth="0.09" cycletime="6" range="1100" />
+      <beam_port x="-0.17" y="0" z="0.02" damage="1.2" playerdamage="12" arcwidth="0.09" cycletime="6" range="1100" />
+      <beam_port x="0.17" y="0" z="-0.02" damage="1.2" playerdamage="12" arcwidth="0.09" cycletime="6" range="1100" />
+      <beam_port x="-0.17" y="0" z="-0.02" damage="1.2" playerdamage="12" arcwidth="0.09" cycletime="6" range="1100" />
+      
+      <beam_port x="-1" y="1" z="1" damage="5" playerdamage="5" arcwidth="0.25" cycletime="35.0" range="750" />
+      <beam_port x="1" y="1" z="1" damage="5" playerdamage="5" arcwidth="0.25" cycletime="35.0" range="750" />
+      <beam_port x="1" y="-1" z="-1" damage="5" playerdamage="5" arcwidth="0.25" cycletime="35.0" range="750" />
+      <beam_port x="-1" y="-1" z="-1" damage="5" playerdamage="5" arcwidth="0.25" cycletime="35.0" range="750" />
+      
+      <beam_port x="0" y="1" z="1" damage="3" playerdamage="3" arcwidth="0.25" cycletime="20.0" range="500" />
+      <beam_port x="1" y="0" z="0" damage="3" playerdamage="3" arcwidth="0.25" cycletime="20.0" range="500" />
+      <beam_port x="0" y="-1" z="-1" damage="3" playerdamage="3" arcwidth="0.25" cycletime="20.0" range="500" />
+      <beam_port x="-1" y="0" z="0" damage="3" playerdamage="3" arcwidth="0.25" cycletime="20.0" range="500" />
+      
+      <beam_port x="0" y="1" z="0" damage="15" playerdamage="300" arcwidth="0.005" cycletime="60" range="1250" />
+      
+      <torpedo_tube x="0" y="8.35" z="258.74" />
+      <torpedo_tube x="0" y="8.35" z="258.74" />
+      <torpedo_storage type="trp" amount="6" /> <!-- Type 1 Homing"-->
+      <torpedo_storage type="nuk" amount="4" /> <!-- Type 4 LR Nuke-->
+      <torpedo_storage type="min" amount="0" /> <!-- Type 6 Mine"-->
+      <torpedo_storage type="emp" amount="8" /> <!-- Type 9 ECM"-->
+      <torpedo_storage type="shk" amount="2" /> <!-- Type 8 Pshock"-->
+      <torpedo_storage type="bea" amount="4"/>  <!-- Beacon"-->
+      <torpedo_storage type="pro" amount="8"/>  <!-- Probe"-->
+      <torpedo_storage type="tag" amount="4"/>  <!-- Tag"-->
+      <engine_port x=" 45" y="30" z="-240" />
+      <engine_port x="-45" y="30" z="-240" />
+      <engine_port x=" 140" y="-7" z="-195" />
+      <engine_port x="-140" y="-7" z="-195" />
+      
+      <long_desc text="Loki-class Jump Frigate. ^4 Side-mounted Beams^Forward Chaser Battery^Fractionary Point Defense Array^2 Torpedo Tubes^Stores for 6 Homing, 4 Nukes, 0 Mines, 8 EMP, 2 PShock.^Shields Front 60 Rear 60"/>
+      
+  </vessel>
+  
+  <!-- ***                                 Broadside Frigate                             *** -->
+  <vessel    uniqueID="23"    side="0"       classname="Heavy Frigate" broadType="player small tsnbeninterdictorfrigate">
+      <art     meshfile="dat/ENE_LeeA.dxs"    diffuseFile="dat/ship1_color_1024.png"
+      glowFile="dat/ship1_glow_1024.png"    specularFile="dat/ship1_spec_1024.png" scale="0.2" pushRadius="150"/>
+      <internal_data file="Ben/UEGoliathBroadFrig.snt"/>
+      <shields front="65" back="65"/>
+      <performance turnrate="0.006" topspeed="0.7" shipefficiency="0.9" warpefficiency="1.0" jumpefficiency="1.0"/>
+      <beam_port x="0" y="17.8" z="200.0" damage="1.5" playerdamage="18" arcwidth="0.6" cycletime="6.0" range="1000"/>
+      <beam_port x="0" y="17.8" z="-200.0" damage="1.5" playerdamage="18" arcwidth="0.6" cycletime="6.0" range="1000"/>
+      <torpedo_tube x="10" y="8.35" z="258.74"/>
+      <torpedo_tube x="-10" y="8.35" z="258.74"/>
+      <torpedo_storage type="trp" amount="8"/>  <!-- Type 1 Homing"-->
+      <torpedo_storage type="nuk" amount="2"/>  <!-- Type 4 LR Nuke-->
+      <torpedo_storage type="min" amount="6"/>  <!-- Type 6 Mine"-->
+      <torpedo_storage type="emp" amount="4"/>  <!-- Type 9 EMP"-->
+      <torpedo_storage type="shk" amount="4"/>  <!-- Type 8 Pshock"-->
+      <torpedo_storage type="bea" amount="4"/>  <!-- Beacon"-->
+      <torpedo_storage type="pro" amount="8"/>  <!-- Probe"-->
+      <torpedo_storage type="tag" amount="4"/>  <!-- Tag"-->
+      <engine_port x="-107" y="36" z="-328"/>
+      <engine_port x=" 107" y="36" z="-328"/>
+      <engine_port x="-134" y="-14" z="-328"/>
+      <engine_port x=" 134" y="-14" z="-328"/>
+      <impulse_point x="-111" y="10" z="-151"/>
+      <impulse_point x=" 111" y="10" z="-151"/>
+      <maneuver_point x="-117" y="8" z="12"/>
+      <maneuver_point x=" 117" y="8" z="12"/>
+      <long_desc text="Interdictor Heavy Frigate^Excells at striking unprotected enemy flanks.^2 Fore/Aft Medium Beams (Best firepower to the sides)^2 Torpedo Tubes^Stores for 8 Homing, 2 Nukes, 6 Mines, 4 EMP, 4 PShock.^Shields Front 65 Rear 65"/>
+  </vessel>
+  
+  <!-- ***                                   Beam Destroyer                                *** -->
+  
+  <vessel    uniqueID="24"    side="0"       classname="Patrolman Destroyer" broadType="player destroyer beam tsnbenpatrolmandestroyer">
+      <art     meshfile="dat/artemis.dxs"    diffuseFile="dat/LightCruiser_Diffuse.png"
+      glowFile="dat/LightCruiser_Glow.png"    specularFile="dat/LightCruiser_Specular.png" scale="0.2" pushRadius="150"/>
+      <internal_data file="dat/artemis.snt"/>
+      <engine_port x=" 82.93" y="5" z="-240.89"/>
+<engine_port x="-82.93" y="5" z="-240.89"/>
+      <engine_port x="0" y="-9.22" z="-300"/>
+      <engine_port x="0" y="29.64" z="-300"/>
+      <shields front="80" back="80"/>
+      <performance turnrate="0.005" topspeed="0.7" shipefficiency="0.9" warpefficiency="1.05" jumpefficiency="0.45"/>
+      <beam_port x="-102.14" y="8.35" z="258.74" damage="1" playerdamage="12" arcwidth="0.4" cycletime="6.0" range="1000"/>
+      <beam_port x=" 102.14" y="8.35" z="258.74" damage="1" playerdamage="12" arcwidth="0.4" cycletime="6.0" range="1000"/>
+      <torpedo_tube x="0" y="8.35" z="258.74"/>
+      <torpedo_tube x="0" y="8.35" z="258.74"/>
+      <torpedo_storage type="trp" amount="8"/>  <!-- Type 1 Homing"-->
+      <torpedo_storage type="nuk" amount="2"/>  <!-- Type 4 LR Nuke-->
+      <torpedo_storage type="min" amount="6"/>  <!-- Type 6 Mine"-->
+      <torpedo_storage type="emp" amount="4"/>  <!-- Type 9 EMP"-->
+      <torpedo_storage type="shk" amount="2"/>  <!-- Type 8 Pshock"-->
+      <torpedo_storage type="bea" amount="4"/>  <!-- Beacon"-->
+      <torpedo_storage type="pro" amount="8"/>  <!-- Probe"-->
+      <torpedo_storage type="tag" amount="4"/>  <!-- Tag"-->
+      <long_desc text="Patrolman Beam Destroyer^2 Forward Beams^2 Torpedo Tubes^Stores for 8 Homing, 2 Nukes, 6 Mines, 4 EMP, 2 PShock.^Shields Front 80 Rear 80"/>
+  </vessel>
+  
+  
+  <!-- ***                                 Heavy Beam Corvette                             *** -->
+  
+  <vessel    uniqueID="25"    side="0"       classname="Executor Destroyer" broadType="player destroyer custom tsnbenexecutordestroyer">
+      <art     meshfile="dat/artemis-4.dxs"    diffuseFile="dat/artemis_diffuse.png"
+      glowFile="dat/artemis_illum.png"    specularFile="dat/artemis_specular.png" scale="0.2" pushRadius="150"/>
+      <internal_data file="dat/artemis-4.snt"/>
+      <engine_port x=" 82.93" y="5" z="-240.89"/>
+      <engine_port x="-82.93" y="5" z="-240.89"/>
+      <engine_port x="0" y="-9.22" z="-300"/>
+      <engine_port x="0" y="29.64" z="-300"/>
+      <engine_port x="0" y="99.1" z="-176.5"/>
+      <engine_port x="0" y="-81.0" z="-173.7"/>
+      <shields front="80" back="80"/>
+      <performance turnrate="0.005" topspeed="0.7" shipefficiency="0.9" warpefficiency="1.05" jumpefficiency="0.45"/>
+      <beam_port x="-50" y="17.8" z="289.0" damage="1" playerdamage="12" arcwidth="0.4" cycletime="6.0" range="1000"/>
+      <beam_port x="50" y="17.8" z="289.0" damage="1" playerdamage="12" arcwidth="0.4" cycletime="6.0" range="1000"/>
+      <beam_port x="-50" y="17.8" z="289.0" damage="1" playerdamage="12" arcwidth="0.4" cycletime="6.0" range="1000"/>
+      <beam_port x="50" y="17.8" z="289.0" damage="1" playerdamage="12" arcwidth="0.4" cycletime="6.0" range="1000"/>
+      <torpedo_storage type="trp" amount="0"/>  <!-- Type 1 Homing"-->
+      <torpedo_storage type="nuk" amount="0"/>  <!-- Type 4 LR Nuke-->
+      <torpedo_storage type="min" amount="0"/>  <!-- Type 6 Mine"-->
+      <torpedo_storage type="emp" amount="0"/>  <!-- Type 9 EMP"-->
+      <torpedo_storage type="shk" amount="0"/>  <!-- Type 8 Pshock"-->
+      <long_desc text="Executor Heavy Beam Destroyer^4 Beams^0 Torpedo Tubes^Shields Front 80 Rear 80"/>
+  </vessel>
+
+<!-- ***                                   Turreted Destroyer                                *** -->
+
+  <vessel    uniqueID="26"    side="0"       classname="Falcon Destroyer" broadType="player destroyer turreted tsnbenfalcondestroyer">
+    <art     meshfile="dat/artemis.dxs"    diffuseFile="dat/LightCruiser_Diffuse.png"
+             glowFile="dat/LightCruiser_Glow.png"    specularFile="dat/LightCruiser_Specular.png" scale="0.2" pushRadius="150"/>
+    <internal_data file="dat/artemis.snt"/>
+    <engine_port x=" 82.93" y="5" z="-240.89"/>
+    <engine_port x="-82.93" y="5" z="-240.89"/>
+    <engine_port x="0" y="-9.22" z="-300"/>
+    <engine_port x="0" y="29.64" z="-300"/>
+    <shields front="80" back="80"/>
+    <performance turnrate="0.005" topspeed="0.7" shipefficiency="0.9" warpefficiency="1.05" jumpefficiency="0.45"/>
+    <beam_port x="0" y="17.8" z="289.0" damage="1" playerdamage="12" arcwidth="1.0" cycletime="6.0" range="667"/>
+    <beam_port x="0" y="17.8" z="289.0" damage="1" playerdamage="12" arcwidth="1.0" cycletime="6.0" range="667"/>
+    <torpedo_tube x="0" y="8.35" z="258.74"/>
+    <torpedo_tube x="0" y="8.35" z="258.74"/>
+    <torpedo_storage type="trp" amount="8"/>  <!-- Type 1 Homing"-->
+    <torpedo_storage type="nuk" amount="2"/>  <!-- Type 4 LR Nuke-->
+    <torpedo_storage type="min" amount="6"/>  <!-- Type 6 Mine"-->
+    <torpedo_storage type="emp" amount="4"/>  <!-- Type 9 EMP"-->
+    <torpedo_storage type="shk" amount="2"/>  <!-- Type 8 Pshock"-->
+    <torpedo_storage type="bea" amount="4"/>  <!-- Beacon"-->
+    <torpedo_storage type="pro" amount="8"/>  <!-- Probe"-->
+    <torpedo_storage type="tag" amount="4"/>  <!-- Tag"-->
+    <long_desc text="Falcon Destroyer^2 Beam Turrets^2 Torpedo Tubes^Stores for 8 Homing, 2 Nukes, 6 Mines, 4 EMP, 2 PShock.^Shields Front 80 Rear 80"/>
+  </vessel>
+
+<!-- ***                              Sniper Destroyer                        *** -->
+
+  <vessel    uniqueID="27"    side="7"       classname="Archer Destroyer" broadType="player destroyer sniper ximnibenarcherdestroyer">
+    <art     meshfile="dat/ximni-light-cruiser.dxs"    diffuseFile="dat/XimniDiffuse.png"
+             glowFile="dat/XimniGlow.png"    specularFile="dat/XimniSpecular.png" scale="0.2" pushRadius="150"/>
+    <internal_data file="dat/ximni-light-cruiser.snt"/>
+    <engine_port x=" 82.93" y="5" z="-240.89"/>
+    <engine_port x="-82.93" y="5" z="-240.89"/>
+    <engine_port x="0" y="-9.22" z="-300"/>
+    <engine_port x="0" y="29.64" z="-300"/>
+    <shields front="80" back="80"/>
+    <beam_port x="0" y="17.8" z="289.0" damage="1" playerdamage="12" arcwidth="0.05" cycletime="6.0" range="1500"/>
+    <beam_port x="0" y="17.8" z="289.0" damage="1" playerdamage="12" arcwidth="0.05" cycletime="6.0" range="1500"/>
+    <torpedo_tube x="10" y="8.35" z="258.74"/>
+    <torpedo_tube x="-10" y="8.35" z="258.74"/>
+    <torpedo_storage type="trp" amount="8"/>  <!-- Type 1 Homing"-->
+    <torpedo_storage type="nuk" amount="2"/>  <!-- Type 4 LR Nuke-->
+    <torpedo_storage type="min" amount="6"/>  <!-- Type 6 Mine"-->
+    <torpedo_storage type="emp" amount="4"/>  <!-- Type 9 EMP"-->
+    <torpedo_storage type="shk" amount="2"/>  <!-- Type 8 Pshock"-->
+    <torpedo_storage type="bea" amount="4"/>  <!-- Beacon"-->
+    <torpedo_storage type="pro" amount="8"/>  <!-- Probe"-->
+    <torpedo_storage type="tag" amount="4"/>  <!-- Tag"-->
+    <performance turnrate="0.005" topspeed="0.7" shipefficiency="0.9" warpefficiency="1.05" jumpefficiency="0.45"/>
+    <long_desc text="Archer Destroyer^2 Focused Beams^2 Torpedo Tubes^Stores for 8 Homing, 2 Nukes, 6 Mines, 4 EMP, 2 PShock.^Shields Front 80 Rear 80"/>
+  </vessel>
+  
+<!-- ***                              Missile Destroyer                        *** -->
+
+  <vessel    uniqueID="28"    side="7"       classname="Napalm Destroyer" broadType="player destroyer missile ximnibennapalmdestroyer">
+    <art     meshfile="dat/ximni-light-cruiser.dxs"    diffuseFile="dat/XimniDiffuse.png"
+             glowFile="dat/XimniGlow.png"    specularFile="dat/XimniSpecular.png" scale="0.2" pushRadius="150"/>
+    <internal_data file="dat/ximni-light-cruiser.snt"/>
+    <shields front="80" back="80"/>
+    <performance turnrate="0.005" topspeed="0.7" shipefficiency="0.9" warpefficiency="1.05" jumpefficiency="0.45"/>
+    <torpedo_tube x="10" y="8.35" z="258.74"/>
+    <torpedo_tube x="-10" y="8.35" z="258.74"/>
+    <torpedo_tube x="10" y="8.35" z="258.74"/>
+    <torpedo_tube x="-10" y="8.35" z="258.74"/>
+    <torpedo_storage type="trp" amount="16"/>  <!-- Type 1 Homing"-->
+    <torpedo_storage type="nuk" amount="4"/>  <!-- Type 4 LR Nuke-->
+    <torpedo_storage type="min" amount="12"/>  <!-- Type 6 Mine"-->
+    <torpedo_storage type="emp" amount="8"/>  <!-- Type 9 EMP"-->
+    <torpedo_storage type="shk" amount="4"/>  <!-- Type 8 Pshock"-->
+    <torpedo_storage type="bea" amount="8"/>  <!-- Beacon"-->
+    <torpedo_storage type="pro" amount="16"/>  <!-- Probe"-->
+    <torpedo_storage type="tag" amount="8"/>  <!-- Tag"-->
+    <engine_port x=" 82.93" y="5" z="-240.89"/>
+    <engine_port x="-82.93" y="5" z="-240.89"/>
+    <engine_port x="0" y="-9.22" z="-300"/>
+    <engine_port x="0" y="29.64" z="-300"/>
+    <long_desc text="Napalm Missile Destroyer^4 Torpedo Tubes^Stores for 16 Homing, 4 Nukes, 12 Mines, 8 EMP, 4 PShock.^Shields Front 80 Rear 80"/>
+  </vessel>
+  
+  
+  <vessel    uniqueID="29"    side="0"       classname="Mosquito Carrier" broadType="player carrier tsnbenmosquitocarrier">
+      <art     meshfile="dat/artemis-scout.dxs"    diffuseFile="dat/artemis_diffuse.png"
+      glowFile="dat/artemis_illum.png"    specularFile="dat/artemis_specular.png" scale="0.21" pushRadius="150"/>
+      <internal_data file="dat/artemis-scout.snt"/>
+      <shields front="60" back="60"/>
+      <performance turnrate="0.005" topspeed="0.7" shipefficiency="0.9" warpefficiency="1.0" jumpefficiency="1.0"/>
+      <beam_port x="-102.14" y="8.35" z="258.74" damage="0.5" playerdamage="6" arcwidth="0.4" cycletime="3.0" range="1000"/>
+      <beam_port x=" 102.14" y="8.35" z="258.74" damage="0.5" playerdamage="6" arcwidth="0.4" cycletime="3.0" range="1000"/>
+      <torpedo_tube x="0" y="8.35" z="258.74"/>
+      <torpedo_storage type="trp" amount="4"/>  <!-- Homing"-->
+      <torpedo_storage type="nuk" amount="1"/>  <!-- LR Nuke-->
+      <torpedo_storage type="min" amount="3"/>  <!-- Mine"-->
+      <torpedo_storage type="emp" amount="2"/>  <!-- EMP"-->
+      <torpedo_storage type="shk" amount="2"/>  <!-- Plasma Shock"-->
+      <torpedo_storage type="bea" amount="2"/>  <!-- Beacon"-->
+      <torpedo_storage type="pro" amount="4"/>  <!-- Probe"-->
+      <torpedo_storage type="tag" amount="2"/>  <!-- Tag"-->
+      <engine_port x="0" y="-9.22" z="-300"/>
+      <engine_port x="0" y="29.64" z="-300"/>
+      
+      <carrierload baycount="2"/>
+      <long_desc text="TSN Mosquito Light Carrier^Destroyer with a varied toolkit used for escort duties.^2 rapid beams^1 Torpedo tubes^Stores for 4 Homing, 1 Nuke, 3 Mines, 2 EMPs, 1 PShock.^2 Fighters^Shields Front 60 Rear 60"/>
+  </vessel>
+  
+
+
+<!-- ***                               Turreted Cruiser                           *** -->
+
+  <vessel    uniqueID="30"    side="0"       classname="Invader Cruiser" broadType="player cruiser turreted tsnbeninvadercruiser">
+    <art     meshfile="dat/TSNMineLayer.dxs"    diffuseFile="dat/CarrierDiffuse.png"
+             glowFile="dat/CarrierGlow.png"    specularFile="dat/CarrierGlow.png" scale="0.22" pushRadius="150"/>
+    <internal_data file="dat/TSNMineLayer.snt"/>
+    <engine_port x="0" y="26.783722" z="-195.166214"/>
+    <engine_port x="0" y="-19.618479" z="-191.015793"/>
+    <engine_port x="-67.803383" y="-4.989450" z="-238.086441"/>
+    <engine_port x="67.803383" y="-4.989450" z="-238.086441"/>
+    <engine_port x="-126.700760" y="-11.772187" z="-272.095581"/>
+    <engine_port x="126.700760" y="-11.772187" z="-272.095581"/>
+    <shields front="120" back="120"/>
+    <performance turnrate="0.004" topspeed="0.6" shipefficiency="1.0" warpefficiency="1.0" jumpefficiency="0.5"/>
+    <beam_port x="0" y="17.8" z="289.0" damage="1" playerdamage="12" arcwidth="1.0" cycletime="6.0" range="667"/>
+    <beam_port x="0" y="17.8" z="289.0" damage="1" playerdamage="12" arcwidth="1.0" cycletime="6.0" range="667"/>
+    <beam_port x="0" y="17.8" z="289.0" damage="1" playerdamage="12" arcwidth="1.0" cycletime="6.0" range="667"/>
+    <torpedo_tube x="10" y="8.35" z="258.74"/>
+    <torpedo_tube x="0" y="8.35" z="258.74"/>
+    <torpedo_tube x="-10" y="8.35" z="258.74"/>
+    <torpedo_storage type="trp" amount="12"/>  <!-- Type 1 Homing"-->
+    <torpedo_storage type="nuk" amount="3"/>  <!-- Type 4 LR Nuke-->
+    <torpedo_storage type="min" amount="9"/>  <!-- Type 6 Mine"-->
+    <torpedo_storage type="emp" amount="6"/>  <!-- Type 9 EMP"-->
+    <torpedo_storage type="shk" amount="3"/>  <!-- Type 8 Pshock"-->
+    <torpedo_storage type="bea" amount="6"/>  <!-- Beacon"-->
+    <torpedo_storage type="pro" amount="12"/>  <!-- Probe"-->
+    <torpedo_storage type="tag" amount="6"/>  <!-- Tag"-->
+    <long_desc text="Invader Cruiser^3 Beam Turrets^3 Torpedo Tubes^Stores for 12 Homing, 3 Nukes, 9 Mines, 6 EMP, 3 PShock.^Shields Front 120 Rear 120"/>
+  </vessel>
+
+<!-- ***                               Beam Cruiser                               *** -->
+
+  <vessel    uniqueID="31"    side="0"       classname="Riptide Cruiser" broadType="player cruiser beam tsnbenriptidecruiser">
+    <art     meshfile="dat/TSNMineLayer.dxs"    diffuseFile="dat/CarrierDiffuse.png"
+             glowFile="dat/CarrierGlow.png"    specularFile="dat/CarrierGlow.png" scale="0.22" pushRadius="150"/>
+    <internal_data file="dat/TSNMineLayer.snt"/>
+    <engine_port x="0" y="26.783722" z="-195.166214"/>
+    <engine_port x="0" y="-19.618479" z="-191.015793"/>
+    <engine_port x="-67.803383" y="-4.989450" z="-238.086441"/>
+    <engine_port x="67.803383" y="-4.989450" z="-238.086441"/>
+    <engine_port x="-126.700760" y="-11.772187" z="-272.095581"/>
+    <engine_port x="126.700760" y="-11.772187" z="-272.095581"/>
+    <shields front="120" back="120"/>
+    <performance turnrate="0.004" topspeed="0.6" shipefficiency="1.0" warpefficiency="1.0" jumpefficiency="0.5"/>
+    <beam_port x="0" y="17.8" z="289.0" damage="1" playerdamage="12" arcwidth="0.4" cycletime="6.0" range="1000"/>
+    <beam_port x="-50" y="17.8" z="289.0" damage="1" playerdamage="12" arcwidth="0.4" cycletime="6.0" range="1000"/>
+    <beam_port x="50" y="17.8" z="289.0" damage="1" playerdamage="12" arcwidth="0.4" cycletime="6.0" range="1000"/>
+    <torpedo_tube x="10" y="8.35" z="258.74"/>
+    <torpedo_tube x="0" y="8.35" z="258.74"/>
+    <torpedo_tube x="-10" y="8.35" z="258.74"/>
+    <torpedo_storage type="trp" amount="12"/>  <!-- Type 1 Homing"-->
+    <torpedo_storage type="nuk" amount="3"/>  <!-- Type 4 LR Nuke-->
+    <torpedo_storage type="min" amount="9"/>  <!-- Type 6 Mine"-->
+    <torpedo_storage type="emp" amount="6"/>  <!-- Type 9 EMP"-->
+    <torpedo_storage type="shk" amount="3"/>  <!-- Type 8 Pshock"-->
+    <torpedo_storage type="bea" amount="6"/>  <!-- Beacon"-->
+    <torpedo_storage type="pro" amount="12"/>  <!-- Probe"-->
+    <torpedo_storage type="tag" amount="6"/>  <!-- Tag"-->
+    <long_desc text="Riptide Cruiser^3 Forward Beams^3 Torpedo Tubes^Stores for 12 Homing, 3 Nukes, 9 Mines, 6 EMP, 3 PShock.^Shields Front 120 Rear 120"/>
+  </vessel>
+
+<!-- ***                               Sniper Cruiser                             *** -->
+
+  <vessel    uniqueID="32"    side="7"       classname="Lightning Cruiser" broadType="player cruiser sniper ximnibenlightningcruiser">
+    <art     meshfile="dat/ximni-missile.dxs"    diffuseFile="dat/XimniDiffuse.png"
+             glowFile="dat/XimniGlow.png"    specularFile="dat/XimniSpecular.png" scale="0.2" pushRadius="150"/>
+    <internal_data file="dat/ximni-missile.snt"/>
+    <engine_port x="-85.449120" y="-8.132334" z="-201.552475"/>
+    <engine_port x="-45.808228" y="-1.427677" z="-189.611588"/>
+    <engine_port x="-67.651352" y="-6.247528" z="-195.777618"/>
+    <engine_port x=" 85.449120" y="-8.132334" z="-201.552475"/>
+    <engine_port x=" 45.808228" y="-1.427677" z="-189.611588"/>
+    <engine_port x=" 67.651352" y="-6.247528" z="-195.777618"/>
+    <shields front="120" back="120"/>
+    <performance turnrate="0.004" topspeed="0.6" shipefficiency="1.0" warpefficiency="1.0" jumpefficiency="0.5"/>
+    <beam_port x="0" y="17.8" z="289.0" damage="1" playerdamage="12" arcwidth="0.05" cycletime="6.0" range="1500"/>
+    <beam_port x="0" y="17.8" z="289.0" damage="1" playerdamage="12" arcwidth="0.05" cycletime="6.0" range="1500"/>
+    <beam_port x="0" y="17.8" z="289.0" damage="1" playerdamage="12" arcwidth="0.05" cycletime="6.0" range="1500"/>
+    <torpedo_tube x="10" y="8.35" z="258.74"/>
+    <torpedo_tube x="0" y="8.35" z="258.74"/>
+    <torpedo_tube x="-10" y="8.35" z="258.74"/>
+    <torpedo_storage type="trp" amount="12"/>  <!-- Type 1 Homing"-->
+    <torpedo_storage type="nuk" amount="3"/>  <!-- Type 4 LR Nuke-->
+    <torpedo_storage type="min" amount="9"/>  <!-- Type 6 Mine"-->
+    <torpedo_storage type="emp" amount="6"/>  <!-- Type 9 EMP"-->
+    <torpedo_storage type="shk" amount="3"/>  <!-- Type 8 Pshock"-->
+    <torpedo_storage type="bea" amount="6"/>  <!-- Beacon"-->
+    <torpedo_storage type="pro" amount="12"/>  <!-- Probe"-->
+    <torpedo_storage type="tag" amount="6"/>  <!-- Tag"-->
+    <long_desc text="Lightning Cruiser^3 Focused Beams^3 Torpedo Tubes^Stores for 12 Homing, 3 Nukes, 9 Mines, 6 EMP, 3 PShock.^Shields Front 120 Rear 120"/>
+  </vessel>
+
+  <!-- ***                               Missile Cruiser                            *** -->
+
+  <vessel    uniqueID="33"    side="7"       classname="Long Arm Cruiser" broadType="player cruiser missile ximnibenlongarmcruiser">
+    <art     meshfile="dat/ximni-missile.dxs"    diffuseFile="dat/XimniDiffuse.png"
+             glowFile="dat/XimniGlow.png"    specularFile="dat/XimniSpecular.png" scale="0.2" pushRadius="150"/>
+    <internal_data file="dat/ximni-missile.snt"/>
+    <engine_port x="-85.449120" y="-8.132334" z="-201.552475"/>
+    <engine_port x="-45.808228" y="-1.427677" z="-189.611588"/>
+    <engine_port x="-67.651352" y="-6.247528" z="-195.777618"/>
+    <engine_port x=" 85.449120" y="-8.132334" z="-201.552475"/>
+    <engine_port x=" 45.808228" y="-1.427677" z="-189.611588"/>
+    <engine_port x=" 67.651352" y="-6.247528" z="-195.777618"/>
+    <shields front="120" back="120"/>
+    <torpedo_tube x="10" y="8.35" z="258.74"/>
+    <torpedo_tube x="0" y="8.35" z="258.74"/>
+    <torpedo_tube x="-10" y="8.35" z="258.74"/>
+    <torpedo_tube x="10" y="8.35" z="258.74"/>
+    <torpedo_tube x="0" y="8.35" z="258.74"/>
+    <torpedo_tube x="-10" y="8.35" z="258.74"/>
+    <torpedo_storage type="trp" amount="24"/>  <!-- Type 1 Homing"-->
+    <torpedo_storage type="nuk" amount="6"/>  <!-- Type 4 LR Nuke-->
+    <torpedo_storage type="min" amount="18"/>  <!-- Type 6 Mine"-->
+    <torpedo_storage type="emp" amount="12"/>  <!-- Type 9 EMP"-->
+    <torpedo_storage type="shk" amount="6"/>  <!-- Type 8 Pshock"-->
+    <torpedo_storage type="bea" amount="12"/>  <!-- Beacon"-->
+    <torpedo_storage type="pro" amount="24"/>  <!-- Probe"-->
+    <torpedo_storage type="tag" amount="12"/>  <!-- Tag"-->
+    <performance turnrate="0.004" topspeed="0.6" shipefficiency="1.0" warpefficiency="1.0" jumpefficiency="0.5"/>
+    <long_desc text="Long Arm Missile Cruiser^6 Torpedo Tubes^Stores for 24 Homing, 6 Nukes, 18 Mines, 12 EMP, 6 PShock.^Shields Front 120 Rear 120"/>
+  </vessel>
+
+<!-- ***                               Cruiser Carrier                      *** -->
+
+  <vessel    uniqueID="34"    side="0"       classname="Flotilla Cruiser" broadType="player cruiser carrier tsnbenflotillacruiser">
+    <art     meshfile="dat/TSNMediumCarrier.dxs"    diffuseFile="dat/CarrierDiffuse.png"
+             glowFile="dat/CarrierGlow.png"    specularFile="dat/CarrierGlow.png" scale="0.25" pushRadius="150"/>
+    <internal_data file="dat/TSNMediumCarrier.snt"/>
+    <engine_port x="-96.104828" y="-3.736436" z="-206.067001"/>
+    <engine_port x="-49.342007" y="13.807057" z="-246.574982"/>
+    <engine_port x="-47.541462" y="-9.202737" z="-245.196808"/>
+    <engine_port x="96.104828" y="-3.736436" z="-206.067001"/>
+    <engine_port x="49.342007" y="13.807057" z="-246.574982"/>
+    <engine_port x="47.541462" y="-9.202737" z="-245.196808"/>
+    <engine_port x="0" y="25.578470" z="-219.469696"/>
+    <engine_port x="0" y="-9.545690" z="-216.306778"/>
+    <shields front="80" back="80"/>
+    <performance turnrate="0.004" topspeed="0.6" shipefficiency="1.0" warpefficiency="1.0" jumpefficiency="0.5"/>
+    <beam_port x="-50" y="17.8" z="289.0" damage="1" playerdamage="12" arcwidth="0.4" cycletime="6.0" range="1000"/>
+    <beam_port x="50" y="17.8" z="289.0" damage="1" playerdamage="12" arcwidth="0.4" cycletime="6.0" range="1000"/>
+    <torpedo_tube x="10" y="8.35" z="258.74"/>
+    <torpedo_tube x="-10" y="8.35" z="258.74"/>
+    <torpedo_storage type="trp" amount="8"/>  <!-- Type 1 Homing"-->
+    <torpedo_storage type="nuk" amount="2"/>  <!-- Type 4 LR Nuke-->
+    <torpedo_storage type="min" amount="6"/>  <!-- Type 6 Mine"-->
+    <torpedo_storage type="emp" amount="4"/>  <!-- Type 9 EMP"-->
+    <torpedo_storage type="shk" amount="2"/>  <!-- Type 8 Pshock"-->
+    <torpedo_storage type="bea" amount="4"/>  <!-- Beacon"-->
+    <torpedo_storage type="pro" amount="8"/>  <!-- Probe"-->
+    <torpedo_storage type="tag" amount="4"/>  <!-- Tag"-->
+    <long_desc text="Flotilla Carrier^2 Forward Beams^2 Torpedo Tubes^Stores for 8 Homing, 2 Nukes, 6 Mines, 4 EMP, 2 PShock.^Fighters 4^Shields Front 80 Rear 80"/>
+    <carrierload baycount="4"/>
+  </vessel>
+  
+  <!-- ***                               Broadside Cruiser                        *** -->
+  <vessel    uniqueID="35"    side="9"       classname="Kestrel" broadType="player carrier ambrosianbenkestrelcruiser">
+      <art     meshfile="Ben/kestrel.dxs"    diffuseFile="Ben/kestrel_diffuse.jpg"
+      scale="0.2" pushRadius="180"/>
+      <internal_data file="Ben/kestrel.snt"/>
+      <performance turnrate="0.004" topspeed="0.6" shipefficiency="1.0" warpefficiency="1.0" jumpefficiency="0.5"/>
+      
+      <shields front="100" back="100"/>
+      <beam_port x="-0.701067" y="-115.343941" z="507.187408" damage="1" playerdamage="12" arcwidth="0.6" cycletime="6.0" range="1000"/>
+      <beam_port x="-0.701067" y="-115.343941" z="507.187408" damage="1" playerdamage="12" arcwidth="0.6" cycletime="6.0" range="1000"/>
+      <beam_port x="0.000000" y="0.000000" z="-173.150146" damage="1" playerdamage="12" arcwidth="0.6" cycletime="6.0" range="1000"/>
+      <torpedo_tube x="-0.701067" y="-115.343941" z="507.187408"/>
+      <torpedo_tube x="-0.701067" y="-115.343941" z="507.187408"/>
+      <torpedo_storage type="trp" amount="8"/>  <!-- Type 1 Homing"-->
+      <torpedo_storage type="nuk" amount="2"/>  <!-- Type 4 LR Nuke-->
+      <torpedo_storage type="min" amount="6"/>  <!-- Type 6 Mine"-->
+      <torpedo_storage type="emp" amount="4"/>  <!-- Type 9 EMP"-->
+      <torpedo_storage type="shk" amount="2"/>  <!-- Type 8 Pshock"-->
+      <torpedo_storage type="bea" amount="4"/>  <!-- Beacon"-->
+      <torpedo_storage type="pro" amount="8"/>  <!-- Probe"-->
+      <torpedo_storage type="tag" amount="4"/>  <!-- Tag"-->
+      <engine_port x="0.000000" y="0.000000" z="-173.150146"/>
+      <carrierload baycount="2"/>
+      
+      <long_desc text="Kestrel Escort Cruiser^Jump drive ship from Ambrosia Software's Escape Velocity.^2 Fore/1 Aft Beams (Best firepower to the sides)^2 Torpedo Tubes^Stores for 8 Homing, 2 Nukes, 6 Mines, 4 EMP, 2 PShock.^2 Heavy Fighters.^Shields Front 100 Rear 100"/>
+  </vessel>
+  
+  <!-- ***                               RP Heavy Cruiser (Reskinned Kestrel)                       *** -->
+  <vessel    uniqueID="36"    side="0"       classname="TSN Heavy Cruiser" broadType="player carrier tsnbenrpheavycruiser">
+      <art meshfile="Ben/artemis-HvyC.dxs" diffuseFile="dat/artemis_diffuse.png" glowFile="dat/artemis_illum.png" specularFile="dat/artemis_specular.png" scale="0.2" pushRadius="150" />
+      <internal_data file="Ben/artemis-HvyC.snt" />
+      <performance turnrate="0.004" topspeed="0.6" shipefficiency="1.0" warpefficiency="1.0" jumpefficiency="0.5"/>
+      
+      <shields front="100" back="100"/>
+      <beam_port x="-0.701067" y="-115.343941" z="507.187408" damage="1" playerdamage="12" arcwidth="0.6" cycletime="6.0" range="1000"/>
+      <beam_port x="-0.701067" y="-115.343941" z="507.187408" damage="1" playerdamage="12" arcwidth="0.6" cycletime="6.0" range="1000"/>
+      <beam_port x="0.000000" y="0.000000" z="-173.150146" damage="1" playerdamage="12" arcwidth="0.6" cycletime="6.0" range="1000"/>
+      <torpedo_tube x="0" y="8.35" z="258.74" />
+      <torpedo_tube x="0" y="8.35" z="258.74" />
+      <torpedo_storage type="trp" amount="8"/>  <!-- Type 1 Homing"-->
+      <torpedo_storage type="nuk" amount="2"/>  <!-- Type 4 LR Nuke-->
+      <torpedo_storage type="min" amount="6"/>  <!-- Type 6 Mine"-->
+      <torpedo_storage type="emp" amount="4"/>  <!-- Type 9 EMP"-->
+      <torpedo_storage type="shk" amount="2"/>  <!-- Type 8 Pshock"-->
+      <torpedo_storage type="bea" amount="4"/>  <!-- Beacon"-->
+      <torpedo_storage type="pro" amount="8"/>  <!-- Probe"-->
+      <torpedo_storage type="tag" amount="4"/>  <!-- Tag"-->
+      <engine_port x=" 45" y="30" z="-240" />
+      <engine_port x="-45" y="30" z="-240" />
+      <engine_port x=" 140" y="-7" z="-195" />
+      <engine_port x="-140" y="-7" z="-195" />
+      <carrierload baycount="2"/>
+      
+      <long_desc text="TSN Heavy Cruiser^Versatile warship well equipped for any role.^2 Fore/1 Aft Beams (Side overlap)^2 Torpedo Tubes^Stores for 8 Homing, 2 Nukes, 6 Mines, 4 EMP, 2 PShock.^2 Support Fighters^Shields Front 100 Rear 100"/>
+  </vessel>
+
+  
+  
+  <!-- ***                               Battlecruiser                        *** -->
+
+  <vessel    uniqueID="37"    side="7"       classname="Thunder Battlecruiser" broadType="player battlecruiser beam ximnibenthunderbattlecruiser">
+    <art     meshfile="dat/ximni-battleship.dxs"    diffuseFile="dat/XimniDiffuse.png"
+             glowFile="dat/XimniGlow.png"    specularFile="dat/XimniSpecular.png" scale="0.2" pushRadius="150"/>
+    <internal_data file="dat/ximni-battleship.snt"/>
+    <engine_port x="-52" y="-20" z="-34.943451"/>
+    <engine_port x=" 52" y="-20" z="-34.943451"/>
+    <engine_port x="-109" y="-21.496468" z="-249.583313"/>
+    <engine_port x=" 109" y="-21.496468" z="-249.583313"/>
+    <engine_port x="-134" y="-26.184715" z="-249.640533"/>
+    <engine_port x=" 134" y="-26.184715" z="-249.640533"/>
+    <shields front="160" back="160"/>
+    <performance turnrate="0.0035" topspeed="0.5" shipefficiency="1.1" warpefficiency="0.917" jumpefficiency="0.55"/>
+    <beam_port x="0" y="17.8" z="289.0" damage="1" playerdamage="12" arcwidth="0.4" cycletime="6.0" range="1000"/>
+    <beam_port x="-50" y="17.8" z="289.0" damage="1" playerdamage="12" arcwidth="0.4" cycletime="6.0" range="1000"/>
+    <beam_port x="0" y="17.8" z="289.0" damage="1" playerdamage="12" arcwidth="0.4" cycletime="6.0" range="1000"/>
+    <beam_port x="-50" y="17.8" z="289.0" damage="1" playerdamage="12" arcwidth="0.4" cycletime="6.0" range="1000"/>
+    <torpedo_tube x="10" y="8.35" z="258.74"/>
+    <torpedo_tube x="-10" y="8.35" z="258.74"/>
+    <torpedo_tube x="10" y="8.35" z="258.74"/>
+    <torpedo_tube x="-10" y="8.35" z="258.74"/>
+    <torpedo_storage type="trp" amount="16"/>  <!-- Type 1 Homing"-->
+    <torpedo_storage type="nuk" amount="4"/>  <!-- Type 4 LR Nuke-->
+    <torpedo_storage type="min" amount="12"/>  <!-- Type 6 Mine"-->
+    <torpedo_storage type="emp" amount="8"/>  <!-- Type 9 EMP"-->
+    <torpedo_storage type="shk" amount="4"/>  <!-- Type 8 Pshock"-->
+    <torpedo_storage type="bea" amount="8"/>  <!-- Beacon"-->
+    <torpedo_storage type="pro" amount="16"/>  <!-- Probe"-->
+    <torpedo_storage type="tag" amount="8"/>  <!-- Tag"-->
+    <long_desc text="Thunder Battlecruiser^4 Forward Beams^4 Torpedo Tubes^Stores for 16 Homing, 4 Nukes, 12 Mines, 8 EMP, 4 PShock.^Shields Front 160 Rear 160"/>
+  </vessel>
+
+<!-- ***                               Classic Battlecruiser / Broadside Battlecruiser               *** -->
+
+  <vessel    uniqueID="38"    side="7"       classname="Broadside Battlecruiser" broadType="player battlecruiser broadside ximnibenbroadsidebattlecruiser">
+    <art     meshfile="dat/ximni-battleship.dxs"    diffuseFile="dat/XimniDiffuse.png"
+             glowFile="dat/XimniGlow.png"    specularFile="dat/XimniSpecular.png" scale="0.2" pushRadius="150"/>
+    <internal_data file="dat/ximni-battleship.snt"/>
+    <engine_port x="-52" y="-20" z="-34.943451"/>
+    <engine_port x=" 52" y="-20" z="-34.943451"/>
+    <engine_port x="-109" y="-21.496468" z="-249.583313"/>
+    <engine_port x=" 109" y="-21.496468" z="-249.583313"/>
+    <engine_port x="-134" y="-26.184715" z="-249.640533"/>
+    <engine_port x=" 134" y="-26.184715" z="-249.640533"/>
+    <shields front="160" back="160"/>
+    <performance turnrate="0.0035" topspeed="0.5" shipefficiency="1.1" warpefficiency="0.917" jumpefficiency="0.55"/>
+    <beam_port x="0" y="17.8" z="200.0" damage="1" playerdamage="12" arcwidth="0.6" cycletime="6.0" range="1000"/>
+    <beam_port x="0" y="17.8" z="-200.0" damage="1" playerdamage="12" arcwidth="0.6" cycletime="6.0" range="1000"/>
+    <beam_port x="0" y="17.8" z="200.0" damage="1" playerdamage="12" arcwidth="0.6" cycletime="6.0" range="1000"/>
+    <beam_port x="0" y="17.8" z="-200.0" damage="1" playerdamage="12" arcwidth="0.6" cycletime="6.0" range="1000"/>
+    <torpedo_tube x="10" y="8.35" z="258.74"/>
+    <torpedo_tube x="-10" y="8.35" z="258.74"/>
+    <torpedo_tube x="10" y="8.35" z="258.74"/>
+    <torpedo_tube x="-10" y="8.35" z="258.74"/>
+    <torpedo_storage type="trp" amount="16"/>  <!-- Type 1 Homing"-->
+    <torpedo_storage type="nuk" amount="4"/>  <!-- Type 4 LR Nuke-->
+    <torpedo_storage type="min" amount="12"/>  <!-- Type 6 Mine"-->
+    <torpedo_storage type="emp" amount="8"/>  <!-- Type 9 EMP"-->
+    <torpedo_storage type="shk" amount="4"/>  <!-- Type 8 Pshock"-->
+    <torpedo_storage type="bea" amount="8"/>  <!-- Beacon"-->
+    <torpedo_storage type="pro" amount="16"/>  <!-- Probe"-->
+    <torpedo_storage type="tag" amount="8"/>  <!-- Tag"-->
+    <long_desc text="Ironsides Battlecruiser^4 Fore/Aft Beams (Best firepower to the sides)^4 Torpedo Tubes^Stores for 16 Homing, 4 Nukes, 12 Mines, 8 EMP, 4 PShock.^Shields Front 160 Rear 160"/>
+  </vessel>
+
+<!-- ***                               Battlecruiser Battle Carrier         *** -->
+
+  <vessel    uniqueID="39"    side="7"       classname="Storm Battlecruiser" broadType="player battlecruiser carrier ximnibenstormbattlecruiser">
+    <art     meshfile="dat/ximni-carrier.dxs"    diffuseFile="dat/XimniDiffuse.png"
+             glowFile="dat/XimniGlow.png"    specularFile="dat/XimniSpecular.png" scale="0.2" pushRadius="150"/>
+    <internal_data file="dat/ximni-carrier.snt"/>
+    <engine_port x="-111" y="0" z="-96"/>
+    <engine_port x= "111" y="0" z="-96"/>
+    <engine_port x="-64" y="-39" z="-128"/>
+    <engine_port x= "64" y="-39" z="-128"/>
+    <shields front="120" back="120"/>
+    <beam_port x="0" y="17.8" z="289.0" damage="1" playerdamage="12" arcwidth="0.4" cycletime="6.0" range="1000"/>
+    <beam_port x="-50" y="17.8" z="289.0" damage="1" playerdamage="12" arcwidth="0.4" cycletime="6.0" range="1000"/>
+    <beam_port x="50" y="17.8" z="289.0" damage="1" playerdamage="12" arcwidth="0.4" cycletime="6.0" range="1000"/>
+    <torpedo_tube x="10" y="8.35" z="258.74"/>
+    <torpedo_tube x="0" y="8.35" z="258.74"/>
+    <torpedo_tube x="-10" y="8.35" z="258.74"/>
+    <torpedo_storage type="trp" amount="12"/>  <!-- Type 1 Homing"-->
+    <torpedo_storage type="nuk" amount="3"/>  <!-- Type 4 LR Nuke-->
+    <torpedo_storage type="min" amount="9"/>  <!-- Type 6 Mine"-->
+    <torpedo_storage type="emp" amount="6"/>  <!-- Type 9 EMP"-->
+    <torpedo_storage type="shk" amount="3"/>  <!-- Type 8 Pshock"-->
+    <torpedo_storage type="bea" amount="6"/>  <!-- Beacon"-->
+    <torpedo_storage type="pro" amount="12"/>  <!-- Probe"-->
+    <torpedo_storage type="tag" amount="6"/>  <!-- Tag"-->
+    <performance turnrate="0.0035" topspeed="0.5" shipefficiency="1.1" warpefficiency="0.917" jumpefficiency="0.55"/>
+    <long_desc text="Storm Battlecarrier^3 Forward Beams^3 Torpedo Tubes^Stores for 12 Homing, 3 Nukes, 9 Mines, 6 EMP, 3 PShock.^Fighters 4^Shields Front 120 Rear 120"/>
+    <carrierload baycount="4"/>
+  </vessel>
+
+<!-- ***                               Battlecruiser Super Carrier          *** -->
+
+  <vessel    uniqueID="40"    side="0"       classname="Tsunami Battlecruiser" broadType="player battlecruiser carrier tsnbentsunamibattlecruiser">
+    <art     meshfile="dat/TSNSuperDread.dxs"    diffuseFile="dat/CarrierDiffuse.png"
+             glowFile="dat/CarrierGlow.png"    specularFile="dat/CarrierGlow.png" scale="0.27" pushRadius="170"/>
+    <internal_data file="dat/TSNSuperDread.snt"/>
+    <engine_port x="0" y="24.975101" z="-236.371490"/>
+    <engine_port x="0" y="-10.557181" z="-233.345779"/>
+    <engine_port x="-47.7" y="6.489565" z="-210.410187"/>
+    <engine_port x="-38.5" y="-23.931412" z="-210.133820"/>
+    <engine_port x="-77.7" y="42.549511" z="-252.256500"/>
+    <engine_port x="-76.5" y="21.562883" z="-248.874771"/>
+    <engine_port x="-82.1" y="-6.105583" z="-241.444992"/>
+    <engine_port x="-116.3" y="-9.108684" z="-241.983398"/>
+    <engine_port x="47.7" y="6.489565" z="-210.410187"/>
+    <engine_port x="38.5" y="-23.931412" z="-210.133820"/>
+    <engine_port x="77.7" y="42.549511" z="-252.256500"/>
+    <engine_port x="76.5" y="21.562883" z="-248.874771"/>
+    <engine_port x="82.1" y="-6.105583" z="-241.444992"/>
+    <engine_port x="116.3" y="-9.108684" z="-241.983398"/>
+    <shields front="80" back="80"/>
+    <beam_port x="-50" y="17.8" z="289.0" damage="1" playerdamage="12" arcwidth="0.4" cycletime="6.0" range="1000"/>
+    <beam_port x="50" y="17.8" z="289.0" damage="1" playerdamage="12" arcwidth="0.4" cycletime="6.0" range="1000"/>
+    <torpedo_tube x="10" y="8.35" z="258.74"/>
+    <torpedo_tube x="-10" y="8.35" z="258.74"/>
+    <torpedo_storage type="trp" amount="8"/>  <!-- Type 1 Homing"-->
+    <torpedo_storage type="nuk" amount="2"/>  <!-- Type 4 LR Nuke-->
+    <torpedo_storage type="min" amount="6"/>  <!-- Type 6 Mine"-->
+    <torpedo_storage type="emp" amount="4"/>  <!-- Type 9 EMP"-->
+    <torpedo_storage type="shk" amount="2"/>  <!-- Type 8 Pshock"-->
+    <torpedo_storage type="bea" amount="4"/>  <!-- Beacon"-->
+    <torpedo_storage type="pro" amount="8"/>  <!-- Probe"-->
+    <torpedo_storage type="tag" amount="4"/>  <!-- Tag"-->
+    <performance turnrate="0.0035" topspeed="0.5" shipefficiency="1.1" warpefficiency="0.917" jumpefficiency="0.55"/>
+    <long_desc text="Tsunami Heavy Carrier^2 Forward Beams^2 Torpedo Tubes^Stores for 8 Homing, 2 Nukes, 6 Mines, 4 EMP, 2 PShock.^Fighters 8^Shields Front 80 Rear 80"/>
+    <carrierload baycount="8"/>
   </vessel>
 
 
+<!-- ***                               Battleship                           *** -->
+
+  <vessel    uniqueID="41"    side="0"       classname="Reaver Battleship" broadType="player battleship sniper tsnbenreaverbattleship">
+    <art     meshfile="dat/artemis-3.dxs"    diffuseFile="dat/artemis_diffuse.png"
+             glowFile="dat/artemis_illum.png"    specularFile="dat/artemis_specular.png" scale="0.2"/>
+    <internal_data file="dat/artemis-3.snt"/>
+    <engine_port x="0" y="-9.22" z="-300"/>
+    <engine_port x="0" y="29.64" z="-300"/>
+    <engine_port x="-111.755783" y="-44.202168" z="-242.740082"/>
+    <engine_port x="111.755783" y="-44.202168" z="-242.740082"/>
+    <engine_port x="0" y="97.875313" z="-181.449524"/>
+    <beam_port x="0" y="17.8" z="289.0" damage="1" playerdamage="12" arcwidth="0.05" cycletime="6.0" range="1500"/>
+    <beam_port x="0" y="17.8" z="289.0" damage="1" playerdamage="12" arcwidth="0.05" cycletime="6.0" range="1500"/>
+    <beam_port x="-50" y="17.8" z="289.0" damage="1" playerdamage="12" arcwidth="0.4" cycletime="6.0" range="1000"/>
+    <beam_port x="50" y="17.8" z="289.0" damage="1" playerdamage="12" arcwidth="0.4" cycletime="6.0" range="1000"/>
+    <beam_port x="0" y="17.8" z="289.0" damage="1" playerdamage="12" arcwidth="1.0" cycletime="6.0" range="667"/>
+    <beam_port x="0" y="17.8" z="289.0" damage="1" playerdamage="12" arcwidth="1.0" cycletime="6.0" range="667"/>
+    <torpedo_tube x="10" y="8.35" z="258.74"/>
+    <torpedo_tube x="0" y="8.35" z="258.74"/>
+    <torpedo_tube x="-10" y="8.35" z="258.74"/>
+    <torpedo_tube x="10" y="8.35" z="258.74"/>
+    <torpedo_tube x="0" y="8.35" z="258.74"/>
+    <torpedo_tube x="-10" y="8.35" z="258.74"/>
+    <torpedo_storage type="trp" amount="24"/>  <!-- Type 1 Homing"-->
+    <torpedo_storage type="nuk" amount="6"/>  <!-- Type 4 LR Nuke-->
+    <torpedo_storage type="min" amount="18"/>  <!-- Type 6 Mine"-->
+    <torpedo_storage type="emp" amount="12"/>  <!-- Type 9 EMP"-->
+    <torpedo_storage type="shk" amount="6"/>  <!-- Type 8 Pshock"-->
+    <torpedo_storage type="bea" amount="12"/>  <!-- Beacon"-->
+    <torpedo_storage type="pro" amount="24"/>  <!-- Probe"-->
+    <torpedo_storage type="tag" amount="12"/>  <!-- Tag"-->
+    <shields front="240" back="240"/>
+    <performance turnrate="0.003" topspeed="0.45" shipefficiency="1.2" warpefficiency="0.9" jumpefficiency="0.6"/>
+    <long_desc text="Reaver Battleship^2 Focused Beams, 2 Forward Beams, 2 Beam Turrets^6 Torpedo Tubes^Stores for 24 Homing, 6 Nukes, 18 Mines, 12 EMP, 6 PShock.^Fighters 2^Shields Front 240 Rear 240"/>
+    <carrierload baycount="2"/>
+  </vessel>
+
+<!-- ***                                  Dreadnought                             *** -->
+
+  <vessel    uniqueID="42"    side="0"       classname="Armageddon Dreadnought" broadType="player dreadnought sniper tsnbenarmageddondreadnought">
+    <art     meshfile="dat/artemis-5.dxs"    diffuseFile="dat/artemis_diffuse.png"
+             glowFile="dat/artemis_illum.png"    specularFile="dat/artemis_specular.png" scale="0.25" pushRadius="150"/>
+    <internal_data file="dat/artemis-5.snt"/>
+    <engine_port x="0" y="-9.22" z="-300"/>
+    <engine_port x="0" y="29.64" z="-300"/>
+    <engine_port x="-81.6" y="5.1" z="-235.4"/>
+    <engine_port x="81.6" y="5.1" z="-235.4"/>
+    <engine_port x="-153.0" y="10.9" z="-187.4"/>
+    <engine_port x="153.0" y="10.9" z="-187.4"/>
+    <shields front="320" back="320"/>
+    <performance turnrate="0.0025" topspeed="0.4" shipefficiency="1.3" warpefficiency="0.867" jumpefficiency="0.65"/>
+    <beam_port x="0" y="17.8" z="289.0" damage="1" playerdamage="12" arcwidth="0.05" cycletime="6.0" range="1500"/>
+    <beam_port x="0" y="17.8" z="289.0" damage="1" playerdamage="12" arcwidth="0.05" cycletime="6.0" range="1500"/>
+    <beam_port x="0" y="17.8" z="289.0" damage="1" playerdamage="12" arcwidth="0.05" cycletime="6.0" range="1500"/>
+    <beam_port x="0" y="17.8" z="289.0" damage="1" playerdamage="12" arcwidth="0.05" cycletime="6.0" range="1500"/>
+    <beam_port x="-50" y="17.8" z="289.0" damage="1" playerdamage="12" arcwidth="0.4" cycletime="6.0" range="1000"/>
+    <beam_port x="50" y="17.8" z="289.0" damage="1" playerdamage="12" arcwidth="0.4" cycletime="6.0" range="1000"/>
+    <beam_port x="0" y="17.8" z="289.0" damage="1" playerdamage="12" arcwidth="1.0" cycletime="6.0" range="667"/>
+    <beam_port x="0" y="17.8" z="289.0" damage="1" playerdamage="12" arcwidth="1.0" cycletime="6.0" range="667"/>
+    <torpedo_tube x="10" y="8.35" z="258.74"/>
+    <torpedo_tube x="-10" y="8.35" z="258.74"/>
+    <torpedo_tube x="0" y="8.35" z="258.74"/>
+    <torpedo_tube x="0" y="8.35" z="258.74"/>
+    <torpedo_tube x="10" y="8.35" z="258.74"/>
+    <torpedo_tube x="-10" y="8.35" z="258.74"/>
+    <torpedo_storage type="trp" amount="44"/>  <!-- Type 1 Homing"-->
+    <torpedo_storage type="nuk" amount="8"/>  <!-- Type 4 LR Nuke-->
+    <torpedo_storage type="min" amount="24"/>  <!-- Type 6 Mine"-->
+    <torpedo_storage type="emp" amount="16"/>  <!-- Type 9 EMP"-->
+    <torpedo_storage type="shk" amount="8"/>  <!-- Type 8 Pshock"-->
+    <torpedo_storage type="bea" amount="12"/>  <!-- Beacon"-->
+    <torpedo_storage type="pro" amount="24"/>  <!-- Probe"-->
+    <torpedo_storage type="tag" amount="12"/>  <!-- Tag"-->
+    <long_desc text="Armageddon Dreadnought^4 Focused, 2 Forward, 2 Beam Turrets^6 Torpedo Tubes with 2 Additional Stores^Stores for 44 Homing, 8 Nukes, 24 Mines, 16 EMP, 8 PShock.^Fighters 4^Shields Front 320 Rear 320"/>
+    <carrierload baycount="4"/>
+  </vessel>
+
+<!-- ***                                  Jump Dreadnought                             *** -->
+
+  <vessel    uniqueID="43"    side="7"       classname="Supernova Dreadnought" broadType="player dreadnought sniper ximnibensupernovadreadnought">
+    <art     meshfile="dat/ximni-dread.dxs"    diffuseFile="dat/XimniDiffuse.png"
+             glowFile="dat/XimniGlow.png"    specularFile="dat/XimniSpecular.png" scale="0.23" pushRadius="150"/>
+    <internal_data file="dat/ximni-dread.snt"/>
+    <engine_port x="0" y="-9.22" z="-300"/>
+    <engine_port x="0" y="29.64" z="-300"/>
+    <engine_port x="-81.6" y="5.1" z="-235.4"/>
+    <engine_port x="81.6" y="5.1" z="-235.4"/>
+    <engine_port x="-153.0" y="10.9" z="-187.4"/>
+    <engine_port x="153.0" y="10.9" z="-187.4"/>
+    <beam_port x="0" y="17.8" z="289.0" damage="1" playerdamage="12" arcwidth="0.05" cycletime="6.0" range="1500"/>
+    <beam_port x="0" y="17.8" z="289.0" damage="1" playerdamage="12" arcwidth="0.05" cycletime="6.0" range="1500"/>
+    <beam_port x="0" y="17.8" z="289.0" damage="1" playerdamage="12" arcwidth="0.05" cycletime="6.0" range="1500"/>
+    <beam_port x="0" y="17.8" z="289.0" damage="1" playerdamage="12" arcwidth="0.05" cycletime="6.0" range="1500"/>
+    <beam_port x="0" y="17.8" z="289.0" damage="1" playerdamage="12" arcwidth="0.05" cycletime="6.0" range="1500"/>
+    <beam_port x="0" y="17.8" z="289.0" damage="1" playerdamage="12" arcwidth="0.05" cycletime="6.0" range="1500"/>
+    <beam_port x="0" y="17.8" z="289.0" damage="1" playerdamage="12" arcwidth="0.05" cycletime="6.0" range="1500"/>
+    <beam_port x="0" y="17.8" z="289.0" damage="1" playerdamage="12" arcwidth="0.05" cycletime="6.0" range="1500"/>
+    <torpedo_tube x="10" y="8.35" z="258.74"/>
+    <torpedo_tube x="-10" y="8.35" z="258.74"/>
+    <torpedo_tube x="0" y="8.35" z="258.74"/>
+    <torpedo_tube x="0" y="8.35" z="258.74"/>
+    <torpedo_tube x="10" y="8.35" z="258.74"/>
+    <torpedo_tube x="-10" y="8.35" z="258.74"/>
+    <torpedo_storage type="trp" amount="44"/>  <!-- Type 1 Homing"-->
+    <torpedo_storage type="nuk" amount="8"/>  <!-- Type 4 LR Nuke-->
+    <torpedo_storage type="min" amount="24"/>  <!-- Type 6 Mine"-->
+    <torpedo_storage type="emp" amount="16"/>  <!-- Type 9 EMP"-->
+    <torpedo_storage type="shk" amount="8"/>  <!-- Type 8 Pshock"-->
+    <torpedo_storage type="bea" amount="12"/>  <!-- Beacon"-->
+    <torpedo_storage type="pro" amount="24"/>  <!-- Probe"-->
+    <torpedo_storage type="tag" amount="12"/>  <!-- Tag"-->
+    <shields front="320" back="320"/>
+    <performance turnrate="0.0015" topspeed="0.001" shipefficiency="0.1" warpefficiency="100.0" jumpefficiency="0.65"/>
+    <long_desc text="Supernova Jump Dreadnought (Jump Only)^8 Focused Beams^6 Torpedo Tubes with 2 Additional Stores^Stores for 44 Homing, 8 Nukes, 24 Mines, 16 EMP, 8 PShock.^Fighters 4^Shields Front 320 Rear 320"/>
+    <carrierload baycount="4"/>
+  </vessel>
+
+<!-- ***                                 Species 8473 Dreadnought                             *** -->
+
+<vessel    uniqueID="44"    side="7"       classname="Species 8473" broadType="player dreadnought sniper ximnibenspecies8473dreadnought">
+    <art     meshfile="dat/z-drone1.dxs"    diffuseFile="dat/drone1_color.png"
+    glowFile="dat/drone1_glow.png"    specularFile="dat/drone1_spec.png" scale="0.45" pushRadius="250"/>
+    <internal_data file="Ben/z-drone1.snt"/>
+    <engine_port x="0" y="268" z="-33"/>
+    <engine_port x="0" y="-228" z="-83"/>
+    <shields front="200" back="200"/>
+    <performance turnrate="0.008" topspeed="0.6" shipefficiency="0.7" warpefficiency="0.93" jumpefficiency="0.35"/>
+    <beam_port x="0" y="17.8" z="289.0" damage="1" playerdamage="12" arcwidth="0.05" cycletime="6.0" range="1500"/>
+    <beam_port x="0" y="17.8" z="289.0" damage="1" playerdamage="12" arcwidth="0.05" cycletime="6.0" range="1500"/>
+    <beam_port x="0" y="17.8" z="289.0" damage="1" playerdamage="12" arcwidth="0.05" cycletime="6.0" range="1500"/>
+    <beam_port x="0" y="17.8" z="289.0" damage="1" playerdamage="12" arcwidth="0.05" cycletime="6.0" range="1500"/>
+    <beam_port x="0" y="17.8" z="289.0" damage="1" playerdamage="12" arcwidth="1.0" cycletime="6.0" range="667"/>
+    <beam_port x="0" y="17.8" z="289.0" damage="1" playerdamage="12" arcwidth="1.0" cycletime="6.0" range="667"/>
+    <torpedo_tube x="10" y="8.35" z="258.74"/>
+    <torpedo_tube x="-10" y="8.35" z="258.74"/>
+    <torpedo_tube x="10" y="8.35" z="258.74"/>
+    <torpedo_tube x="-10" y="8.35" z="258.74"/>
+    <torpedo_storage type="trp" amount="16"/>  <!-- Type 1 Homing"-->
+    <torpedo_storage type="nuk" amount="4"/>  <!-- Type 4 LR Nuke-->
+    <torpedo_storage type="min" amount="12"/>  <!-- Type 6 Mine"-->
+    <torpedo_storage type="emp" amount="8"/>  <!-- Type 9 EMP"-->
+    <torpedo_storage type="shk" amount="4"/>  <!-- Type 8 Pshock"-->
+    <torpedo_storage type="bea" amount="8"/>  <!-- Beacon"-->
+    <torpedo_storage type="pro" amount="16"/>  <!-- Probe"-->
+    <torpedo_storage type="tag" amount="8"/>  <!-- Tag"-->
+    <long_desc text="Species 8473 Dreadnought^Corvette maneuver and speed on a Dreadnought Hull^4 Focused Beams^2 Beam Turrets^4 Torpedo Tubes^Stores for 16 Homing, 4 Nukes, 12 Mines, 8 EMP, 4 PShock.^Shields Front 200 Rear 200"/>
+</vessel>
+
+  
+  <!-- ***                                 Impulse Corvette                             *** -->
+  
+  <vessel    uniqueID="45"    side="7"       classname="Hellion Corvette" broadType="player corvette impulse ximnibenhellioncorvette">
+      <art     meshfile="dat/ENE_RoundA.dxs"    diffuseFile="dat/roundA_diffuse.png"
+      glowFile="dat/roundA_illum.png"    specularFile="dat/roundA_specular.png" scale="0.2" pushRadius="150"/>
+      <internal_data file="Ben/ENE_RoundA.snt"/>
+      <shields front="80" back="80"/>
+      <performance turnrate="0.006" topspeed="1.6"  shipefficiency="0.7" warpefficiency="100.0" jumpefficiency="100.0"/>
+      <beam_port x="-102.14" y="8.35" z="258.74" damage="1" playerdamage="12" arcwidth="0.4" cycletime="6.0" range="1000"/>
+      <beam_port x=" 102.14" y="8.35" z="258.74" damage="1" playerdamage="12" arcwidth="0.4" cycletime="6.0" range="1000"/>
+      <torpedo_tube x="0" y="8.35" z="258.74"/>
+      <torpedo_tube x="0" y="8.35" z="258.74"/>
+      <torpedo_storage type="trp" amount="8"/>  <!-- Type 1 Homing"-->
+      <torpedo_storage type="nuk" amount="2"/>  <!-- Type 4 LR Nuke-->
+      <torpedo_storage type="min" amount="6"/>  <!-- Type 6 Mine"-->
+      <torpedo_storage type="emp" amount="4"/>  <!-- Type 9 EMP"-->
+      <torpedo_storage type="shk" amount="2"/>  <!-- Type 8 Pshock"-->
+      <torpedo_storage type="bea" amount="4"/>  <!-- Beacon"-->
+      <torpedo_storage type="pro" amount="8"/>  <!-- Probe"-->
+      <torpedo_storage type="tag" amount="4"/>  <!-- Tag"-->
+      <long_desc text="Hellion Impulse Corvette^2 Forward Beams^2 Torpedo Tubes^Stores for 8 Homing, 2 Nukes, 6 Mines, 4 EMP, 2 PShock.^Shields Front 80 Rear 80"/>
+      <engine_port x="-72.43" y="27.65" z="-260"/>
+      <engine_port x=" 72.43" y="27.65" z="-260"/>
+      <engine_port x="-76.22" y="-18.78" z="-250"/>
+      <engine_port x=" 76.22" y="-18.78" z="-250"/>
+      <impulse_point x="104.414703" y="42.085434" z="-166.859009"/>
+      <impulse_point x="-104.414703" y="42.085434" z="-166.859009"/>
+      <maneuver_point x="173.576767" y="-0.981873" z="158.842682"/>
+      <maneuver_point x="-173.576767" y="-0.981873" z="158.842682"/>
+  </vessel>
+  
+  <!-- ***                              Impulse Destroyer                        *** -->
+  
+  <vessel    uniqueID="46"    side="7"       classname="Protector Destroyer" broadType="player destroyer impulse ximnibenprotectordestroyer">
+      <art     meshfile="dat/ENE_RoundB.dxs"    diffuseFile="dat/roundB_diffuse.png"
+      glowFile="dat/roundB_selfIllum.png"    specularFile="dat/roundB_specular.png" scale="0.25" pushRadius="150"/>
+      <internal_data file="Ben/ENE_RoundB.snt"/>
+      <performance turnrate="0.005" topspeed="1.4" shipefficiency="0.9" warpefficiency="100.0" jumpefficiency="100.0"/>
+      <engine_port x=" 70.35" y="8.7" z="-240"/>
+      <engine_port x="-70.35" y="8.7" z="-240"/>
+      <impulse_point x="-96.062263" y="-10.102722" z="-77.436584"/>
+      <impulse_point x="96.062263" y="-10.102722" z="-77.436584"/>
+      <maneuver_point x="-3.419852" y="-48.397114" z="82.551994"/>
+      <shields front="120" back="120"/>
+      <beam_port x="0" y="17.8" z="289.0" damage="1" playerdamage="12" arcwidth="0.4" cycletime="6.0" range="1000"/>
+      <beam_port x="-50" y="17.8" z="289.0" damage="1" playerdamage="12" arcwidth="0.4" cycletime="6.0" range="1000"/>
+      <beam_port x="50" y="17.8" z="289.0" damage="1" playerdamage="12" arcwidth="0.4" cycletime="6.0" range="1000"/>
+      <torpedo_tube x="10" y="8.35" z="258.74"/>
+      <torpedo_tube x="0" y="8.35" z="258.74"/>
+      <torpedo_tube x="-10" y="8.35" z="258.74"/>
+      <torpedo_storage type="trp" amount="12"/>  <!-- Type 1 Homing"-->
+      <torpedo_storage type="nuk" amount="3"/>  <!-- Type 4 LR Nuke-->
+      <torpedo_storage type="min" amount="9"/>  <!-- Type 6 Mine"-->
+      <torpedo_storage type="emp" amount="6"/>  <!-- Type 9 EMP"-->
+      <torpedo_storage type="shk" amount="3"/>  <!-- Type 8 Pshock"-->
+      <torpedo_storage type="bea" amount="6"/>  <!-- Beacon"-->
+      <torpedo_storage type="pro" amount="12"/>  <!-- Probe"-->
+      <torpedo_storage type="tag" amount="6"/>  <!-- Tag"-->
+      <long_desc text="Protector Impulse Destroyer^3 Forward Beams^3 Torpedo Tubes^Stores for 12 Homing, 3 Nukes, 9 Mines, 6 EMP, 3 PShock.^Shields Front 120 Rear 120"/>
+  </vessel>
+  <!-- ***                               Impulse Cruiser                            *** -->
+  
+  <vessel    uniqueID="47"    side="7"       classname="Steamroller Cruiser" broadType="player cruiser impulse ximnibensteamrollercruiser">
+      <art     meshfile="dat/ENE_RoundC.dxs"    diffuseFile="dat/RoundC_Diffuse.png"
+      glowFile="dat/roundC_illum.png"    specularFile="dat/roundC_specular.png" scale="0.3" pushRadius="150"/>
+      <internal_data file="Ben/ENE_RoundC.snt"/>
+      <performance turnrate="0.004" topspeed="1.2" shipefficiency="1.0" warpefficiency="100.0" jumpefficiency="100.0"/>
+      <engine_port x=" 35.77" y="-7.76" z="-200"/>
+      <engine_port x="-35.77" y="-7.76" z="-200"/>
+      <engine_port x="115" y="-20.27" z="-80"/>
+      <engine_port x="-115" y="-20.27" z="-80"/>
+      <impulse_point x="-57.151264" y="-7.934345" z="-119.779823"/>
+      <impulse_point x="57.151264" y="-7.934345" z="-119.779823"/>
+      <maneuver_point x="-61.429497" y="-19.089073" z="170.379669"/>
+      <maneuver_point x="61.429497" y="-19.089073" z="170.379669"/>
+      <shields front="160" back="160"/>
+      <beam_port x="-50" y="17.8" z="289.0" damage="1" playerdamage="12" arcwidth="0.4" cycletime="6.0" range="1000"/>
+      <beam_port x="50" y="17.8" z="289.0" damage="1" playerdamage="12" arcwidth="0.4" cycletime="6.0" range="1000"/>
+      <beam_port x="-50" y="17.8" z="289.0" damage="1" playerdamage="12" arcwidth="0.4" cycletime="6.0" range="1000"/>
+      <beam_port x="50" y="17.8" z="289.0" damage="1" playerdamage="12" arcwidth="0.4" cycletime="6.0" range="1000"/>
+      <torpedo_tube x="10" y="8.35" z="258.74"/>
+      <torpedo_tube x="-10" y="8.35" z="258.74"/>
+      <torpedo_tube x="10" y="8.35" z="258.74"/>
+      <torpedo_tube x="-10" y="8.35" z="258.74"/>
+      <torpedo_storage type="trp" amount="16"/>  <!-- Type 1 Homing"-->
+      <torpedo_storage type="nuk" amount="4"/>  <!-- Type 4 LR Nuke-->
+      <torpedo_storage type="min" amount="12"/>  <!-- Type 6 Mine"-->
+      <torpedo_storage type="emp" amount="8"/>  <!-- Type 9 EMP"-->
+      <torpedo_storage type="shk" amount="4"/>  <!-- Type 8 Pshock"-->
+      <torpedo_storage type="bea" amount="8"/>  <!-- Beacon"-->
+      <torpedo_storage type="pro" amount="16"/>  <!-- Probe"-->
+      <torpedo_storage type="tag" amount="8"/>  <!-- Tag"-->
+      <long_desc text="Steamroller Impulse Cruiser^4 Forward Beams^4 Torpedo Tubes^Stores for 16 Homing, 4 Nukes, 12 Mines, 8 EMP, 4 PShock.^Shields Front 160 Rear 160"/>
+  </vessel>
+  <!-- ***                                 Impulse Battlecruiser                             *** -->
+  
+  <vessel    uniqueID="48"    side="7"       classname="Earthquake Battlecruiser" broadType="player battlecruiser impulse ximnibenearthquakebattlecruiser">
+      <art     meshfile="dat/ENE_LeeC.dxs"    diffuseFile="dat/ship3_color_1024.png"
+      glowFile="dat/ship3_glow_1024.png"    specularFile="dat/ship3_spec_1024.png"  scale="0.4" pushRadius="250"/>
+      <internal_data file="Ben/ENE_LeeC.snt"/>
+      <performance turnrate="0.0035" topspeed="1.0" shipefficiency="1.1" warpefficiency="100.0" jumpefficiency="100.0"/>
+      <engine_port x=" 66" y="22" z="-383"/>
+      <engine_port x="-66" y="22" z="-383"/>
+      <engine_port x=" 54" y="41" z="-370"/>
+      <engine_port x="-54" y="41" z="-370"/>
+      <impulse_point x=" 76" y="39" z="-319"/>
+      <impulse_point x="-76" y="39" z="-319"/>
+      <maneuver_point x=" 98" y="31" z="162"/>
+      <maneuver_point x="-98" y="31" z="162"/>
+      <beam_port x="0" y="17.8" z="289.0" damage="1" playerdamage="12" arcwidth="0.05" cycletime="6.0" range="1500"/>
+      <beam_port x="0" y="17.8" z="289.0" damage="1" playerdamage="12" arcwidth="0.05" cycletime="6.0" range="1500"/>
+      <beam_port x="-50" y="17.8" z="289.0" damage="1" playerdamage="12" arcwidth="0.4" cycletime="6.0" range="1000"/>
+      <beam_port x="50" y="17.8" z="289.0" damage="1" playerdamage="12" arcwidth="0.4" cycletime="6.0" range="1000"/>
+      <beam_port x="0" y="17.8" z="289.0" damage="1" playerdamage="12" arcwidth="1.0" cycletime="6.0" range="667"/>
+      <beam_port x="0" y="17.8" z="289.0" damage="1" playerdamage="12" arcwidth="1.0" cycletime="6.0" range="667"/>
+      <torpedo_tube x="10" y="8.35" z="258.74"/>
+      <torpedo_tube x="0" y="8.35" z="258.74"/>
+      <torpedo_tube x="-10" y="8.35" z="258.74"/>
+      <torpedo_tube x="10" y="8.35" z="258.74"/>
+      <torpedo_tube x="0" y="8.35" z="258.74"/>
+      <torpedo_tube x="-10" y="8.35" z="258.74"/>
+      <torpedo_storage type="trp" amount="24"/>  <!-- Type 1 Homing"-->
+      <torpedo_storage type="nuk" amount="6"/>  <!-- Type 4 LR Nuke-->
+      <torpedo_storage type="min" amount="18"/>  <!-- Type 6 Mine"-->
+      <torpedo_storage type="emp" amount="12"/>  <!-- Type 9 EMP"-->
+      <torpedo_storage type="shk" amount="6"/>  <!-- Type 8 Pshock"-->
+      <torpedo_storage type="bea" amount="12"/>  <!-- Beacon"-->
+      <torpedo_storage type="pro" amount="24"/>  <!-- Probe"-->
+      <torpedo_storage type="tag" amount="12"/>  <!-- Tag"-->
+      <shields front="240" back="240"/>
+      <long_desc text="Earthquake Impulse Battlecruiser^2 Focused, 2 Forward, and 2 Beam Turrets^6 Torpedo Tubes^Stores for 24 Homing, 6 Nukes, 18 Mines, 12 EMP, 6 PShock.^Fighters 2^Shields Front 240 Rear 240"/>
+      <carrierload baycount="2"/>
+  </vessel>
+  
+  
+  <vessel    uniqueID="49"    side="7"       classname="Typhoon Battleship" broadType="player battleship impulse ximnibentyphoonbattleship">
+      <art     meshfile="dat/TSNMediumCarrier.dxs"    diffuseFile="dat/CarrierDiffuse.png"
+      glowFile="dat/CarrierGlow.png"    specularFile="dat/CarrierGlow.png" scale="0.4" pushRadius="150"/>
+      <internal_data file="dat/TSNMediumCarrier.snt"/>
+      <performance turnrate="0.003" topspeed="0.9" shipefficiency="1.2" warpefficiency="100.0" jumpefficiency="100.0"/>
+      <engine_port x="-96.104828" y="-3.736436" z="-206.067001"/>
+      <engine_port x="-49.342007" y="13.807057" z="-246.574982"/>
+      <engine_port x="-47.541462" y="-9.202737" z="-245.196808"/>
+      
+      <engine_port x="96.104828" y="-3.736436" z="-206.067001"/>
+      <engine_port x="49.342007" y="13.807057" z="-246.574982"/>
+      <engine_port x="47.541462" y="-9.202737" z="-245.196808"/>
+      
+      <engine_port x="0" y="25.578470" z="-219.469696"/>
+      <engine_port x="0" y="-9.545690" z="-216.306778"/>
+      <impulse_point x=" 76" y="39" z="-319"/>
+      <impulse_point x="-76" y="39" z="-319"/>
+      <maneuver_point x=" 98" y="31" z="162"/>
+      <maneuver_point x="-98" y="31" z="162"/>
+      <beam_port x="-50" y="17.8" z="289.0" damage="1" playerdamage="24" arcwidth="0.4" cycletime="6.0" range="1000"/>
+      <beam_port x="50" y="17.8" z="289.0" damage="1" playerdamage="24" arcwidth="0.4" cycletime="6.0" range="1000"/>
+      <beam_port x="0" y="17.8" z="289.0" damage="1" playerdamage="12" arcwidth="1.0" cycletime="6.0" range="667"/>
+      <beam_port x="0" y="17.8" z="289.0" damage="1" playerdamage="12" arcwidth="1.0" cycletime="6.0" range="667"/>
+      <beam_port x="0" y="17.8" z="289.0" damage="1" playerdamage="12" arcwidth="1.0" cycletime="6.0" range="667"/>
+      <beam_port x="0" y="17.8" z="289.0" damage="1" playerdamage="12" arcwidth="1.0" cycletime="6.0" range="667"/>
+      
+      <torpedo_tube x="-10" y="8.35" z="258.74"/>
+      <torpedo_tube x="10" y="8.35" z="258.74"/>
+      <torpedo_tube x="0" y="8.35" z="258.74"/>
+      <torpedo_tube x="-10" y="8.35" z="258.74"/>
+      <torpedo_storage type="trp" amount="16"/>  <!-- Type 1 Homing"-->
+      <torpedo_storage type="nuk" amount="4"/>  <!-- Type 4 LR Nuke-->
+      <torpedo_storage type="min" amount="12"/>  <!-- Type 6 Mine"-->
+      <torpedo_storage type="emp" amount="8"/>  <!-- Type 9 EMP"-->
+      <torpedo_storage type="shk" amount="4"/>  <!-- Type 8 Pshock"-->
+      <torpedo_storage type="bea" amount="8"/>  <!-- Beacon"-->
+      <torpedo_storage type="pro" amount="16"/>  <!-- Probe"-->
+      <torpedo_storage type="tag" amount="8"/>  <!-- Tag"-->
+      <shields front="280" back="280"/>
+      <long_desc text="Typhoon Impulse Battleship^2 Heavy Forward beams, and 4 Beam Turrets^4 Torpedo Tubes^Stores for 16 Homing, 4 Nukes, 12 Mines, 8 EMP, 4 PShock.^Fighters 6^Shields Front 280 Rear 280"/>
+      <carrierload baycount="6"/>
+  </vessel>
+  
+
+  
+  <vessel    uniqueID="50"    side="0"       classname="Science Vessel" broadType="science player tsnbensciencevessel">
+      <!-- TSN Science -->
+      <art     meshfile="dat/science-vessel.dxs"    diffuseFile="dat/Science_Vessel_color.png"
+      glowFile="dat/Science_Vessel_glow.png"    specularFile="dat/Science_Vessel_spec.png" scale="0.32" pushRadius="150"/>
+      <shields front="30" back="30"/>
+      <internal_data file="Ben/science-vessel.snt"/>
+      <performance turnrate="0.002" topspeed="0.7"/>
+      <fleet_ai commonality="100"/>
+      <engine_port x="-51" y="-3.155422" z="26.135927"/>
+      <engine_port x=" 51" y="-3.155422" z="26.135927"/>
+      <torpedo_tube x="10" y="8.35" z="258.74"/>
+      <torpedo_tube x="0" y="8.35" z="258.74"/>
+      <torpedo_storage type="bea" amount="18"/>  <!-- Beacon"-->
+      <torpedo_storage type="pro" amount="36"/>  <!-- Probe"-->
+      <torpedo_storage type="tag" amount="24"/>  <!-- Tag"-->
+      <long_desc text="An unarmed, long-range exploration ship. The hull is a Ximni design.^Shields Front 30 Rear 30"/>
+  </vessel>
+  
+  <vessel    uniqueID="51"    side="0"       classname="Luxury Liner" broadType="luxury player tsnbenluxuryliner">
+      <!-- TSN Luxury Liner -->
+      <art     meshfile="dat/luxury-vessel.dxs"    diffuseFile="dat/leisure_vessel_color.png"
+      glowFile="dat/leisure_vessel_glow.png"    specularFile="dat/leisure_vessel_spec.png" scale="0.3" pushRadius="150"/>
+      <shields front="30" back="30"/>
+      <internal_data file="Ben/luxury-vessel.snt"/>
+      <performance turnrate="0.002" topspeed="0.3"/>
+      <fleet_ai commonality="100"/>
+      <engine_port x="0.077280" y="11.006388" z="-252.707397"/>
+      <engine_port x="0.197185" y="31.179333" z="-265.912628"/>
+      <engine_port x="-14.653028" y="-57.441185" z="-13.352610"/>
+      <engine_port x="-38.461231" y="-39.984001" z="-13.113809"/>
+      <engine_port x="14.653028" y="-57.441185" z="-13.352610"/>
+      <engine_port x="38.461231" y="-39.984001" z="-13.113809"/>
+      <long_desc text="An unarmed travelling playground of the rich and powerful.^Shields Front 30 Rear 30"/>
+  </vessel>
+  
+  <vessel    uniqueID="52"    side="0"       classname="Bulk Cargo" broadType="cargo player tsnbenbulkcargo">
+      <!-- TSN Bulk Cargo -->
+      <art     meshfile="dat/cargo_vessel.dxs"    diffuseFile="dat/cargo_vessel_color.png"
+      glowFile="dat/cargo_vessel_glow.png"    specularFile="dat/cargo_vessel_spec.png" scale="0.4" pushRadius="150"/>
+      <shields front="30" back="30"/>
+      <internal_data file="Ben/cargo-vessel.snt"/>
+      <performance turnrate="0.002" topspeed="0.4"/>
+      <fleet_ai commonality="100"/>
+      <engine_port x="-36.569798" y="1.519395" z="-261.916901"/>
+      <engine_port x="-63.478695" y="1.709533" z="-240.778183"/>
+      <engine_port x="-91.280312" y="2.732927" z="-226.381104"/>
+      <engine_port x="-91.280312" y="2.732927" z="-226.381104"/>
+      <engine_port x="36.569798" y="1.519395" z="-261.916901"/>
+      <engine_port x="63.478695" y="1.709533" z="-240.778183"/>
+      <engine_port x="91.280312" y="2.732927" z="-226.381104"/>
+      <engine_port x="91.280312" y="2.732927" z="-226.381104"/>
+      <long_desc text="An unarmed bulk freighter, slowly moving cheap cargo between the stars.^Shields Front 30 Rear 30"/>
+  </vessel>
+  
+  
+  <vessel    uniqueID="53"    side="0"       classname="Transport" broadType="transport player tsnbentransport">
+      <art     meshfile="dat/transport-vessel.dxs"    diffuseFile="dat/transport_vessel_color.png"
+      glowFile="dat/transport_vessel_glow.png"    specularFile="dat/transport_vessel_spec.png" scale="0.2" pushRadius="150"/>
+      <shields front="80" back="80"/>
+      <internal_data file="Ben/transport-vessel.snt"/>
+      <performance turnrate="0.002" topspeed="0.3"/>
+      <fleet_ai commonality="100"/>
+      <engine_port x="-57.877796" y="0.839157" z="-284.658264"/>
+      <engine_port x="-136.553009" y="0.466896" z="-261.411255"/>
+      <engine_port x="-213.412323" y="1.201706" z="-239.373917"/>
+      <engine_port x="57.877796" y="0.839157" z="-284.658264"/>
+      <engine_port x="136.553009" y="0.466896" z="-261.411255"/>
+      <engine_port x="213.412323" y="1.201706" z="-239.373917"/>
+      <long_desc text="An unarmed transport, slowly moving cargo between the stars.^Shields Front 80 Rear 80"/>
+  </vessel>
+  
+  
+  <!--                                  Terran-Ximni Jump Starbase                              -->
+  <vessel    uniqueID="54"    side="7"       classname="Jump Starbase" broadType="player carrier ximnibenjumpstarbase">
+      <art     meshfile="dat/station-starfish.dxs"    diffuseFile="dat/player_station_color_03.png"
+      glowFile="dat/player_station_glow_03.png"    specularFile="dat/player_station_spec_03.png" scale="0.3" pushRadius="250"/>
+      <internal_data file="Ben/station-starfish.snt"/>
+      <performance turnrate="0.0006" topspeed="0.01" shipefficiency="0.01" warpefficiency="100.0" jumpefficiency="0.7"/>
+      <shields front="800" back="600"/>
+      <beam_port x="0"  y="-11" z="223"  damage="8" playerdamage="186" arcwidth="0.05" cycletime="12" range="3000"/>
+      <beam_port x="0"  y="-11" z="223"  damage="8" playerdamage="186" arcwidth="0.05" cycletime="12" range="3000"/>
+      <beam_port x="0" y="13" z="58" damage=".25" playerdamage="3" arcwidth="1.0" cycletime="4.0" range="500"/>
+      <beam_port x="0" y="13" z="58" damage=".25" playerdamage="3" arcwidth="1.0" cycletime="4.0" range="500"/>
+      <torpedo_tube x="0" y="8.35" z="258.74"/>
+      <torpedo_storage type="trp" amount="120"/>    <!-- Type 1 Homing"-->
+      <torpedo_storage type="nuk" amount="8"/>    <!-- Type 4 LR Nuke-->
+      <torpedo_storage type="min" amount="0"/>    <!-- Type 6 Mine"-->
+      <torpedo_storage type="emp" amount="16"/>    <!-- Type 9 EMP"-->
+      <torpedo_storage type="shk" amount="8"/>    <!-- Type 8 Pshock"-->
+      <torpedo_storage type="bea" amount="12"/>  <!-- Beacon"-->
+      <torpedo_storage type="pro" amount="24"/>  <!-- Probe"-->
+      <torpedo_storage type="tag" amount="12"/>  <!-- Tag"-->
+      <long_desc text="A joint Terran-Ximni venture to create a Jump Mobile Starbase^Minimal tactical maneuverability (0.0006), but jump capable^2 Advanced Tunneling Warp Beams^2 Point Defense Beams^1 Torpedo Tube, 120 Homing, 4 Nukes, 8 EMP, 8 P Shock^10 Fighters^Shields Front 800 Rear 600"/>
+      <carrierload baycount="10"/>
+  </vessel>
+
+<!-- **************************************************************************************** -->
+<!-- ***                                End new Starships                                 *** -->
+<!-- **************************************************************************************** -->
 
   <!-- ****************************** one-player ships (fighters, bombers, shuttles) **************************************** -->
-  <vessel    uniqueID="100"    side="0"       classname="TSN Medium Fighter" broadType="player singleseat fighter">
+  <vessel    uniqueID="100"    side="0"       classname="TSN Medium Fighter" broadType="player singleseat fighter tsnvanillafighter">
     <art     meshfile="dat/TSNFighter.dxs"    diffuseFile="dat/LightCruiser_Diffuse.png"
              glowFile="dat/LightCruiser_Glow.png"    specularFile="dat/LightCruiser_Specular.png" scale="0.2" pushRadius="50"/>
     <shields front="15" back="15" player="120"/>
     <!-- for fighters, front shield here is actually total HP-->
-    <performance turnrate="0.030" topspeed="0.6" shipefficiency="1.0" warpefficiency="1.0" jumpefficiency="1.0"/>
+    <performance turnrate="0.030" topspeed="1.05" shipefficiency="1.0" warpefficiency="1.0" jumpefficiency="1.0"/>
     <beam_port x="0" y="0" z="0" damage="0.3" playerdamage="4" arcwidth="0.1" cycletime="1.0" range="1000"/>
     <engine_port x="-15.533172" y="-3.027038" z="-50.354633"/>
     <engine_port x=" 15.533172" y="-3.027038" z="-50.354633"/>
-    <torpedo_storage type="0" amount="3"/>
+    <torpedo_storage type="trp" amount="3"/>
     <!-- Type 1 Homing"-->
-    <long_desc text="TSN Fighter^One rapid-fire beam, 3 homing torpedoes."/>
+    <long_desc text="TSN Fighter^One rapid-fire beam, 1 homing torpedo."/>
   </vessel>
 
-  <vessel    uniqueID="101"    side="0"       classname="TSN Bomber" broadType="player singleseat fighter">
+  <vessel    uniqueID="101"    side="0"       classname="TSN Bomber" broadType="player singleseat fighter tsnvanillabomber">
     <art     meshfile="dat/TSNFighter.dxs"    diffuseFile="dat/LightCruiser_Diffuse.png"
              glowFile="dat/LightCruiser_Glow.png"    specularFile="dat/LightCruiser_Specular.png" scale="0.2" pushRadius="50"/>
     <shields front="20" back="15" player="120"/>
     <!-- for fighters, front shield here is actually total HP-->
-    <performance turnrate="0.025" topspeed="0.5" shipefficiency="1.0" warpefficiency="1.0" jumpefficiency="1.0"/>
+    <performance turnrate="0.025" topspeed="0.875" shipefficiency="1.0" warpefficiency="1.0" jumpefficiency="1.0"/>
     <beam_port x="0" y="0" z="0" damage="0.3" playerdamage="4" arcwidth="0.1" cycletime="1.0" range="1000"/>
     <engine_port x="-15.533172" y="-3.027038" z="-50.354633"/>
     <engine_port x=" 15.533172" y="-3.027038" z="-50.354633"/>
-    <torpedo_storage type="0" amount="6"/>
+    <torpedo_storage type="trp" amount="6"/>
     <!-- Type 1 Homing"-->
     <long_desc text="TSN Bomber^One rapid-fire beam, 6 homing torpedoes."/>
   </vessel>
 
-  <vessel    uniqueID="102"    side="0"       classname="TSN Shuttle" broadType="player singleseat shuttle">
+  <vessel    uniqueID="102"    side="0"       classname="TSN Shuttle" broadType="player singleseat shuttle tsnvanillashuttle">
     <art     meshfile="dat/TSNShuttle.dxs"    diffuseFile="dat/LightCruiser_Diffuse.png"
              glowFile="dat/LightCruiser_Glow.png"    specularFile="dat/LightCruiser_Specular.png" scale="0.2" pushRadius="50"/>
     <shields front="15" back="15" player="220"/>
     <!-- for fighters, front shield here is actually total HP-->
-    <performance turnrate="0.020" topspeed="0.4" shipefficiency="1.0" warpefficiency="1.0" jumpefficiency="1.0"/>
+    <performance turnrate="0.020" topspeed="0.7" shipefficiency="1.0" warpefficiency="1.0" jumpefficiency="1.0"/>
     <beam_port x="0" y="0" z="0" damage="0.2" playerdamage="1" arcwidth="0.1" cycletime="1.0" range="1000"/>
     <engine_port x="-15.533172" y="-3.027038" z="-50.354633"/>
     <engine_port x=" 15.533172" y="-3.027038" z="-50.354633"/>
     <long_desc text="TSN Shuttle^Armed only with a small laser, this shuttle is designed to move cargo and people over short distances."/>
   </vessel>
 
-  <vessel    uniqueID="103"    side="0"       classname="TSN LR Shuttle" broadType="player singleseat shuttle">
+  <vessel    uniqueID="103"    side="0"       classname="TSN LR Shuttle" broadType="player singleseat shuttle tsnvanillalrshuttle">
     <art     meshfile="dat/TSNShuttle.dxs"    diffuseFile="dat/LightCruiser_Diffuse.png"
              glowFile="dat/LightCruiser_Glow.png"    specularFile="dat/LightCruiser_Specular.png" scale="0.2" pushRadius="50"/>
     <shields front="10" back="15" player="220"/>
     <!-- for fighters, front shield here is actually total HP-->
-    <performance turnrate="0.020" topspeed="0.6" shipefficiency="1.0" warpefficiency="1.0" jumpefficiency="1.0"/>
+    <performance turnrate="0.020" topspeed="1.05" shipefficiency="1.0" warpefficiency="1.0" jumpefficiency="1.0"/>
     <beam_port x="0" y="0" z="0" damage="0.2" playerdamage="1" arcwidth="0.1" cycletime="1.0" range="1000"/>
     <engine_port x="-15.533172" y="-3.027038" z="-50.354633"/>
     <engine_port x=" 15.533172" y="-3.027038" z="-50.354633"/>
     <long_desc text="TSN Long Range Shuttle^Armed only with a small laser, this shuttle is designed to move cargo and people over longer distances."/>
   </vessel>
+  
+  <vessel    uniqueID="104"    side="0"       classname="TSN Gunship" broadType="player singleseat fighter tsnbengunship">
+      <art     meshfile="dat/TSNFighter.dxs"    diffuseFile="dat/LightCruiser_Diffuse.png"
+      glowFile="dat/LightCruiser_Glow.png"    specularFile="dat/LightCruiser_Specular.png" scale="0.2" pushRadius="50"/>
+      <shields front="15" back="15" player="120"/>
+      <!-- for fighters, front shield here is actually total HP-->
+      <performance turnrate="0.048" topspeed="0.8" shipefficiency="1.0" warpefficiency="1.0" jumpefficiency="1.0"/>
+      <beam_port x="0" y="0" z="0" damage="2" playerdamage="18" arcwidth="0.1" cycletime="6.0" range="1000"/>
+      <engine_port x="-15.533172" y="-3.027038" z="-50.354633"/>
+      <engine_port x=" 15.533172" y="-3.027038" z="-50.354633"/>
+      <torpedo_storage type="trp" amount="3"/> <!-- Type 1 Homing"-->
+      <long_desc text="TSN Gunship^The slowest of TSN shipborne craft, the Gunship compromises speed for superior maneuvering and carries warship-caliber beams.^Three capital-class beams, 1 homing torpedo."/>
+  </vessel>
 
-  <vessel    uniqueID="120"    side="7"       classname="Zim Fighter" broadType="player singleseat fighter">
+
+  <vessel    uniqueID="120"    side="7"       classname="Zim Fighter" broadType="player singleseat fighter ximnivanillafighter">
     <art     meshfile="dat/ximni-fighter.dxs"    diffuseFile="dat/XimniDiffuse.png"
              glowFile="dat/XimniGlow.png"    specularFile="dat/XimniSpecular.png" scale="0.2" pushRadius="50"/>
     <shields front="15" back="15" player="120"/>
     <!-- for fighters, front shield here is actually total HP-->
-    <performance turnrate="0.030" topspeed="0.6" shipefficiency="1.0" warpefficiency="1.0" jumpefficiency="1.0"/>
+    <performance turnrate="0.030" topspeed="1.05" shipefficiency="1.0" warpefficiency="1.0" jumpefficiency="1.0"/>
     <beam_port x="0" y="0" z="0" damage="0.3" playerdamage="4" arcwidth="0.1" cycletime="1.0" range="1000"/>
     <engine_port x="0" y="13" z="-44"/>
     <engine_port x="-16" y="-10" z="-57"/>
     <engine_port x= "16" y="-10" z="-57"/>
-    <torpedo_storage type="0" amount="3"/>
+    <torpedo_storage type="trp" amount="3"/>
     <!-- Type 1 Homing"-->
-    <long_desc text="Ximni Fighter^First draft of a Ximni player fighter.^One rapid-fire beam, 3 homing torpedoes."/>
+    <long_desc text="Ximni Fighter^First draft of a Ximni player fighter.^One rapid-fire beam, 1 homing torpedo."/>
   </vessel>
 
-   <vessel    uniqueID="121"    side="7"       classname="Zim Bomber" broadType="player singleseat fighter">
+   <vessel    uniqueID="121"    side="7"       classname="Zim Bomber" broadType="player singleseat fighter ximnivanillabomber">
     <art     meshfile="dat/ximni-bomber.dxs"    diffuseFile="dat/XimniDiffuse.png"
              glowFile="dat/XimniGlow.png"    specularFile="dat/XimniSpecular.png" scale="0.2" pushRadius="50"/>
     <shields front="20" back="15" player="120"/>
     <!-- for fighters, front shield here is actually total HP-->
-    <performance turnrate="0.025" topspeed="0.5" shipefficiency="1.0" warpefficiency="1.0" jumpefficiency="1.0"/>
+    <performance turnrate="0.025" topspeed="0.875" shipefficiency="1.0" warpefficiency="1.0" jumpefficiency="1.0"/>
     <beam_port x="0" y="-1.95" z="72.94" damage="0.3" playerdamage="4" arcwidth="0.1" cycletime="1.0" range="1000"/>
     <engine_port x="-19.8" y="-3.8" z="-33.65"/>
     <engine_port x="-19.8" y="-3.8" z="-33.65"/>
     <engine_port x="0" y="7.4" z="-21.2"/>
-    <torpedo_storage type="0" amount="6"/>
+    <torpedo_storage type="trp" amount="6"/>
     <!-- Type 1 Homing"-->
     <long_desc text="Ximni Bomber^One rapid-fire beam, 6 homing torpedoes."/>
   </vessel>
 
-  <vessel    uniqueID="122"    side="7"       classname="Zim Shuttle" broadType="player singleseat shuttle">
+  <vessel    uniqueID="122"    side="7"       classname="Zim Shuttle" broadType="player singleseat shuttle ximnivanillashuttle">
     <art     meshfile="dat/ximni-bomber.dxs"    diffuseFile="dat/XimniDiffuse.png"
              glowFile="dat/XimniGlow.png"    specularFile="dat/XimniSpecular.png" scale="0.2" pushRadius="50"/>
     <shields front="15" back="15" player="220"/>
     <!-- for fighters, front shield here is actually total HP-->
-    <performance turnrate="0.020" topspeed="0.4" shipefficiency="1.0" warpefficiency="1.0" jumpefficiency="1.0"/>
+    <performance turnrate="0.020" topspeed="0.7" shipefficiency="1.0" warpefficiency="1.0" jumpefficiency="1.0"/>
     <beam_port x="0" y="-1.95" z="72.94"   damage="0.2" playerdamage="1" arcwidth="0.1" cycletime="1.0" range="1000"/>
     <engine_port x="-19.8" y="-3.8" z="-33.65"/>
     <engine_port x="-19.8" y="-3.8" z="-33.65"/>
@@ -663,12 +1945,12 @@
     <long_desc text="Ximni Shuttle^Armed only with a small laser, this shuttle is known as the Party Bus."/>
   </vessel>
 
-  <vessel    uniqueID="123"    side="7"       classname="Zim LR Shuttle" broadType="player singleseat shuttle">
+  <vessel    uniqueID="123"    side="7"       classname="Zim LR Shuttle" broadType="player singleseat shuttle ximnivanillalrshuttle">
     <art     meshfile="dat/ximni-bomber.dxs"    diffuseFile="dat/XimniDiffuse.png"
              glowFile="dat/XimniGlow.png"    specularFile="dat/XimniSpecular.png" scale="0.2" pushRadius="50"/>
     <shields front="10" back="15" player="220"/>
     <!-- for fighters, front shield here is actually total HP-->
-    <performance turnrate="0.020" topspeed="0.6" shipefficiency="1.0" warpefficiency="1.0" jumpefficiency="1.0"/>
+    <performance turnrate="0.020" topspeed="1.05" shipefficiency="1.0" warpefficiency="1.0" jumpefficiency="1.0"/>
     <beam_port x="0" y="-1.95" z="72.94"   damage="0.2" playerdamage="1" arcwidth="0.1" cycletime="1.0" range="1000"/>
     <engine_port x="-19.8" y="-3.8" z="-33.65"/>
     <engine_port x="-19.8" y="-3.8" z="-33.65"/>
@@ -676,36 +1958,64 @@
     <long_desc text="Ximni Long Range Shuttle^Armed only with a small laser, this shuttle is known as the Party Ride."/>
   </vessel>
   
-  <vessel    uniqueID="130"    side="8"       classname="Avenger" broadType="player singleseat fighter">
+  <vessel    uniqueID="130"    side="8"       classname="Avenger" broadType="player singleseat fighter piratevanillafighter">
     <art     meshfile="dat/PirateAvenger.dxs"    diffuseFile="dat/Pirate_Diffuse.png"
              glowFile="dat/Pirate_Glow.png"    specularFile="dat/Pirate_Specular.png" scale="0.2" pushRadius="50"/>
     <shields front="15" back="15" player="100"/>
     <!-- for fighters, front shield here is actually total HP-->
-    <performance turnrate="0.040" topspeed="0.7" shipefficiency="1.0" warpefficiency="1.0" jumpefficiency="1.0"/>
+    <performance turnrate="0.040" topspeed="1.225" shipefficiency="1.0" warpefficiency="1.0" jumpefficiency="1.0"/>
     <beam_port x="0" y="-9.58" z="33.40" damage="0.25" playerdamage="3.5" arcwidth="0.1" cycletime="0.8" range="1000"/>
     <engine_port x="-13.67" y="4.59" z="-58.62"/>
     <engine_port x=" 13.67" y="4.59" z="-58.62"/>
-    <torpedo_storage type="0" amount="3"/>
+    <torpedo_storage type="trp" amount="3"/>
     <!-- Type 1 Homing"-->
-    <long_desc text="Pirate Avenger^A pirate's fighter, light and nimble.^One fast-fire beam, 3 homing torpedoes."/>
+    <long_desc text="Pirate Avenger^A pirate's fighter, light and nimble.^One fast-fire beam, 1 homing torpedo."/>
   </vessel>
 
-    <vessel    uniqueID="131"    side="8"       classname="Adventure" broadType="player singleseat shuttle">
+    <vessel    uniqueID="131"    side="8"       classname="Adventure" broadType="player singleseat shuttle piratevanillashuttle">
     <art     meshfile="dat/PirateAvenger.dxs"    diffuseFile="dat/Pirate_Diffuse.png"
              glowFile="dat/Pirate_Glow.png"    specularFile="dat/Pirate_Specular.png" scale="0.2" pushRadius="50"/>
     <shields front="10" back="15" player="220"/>
     <!-- for fighters, front shield here is actually total HP-->
-    <performance turnrate="0.020" topspeed="0.6" shipefficiency="1.0" warpefficiency="1.0" jumpefficiency="1.0"/>
-    <beam_port x="0" y="-9.58" z="33.40" damage="0.15" playerdamage="1" arcwidth="0.1" cycletime="0.8" range="1000"/>
+    <performance turnrate="0.020" topspeed="1.05" shipefficiency="1.0" warpefficiency="1.0" jumpefficiency="1.0"/>
+    <beam_port x="0" y="-9.58" z="33.40" damage="0.3" playerdamage="1" arcwidth="0.1" cycletime="0.8" range="1000"/>
     <engine_port x="-13.67" y="4.59" z="-58.62"/>
     <engine_port x=" 13.67" y="4.59" z="-58.62"/>
     <!-- Type 1 Homing"-->
     <long_desc text="Pirate Adventure^A pirate's shuttle, light and nimble."/>
   </vessel>
+    
+    <!--                         Ambrosian Fighter                -->
+    <vessel    uniqueID="140"    side="9"       classname="Lightning Fighter" broadType="player singleseat fighter ambrosianbenfighter">
+        <art     meshfile="dat/PirateAvenger.dxs"    diffuseFile="dat/Pirate_Diffuse.png"
+        glowFile="dat/Pirate_Glow.png"    specularFile="dat/Pirate_Specular.png" scale="0.2" pushRadius="50"/>
+        <shields front="15" back="15" player="120"/>
+        <!-- for fighters, front shield here is actually total HP-->
+        <performance turnrate="0.030" topspeed="0.9625" shipefficiency="1.0" warpefficiency="1.0" jumpefficiency="1.0"/>
+        <beam_port x="0" y="-9.58" z="33.40" damage="0.6" playerdamage="18" arcwidth="0.1" cycletime="6.0" range="1000"/>
+        <engine_port x="-13.67" y="4.59" z="-58.62"/>
+        <engine_port x=" 13.67" y="4.59" z="-58.62"/>
+        <torpedo_storage type="trp" amount="2"/> <!-- Type 1 Homing"-->
+        <long_desc text="Lightning Fighter/Bomber^Compromises top speed for heavier beams.^Three capital-class beams, 2 homing torpedoes."/>
+    </vessel>
+    
+    <!--                         Ambrosian Shuttle                -->
+    <vessel    uniqueID="141"    side="9"       classname="Starseeker" broadType="player singleseat shuttle ambrosianbenshuttle">
+        <art     meshfile="dat/PirateAvenger.dxs"    diffuseFile="dat/Pirate_Diffuse.png"
+        glowFile="dat/Pirate_Glow.png"    specularFile="dat/Pirate_Specular.png" scale="0.2" pushRadius="50"/>
+        <shields front="10" back="15" player="220"/>
+        <!-- for fighters, front shield here is actually total HP-->
+        <performance turnrate="0.020" topspeed="1.05" shipefficiency="1.0" warpefficiency="1.0" jumpefficiency="1.0"/>
+        <beam_port x="0" y="-9.58" z="33.40" damage="0.3" playerdamage="1" arcwidth="0.1" cycletime="0.8" range="1000"/>
+        <engine_port x="-13.67" y="4.59" z="-58.62"/>
+        <engine_port x=" 13.67" y="4.59" z="-58.62"/>
+        <!-- Type 1 Homing"-->
+        <long_desc text="Captured Pirate Adventure^A 'repossessed' pirate's shuttle, light and nimble."/>
+    </vessel>
+    
+    <!-- ****************************** unmoving bases **************************************** -->
 
-  <!-- ****************************** unmoving bases **************************************** -->
-
-  <vessel    uniqueID="1000"    side="1"       classname="Deep Space Base" broadType="base">
+  <vessel    uniqueID="1000"    side="1"       classname="Deep Space Base" broadType="base civilianvanilladeepspacebase">
     <!-- the player's standard base -->
     <art     meshfile="dat/stationPipes.dxs"    diffuseFile="dat/stationA_pipes_diffuse.png" specularFile="dat/stationA_pipes_specular.png"  scale="0.3" pushRadius="250"/>
     <art     meshfile="dat/stationTower.dxs"    diffuseFile="dat/stationA_tower_diffuse.png"
@@ -719,7 +2029,7 @@
     <long_desc text="TSN Starbase with strong shields. It is armed with a standard base beam, and can manufacture torpedoes for your ship. May need help if attacked."/>
   </vessel>
 
-  <vessel    uniqueID="1001"    side="1"       classname="Civilian Base" broadType="base">
+  <vessel    uniqueID="1001"    side="1"       classname="Civilian Base" broadType="base civilianvanillacivilianbase">
     <!-- the player's base -->
     <art     meshfile="dat/station-4donuts.dxs"    diffuseFile="dat/player_station_color_04.png"
              glowFile="dat/player_station_glow_04.png"    specularFile="dat/player_station_spec_04.png" scale="0.6" pushRadius="250"/>
@@ -729,19 +2039,19 @@
     <long_desc text="Civilian Starbase built by a local government. It is unarmed, but can manufacture torpedoes for your ship, at a reduced rate. Stations need help if attacked."/>
   </vessel>
 
-  <vessel    uniqueID="1002"    side="1"       classname="Command Base" broadType="base">
+  <vessel    uniqueID="1002"    side="1"       classname="Command Base" broadType="base civilianvanillacommandbase">
     <!-- the player's base -->
     <art     meshfile="dat/station-starfish.dxs"    diffuseFile="dat/player_station_color_03.png"
              glowFile="dat/player_station_glow_03.png"    specularFile="dat/player_station_spec_03.png" scale="0.3" pushRadius="250"/>
     <shields front="800" back="0"/>
     <!-- the base has only one shield facing, the "front" -->
     <beam_port x="0" y="150" z="0" damage="7" arcwidth="0.4" cycletime="6.0" range="1000"/>
-    <torpedo_station_port x="0" y="-10" z="0" damage="30.0" cycletime="30.0" range="5000"/>
+    <torpedo_station_port x="0" y="-10" z="0" damage="30" cycletime="30.0" range="5000"/>
     <production coeff="2.0"/>
     <long_desc text="TSN Command Starbase with very strong shields. It is armed with a base beam and torpedoes, and can manufacture torps at twice the normal rate."/>
   </vessel>
 
-  <vessel    uniqueID="1003"    side="1"       classname="Industrial Base" broadType="base">
+  <vessel    uniqueID="1003"    side="1"       classname="Industrial Base" broadType="base civilianvanillaindustrialbase">
     <!-- the player's base -->
     <art     meshfile="dat/station-big1.dxs"    diffuseFile="dat/player_station_color_02.png"
              glowFile="dat/player_station_glow_02.png"    specularFile="dat/player_station_spec_02.png" scale="0.6" pushRadius="400"/>
@@ -751,7 +2061,7 @@
     <long_desc text="Manufacturing Starbase owned by a large Corporation. It is unarmed, but can build torpedoes at triple speed. Its defense should be a priority."/>
   </vessel>
 
-  <vessel    uniqueID="1004"    side="1"       classname="Science Base" broadType="base">
+  <vessel    uniqueID="1004"    side="1"       classname="Science Base" broadType="base civilianvanillasciencebase">
     <!-- the player's base -->
     <art     meshfile="dat/station-science.dxs"    diffuseFile="dat/player_station_color_01.png"
              glowFile="dat/player_station_glow_01.png"    specularFile="dat/player_station_spec_01.png" scale="0.3" pushRadius="400"/>
@@ -763,7 +2073,7 @@
 
 
   <!-- bases of other races -->
-  <vessel    uniqueID="1005"    side="2"       classname="Base" broadType="base">
+  <vessel    uniqueID="1005"    side="2"       classname="Base" broadType="base kralienvanillabase">
     <art     meshfile="dat/kralien-station.dxs"    diffuseFile="dat/kraliens_station_color.png"
              glowFile="dat/kraliens_station_glow.png"    specularFile="dat/kraliens_station_spec.png" scale="0.3" pushRadius="250"/>
     <shields front="400" back="0"/>
@@ -772,7 +2082,7 @@
     <long_desc text="Kralien Starbase. It has standard shields, and a base beam."/>
   </vessel>
 
-  <vessel    uniqueID="1006"    side="3"       classname="Base" broadType="base carrier">
+  <vessel    uniqueID="1006"    side="3"       classname="Base" broadType="base carrier arvonianvanillabase">
     <art     meshfile="dat/arvonian-station.dxs"    diffuseFile="dat/arvonian_station_color.png"
              glowFile="dat/arvonian_station_glow.png"    specularFile="dat/arvonian_station_spec.png" scale="0.3" pushRadius="450"/>
     <shields front="500" back="0"/>
@@ -782,17 +2092,17 @@
     <long_desc text="Arvonian Starbase. It has strong shields, a base beam, and carries a complement of 10 fighters."/>
   </vessel>
 
-  <vessel    uniqueID="1007"    side="4"       classname="Base" broadType="base">
+  <vessel    uniqueID="1007"    side="4"       classname="Base" broadType="base torgothvanillabase">
     <art     meshfile="dat/torgoth-station.dxs"    diffuseFile="dat/torgoth_color.png"
              glowFile="dat/torgoth_glow.png"    specularFile="dat/torgoth_spec.png" scale="0.3" pushRadius="450"/>
     <shields front="800" back="0"/>
     <!-- the base has only one shield facing, the "front" -->
     <beam_port x="0" y="2100" z="0" damage="7" arcwidth="0.4" cycletime="6.0" range="1500"/>
-    <drone_port x="0" y="-10" z="0" damage="30.0" cycletime="15.0" range="5000"/>
+    <drone_port x="0" y="-10" z="0" damage="30" cycletime="15.0" range="5000"/>
     <long_desc text="Torgoth Starbase. It has very powerful shields, a long range base beam, and can fire drones."/>
   </vessel>
 
-  <vessel    uniqueID="1008"    side="5"       classname="Base" broadType="base">
+  <vessel    uniqueID="1008"    side="5"       classname="Base" broadType="base skaraanvanillabase">
     <art     meshfile="dat/skaraan-station.dxs"    diffuseFile="dat/skaraan_station_color.png"
              glowFile="dat/skaraan_station_glow.png"    specularFile="dat/skaraan_station_spec.png" scale="0.3" pushRadius="250"/>
     <shields front="600" back="0"/>
@@ -805,7 +2115,7 @@
 
   <!-- ****************************** CIVILIAN VESSELS **************************************** -->
 
-  <vessel    uniqueID="1500"    side="1"       classname="Escort" broadType="small warship">
+  <vessel    uniqueID="1500"    side="1"       classname="Escort" broadType="small warship civilianvanillaescort">
     <!-- TSN Escort -->
     <art     meshfile="dat/civilian1.dxs"    diffuseFile="dat/civilian1_diffuse.png"
              glowFile="dat/artemis_illum.png"    specularFile="dat/artemis_specular.png" scale="0.2" pushRadius="150"/>
@@ -819,7 +2129,7 @@
     <long_desc text="Light warship with forward beam weapons. Used to escort Earth's important cargos."/>
   </vessel>
 
-  <vessel    uniqueID="1501"    side="1"       classname="Destroyer" broadType="medium warship">
+  <vessel    uniqueID="1501"    side="1"       classname="Destroyer" broadType="medium warship civilianvanilladestroyer">
     <!-- TSN Destroyer -->
     <art     meshfile="dat/civilian2.dxs"    diffuseFile="dat/civilian2_diffuse.png"
              glowFile="dat/artemis_illum.png"    specularFile="dat/artemis_specular.png" scale="0.2" pushRadius="150"/>
@@ -832,7 +2142,7 @@
     <long_desc text="Medium warship with rapid fire beam weapons. Earth's most common system defense vessel, trading FTL Drive for speed and firepower."/>
   </vessel>
 
-  <vessel    uniqueID="1502"    side="1"       classname="Science Vessel" broadType="science">
+  <vessel    uniqueID="1502"    side="1"       classname="Science Vessel" broadType="science civilianvanillasciencevessel">
     <!-- TSN Science -->
     <art     meshfile="dat/science-vessel.dxs"    diffuseFile="dat/Science_Vessel_color.png"
              glowFile="dat/Science_Vessel_glow.png"    specularFile="dat/Science_Vessel_spec.png" scale="0.32" pushRadius="150"/>
@@ -844,7 +2154,7 @@
     <long_desc text="An unarmed, long-range exploration ship. The hull is a Ximni design."/>
   </vessel>
 
-  <vessel    uniqueID="1503"    side="1"       classname="Bulk Cargo" broadType="cargo">
+  <vessel    uniqueID="1503"    side="1"       classname="Bulk Cargo" broadType="cargo civilianvanillabulkcargo">
     <!-- TSN Bulk Cargo -->
     <art     meshfile="dat/cargo_vessel.dxs"    diffuseFile="dat/cargo_vessel_color.png"
              glowFile="dat/cargo_vessel_glow.png"    specularFile="dat/cargo_vessel_spec.png" scale="0.4" pushRadius="150"/>
@@ -862,7 +2172,7 @@
     <long_desc text="An unarmed bulk freighter, slowly moving cheap cargo between the stars."/>
   </vessel>
 
-  <vessel    uniqueID="1504"    side="1"       classname="Luxury Liner" broadType="luxury">
+  <vessel    uniqueID="1504"    side="1"       classname="Luxury Liner" broadType="luxury civilianvanillaluxuryliner">
     <!-- TSN Luxury Liner -->
     <art     meshfile="dat/luxury-vessel.dxs"    diffuseFile="dat/leisure_vessel_color.png"
              glowFile="dat/leisure_vessel_glow.png"    specularFile="dat/leisure_vessel_spec.png" scale="0.3" pushRadius="150"/>
@@ -878,7 +2188,7 @@
     <long_desc text="An unarmed travelling playground of the rich and powerful."/>
   </vessel>
 
-  <vessel    uniqueID="1505"    side="1"       classname="Transport" broadType="transport">
+  <vessel    uniqueID="1505"    side="1"       classname="Transport" broadType="transport civilianvanillatransport">
     <art     meshfile="dat/transport-vessel.dxs"    diffuseFile="dat/transport_vessel_color.png"
              glowFile="dat/transport_vessel_glow.png"    specularFile="dat/transport_vessel_spec.png" scale="0.2" pushRadius="150"/>
     <shields front="80" back="80"/>
@@ -895,14 +2205,14 @@
 
   <!-- ****************************** KRALIEN VESSELS **************************************** -->
 
-  <vessel    uniqueID="2000"    side="2"       classname="Cruiser" broadType="small">
+  <vessel    uniqueID="2000"    side="2"       classname="Cruiser" broadType="small kralienvanillacruiser">
     <art     meshfile="dat/ENE_RoundA.dxs"    diffuseFile="dat/roundA_diffuse.png"
              glowFile="dat/roundA_illum.png"    specularFile="dat/roundA_specular.png" scale="0.2" pushRadius="150"/>
     <shields front="40" back="40"/>
     <performance turnrate="0.002" topspeed="0.3"/>
-    <fleet_ai commonality="100"/>
-    <beam_port x=" 84" y="-3" z="286" damage="1.0" arcwidth="0.3" cycletime="6.0" range="1000"/>
-    <beam_port x="-84" y="-3" z="286" damage="1.0" arcwidth="0.3" cycletime="6.0" range="1000"/>
+    <fleet_ai commonality="40"/>
+    <beam_port x=" 84" y="-3" z="286" damage="1" arcwidth="0.3" cycletime="6.0" range="1000"/>
+    <beam_port x="-84" y="-3" z="286" damage="1" arcwidth="0.3" cycletime="6.0" range="1000"/>
     <engine_port x="-72.43" y="27.65" z="-260"/>
     <engine_port x=" 72.43" y="27.65" z="-260"/>
     <engine_port x="-76.22" y="-18.78" z="-250"/>
@@ -916,14 +2226,14 @@
 
 
 
-  <vessel    uniqueID="2001"    side="2"       classname="Battleship" broadType="medium">
+  <vessel    uniqueID="2001"    side="2"       classname="Battleship" broadType="medium kralienvanillabattleship">
     <art     meshfile="dat/ENE_RoundB.dxs"    diffuseFile="dat/roundB_diffuse.png"
              glowFile="dat/roundB_selfIllum.png"    specularFile="dat/roundB_specular.png" scale="0.25" pushRadius="150"/>
     <shields front="80" back="80"/>
     <performance turnrate="0.002" topspeed="0.3"/>
-    <fleet_ai commonality="50"/>
-    <beam_port x=" 78" y="-15" z="163" damage="1.0" arcwidth="0.3" cycletime="3.0" range="1000"/>
-    <beam_port x="-78" y="-15" z="163" damage="1.0" arcwidth="0.3" cycletime="3.0" range="1000"/>
+    <fleet_ai commonality="100"/>
+    <beam_port x=" 78" y="-15" z="163" damage="1" arcwidth="0.3" cycletime="3.0" range="1000"/>
+    <beam_port x="-78" y="-15" z="163" damage="1" arcwidth="0.3" cycletime="3.0" range="1000"/>
     <engine_port x=" 70.35" y="8.7" z="-240"/>
     <engine_port x="-70.35" y="8.7" z="-240"/>
     <impulse_point x="-96.062263" y="-10.102722" z="-77.436584"/>
@@ -934,15 +2244,15 @@
 
 
 
-  <vessel    uniqueID="2002"    side="2"       classname="Dreadnought" broadType="large">
+  <vessel    uniqueID="2002"    side="2"       classname="Dreadnought" broadType="large kralienvanilladreadnought">
     <art     meshfile="dat/ENE_RoundC.dxs"    diffuseFile="dat/RoundC_Diffuse.png"
              glowFile="dat/roundC_illum.png"    specularFile="dat/roundC_specular.png" scale="0.3" pushRadius="150"/>
     <shields front="120" back="120"/>
     <performance turnrate="0.002" topspeed="0.3"/>
-    <fleet_ai commonality="25"/>
-    <beam_port x="-116" y="-20" z="94" damage="1.0" arcwidth="0.3" cycletime="3.0" range="1000"/>
-    <beam_port x=" 116" y="-20" z="94" damage="1.0" arcwidth="0.3" cycletime="3.0" range="1000"/>
-    <beam_port x="0" y="-6.5" z="-173" damage="1.0" arcwidth="0.3" cycletime="6.0" range="1400"/>
+    <fleet_ai commonality="50"/>
+    <beam_port x="-116" y="-20" z="94" damage="1" arcwidth="0.3" cycletime="3.0" range="1000"/>
+    <beam_port x=" 116" y="-20" z="94" damage="1" arcwidth="0.3" cycletime="3.0" range="1000"/>
+    <beam_port x="0" y="-6.5" z="-173" damage="1" arcwidth="0.3" cycletime="6.0" range="1400"/>
     <engine_port x=" 35.77" y="-7.76" z="-200"/>
     <engine_port x="-35.77" y="-7.76" z="-200"/>
     <engine_port x="115" y="-20.27" z="-80"/>
@@ -954,11 +2264,151 @@
     <long_desc text="Displacement: 25 kt.  Armament: 2 rapid fire beams, 1 heavy beam. The most dangerous Kralien ship."/>
   </vessel>
 
+<!-- **************************************************************************************** -->
+<!-- ***                                Begin Ben's New Kralien Starships                                 *** -->
+<!-- **************************************************************************************** -->
+
+  <vessel    uniqueID="2003"    side="2"       classname="Fast Attack Cruiser" broadType="small kralienbenfastattackcruiser">
+    <art     meshfile="dat/ENE_RoundA.dxs"    diffuseFile="dat/roundA_diffuse.png"
+             glowFile="dat/roundA_illum.png"    specularFile="dat/roundA_specular.png" scale="0.2" pushRadius="150"/>
+    <shields front="30" back="30"/>
+    <performance turnrate="0.004" topspeed="0.9"/>
+    <fleet_ai commonality="40"/>
+    <beam_port x=" 84" y="-3" z="286" damage="1" arcwidth="0.3" cycletime="6.0" range="1000"/>
+    <engine_port x="-72.43" y="27.65" z="-260"/>
+    <engine_port x=" 72.43" y="27.65" z="-260"/>
+    <engine_port x="-76.22" y="-18.78" z="-250"/>
+    <engine_port x=" 76.22" y="-18.78" z="-250"/>
+    <impulse_point x="104.414703" y="42.085434" z="-166.859009"/>
+    <impulse_point x="-104.414703" y="42.085434" z="-166.859009"/>
+    <maneuver_point x="173.576767" y="-0.981873" z="158.842682"/>
+    <maneuver_point x="-173.576767" y="-0.981873" z="158.842682"/>
+    <long_desc text="Displacement: 9 kt. Armament: 1 forward beam. Fast and maneuverable."/>
+  </vessel>
+
+
+  <vessel    uniqueID="2004"    side="2"       classname="Cruiser" broadType="small kralienbencruiser">
+    <art     meshfile="dat/ENE_RoundA.dxs"    diffuseFile="dat/roundA_diffuse.png"
+             glowFile="dat/roundA_illum.png"    specularFile="dat/roundA_specular.png" scale="0.2" pushRadius="150"/>
+    <shields front="40" back="40"/>
+    <performance turnrate="0.002" topspeed="0.3"/>
+    <fleet_ai commonality="40"/>
+    <beam_port x=" 84" y="-3" z="286" damage="1" arcwidth="0.3" cycletime="3.0" range="1000"/>
+    <beam_port x="-84" y="-3" z="286" damage="1" arcwidth="0.3" cycletime="3.0" range="1000"/>
+    <engine_port x="-72.43" y="27.65" z="-260"/>
+    <engine_port x=" 72.43" y="27.65" z="-260"/>
+    <engine_port x="-76.22" y="-18.78" z="-250"/>
+    <engine_port x=" 76.22" y="-18.78" z="-250"/>
+    <impulse_point x="104.414703" y="42.085434" z="-166.859009"/>
+    <impulse_point x="-104.414703" y="42.085434" z="-166.859009"/>
+    <maneuver_point x="173.576767" y="-0.981873" z="158.842682"/>
+    <maneuver_point x="-173.576767" y="-0.981873" z="158.842682"/>
+    <long_desc text="Displacement: 9 kt. Armament: 2 x standard beams. The most common vessel in the known universe.  This one seems different, it has strange power readings."/>
+  </vessel>
+
+
+  <vessel    uniqueID="2005"    side="2"       classname="Defense Cruiser" broadType="small kralienbendefensecruiser">
+    <art     meshfile="dat/ENE_RoundA.dxs"    diffuseFile="dat/roundA_diffuse.png"
+             glowFile="dat/roundA_illum.png"    specularFile="dat/roundA_specular.png" scale="0.2" pushRadius="150"/>
+    <shields front="40" back="40"/>
+    <performance turnrate="0.002" topspeed="0.3"/>
+    <fleet_ai commonality="40"/>
+    <beam_port x=" 84" y="-3" z="286" damage="1" arcwidth="1.0" cycletime="6.0" range="667"/>
+    <beam_port x="-84" y="-3" z="286" damage="1" arcwidth="1.0" cycletime="6.0" range="667"/>
+    <engine_port x="-72.43" y="27.65" z="-260"/>
+    <engine_port x=" 72.43" y="27.65" z="-260"/>
+    <engine_port x="-76.22" y="-18.78" z="-250"/>
+    <engine_port x=" 76.22" y="-18.78" z="-250"/>
+    <impulse_point x="104.414703" y="42.085434" z="-166.859009"/>
+    <impulse_point x="-104.414703" y="42.085434" z="-166.859009"/>
+    <maneuver_point x="173.576767" y="-0.981873" z="158.842682"/>
+    <maneuver_point x="-173.576767" y="-0.981873" z="158.842682"/>
+    <long_desc text="Displacement: 9 kt. Armament: 2 x defense beams. A variant enabling 360 fleet defense."/>
+  </vessel>
+
+  
+  <vessel    uniqueID="2006"    side="2"       classname="Sniper Cruiser" broadType="small kralienbensnipercruiser">
+    <art     meshfile="dat/ENE_RoundA.dxs"    diffuseFile="dat/roundA_diffuse.png"
+             glowFile="dat/roundA_illum.png"    specularFile="dat/roundA_specular.png" scale="0.2" pushRadius="150"/>
+    <shields front="20" back="20"/>
+    <performance turnrate="0.002" topspeed="0.3"/>
+    <fleet_ai commonality="40"/>
+    <beam_port x=" 0" y="-3" z="286" damage="1" arcwidth="0.05" cycletime="8.0" range="1500"/>
+    <beam_port x=" 0" y="-3" z="286" damage="1" arcwidth="0.05" cycletime="8.0" range="1500"/>
+    <engine_port x="-72.43" y="27.65" z="-260"/>
+    <engine_port x=" 72.43" y="27.65" z="-260"/>
+    <engine_port x="-76.22" y="-18.78" z="-250"/>
+    <engine_port x=" 76.22" y="-18.78" z="-250"/>
+    <impulse_point x="104.414703" y="42.085434" z="-166.859009"/>
+    <impulse_point x="-104.414703" y="42.085434" z="-166.859009"/>
+    <maneuver_point x="173.576767" y="-0.981873" z="158.842682"/>
+    <maneuver_point x="-173.576767" y="-0.981873" z="158.842682"/>
+    <long_desc text="Displacement: 10 kt. Armament: 2 x Focused beams. A variant providing long range support."/>
+  </vessel>
+
+
+  <vessel    uniqueID="2008"    side="2"       classname="Pisces" broadType="medium kralienbenpisces">
+    <art     meshfile="dat/ENE_RoundB.dxs"    diffuseFile="dat/roundB_diffuse.png"
+             glowFile="dat/roundB_selfIllum.png"    specularFile="dat/roundB_specular.png" scale="0.25" pushRadius="150"/>
+    <shields front="80" back="80"/>
+    <performance turnrate="0.002" topspeed="0.3"/>
+    <fleet_ai commonality="50"/>
+    <drone_port x="0" y="-10" z="0" damage="30.0" cycletime="30.0" range="5000"/>
+    <engine_port x=" 70.35" y="8.7" z="-240"/>
+    <engine_port x="-70.35" y="8.7" z="-240"/>
+    <impulse_point x="-96.062263" y="-10.102722" z="-77.436584"/>
+    <impulse_point x="96.062263" y="-10.102722" z="-77.436584"/>
+    <maneuver_point x="-3.419852" y="-48.397114" z="82.551994"/>
+    <long_desc text="Displacement: 17 kt. Armament: 1 light drone launcher. Fire support for the Kralien fleet."/>
+  </vessel>
+
+
+  <vessel    uniqueID="2009"    side="2"       classname="Karrier" broadType="large carrier kralienbenkarrier">
+    <art     meshfile="dat/ENE_RoundC.dxs"    diffuseFile="dat/RoundC_Diffuse.png"
+             glowFile="dat/roundC_illum.png"    specularFile="dat/roundC_specular.png" scale="0.3" pushRadius="150"/>
+    <shields front="120" back="120"/>
+    <performance turnrate="0.002" topspeed="0.3"/>
+    <fleet_ai commonality="50"/>
+    <engine_port x=" 35.77" y="-7.76" z="-200"/>
+    <engine_port x="-35.77" y="-7.76" z="-200"/>
+    <engine_port x="115" y="-20.27" z="-80"/>
+    <engine_port x="-115" y="-20.27" z="-80"/>
+    <impulse_point x="-57.151264" y="-7.934345" z="-119.779823"/>
+    <impulse_point x="57.151264" y="-7.934345" z="-119.779823"/>
+    <maneuver_point x="-61.429497" y="-19.089073" z="170.379669"/>
+    <maneuver_point x="61.429497" y="-19.089073" z="170.379669"/>
+    <carrierload baycount="4"/>
+   <long_desc text="Displacement: 25 kt.  Four Kralien fighters."/>
+  </vessel>
+
+
+  <vessel    uniqueID="2010"    side="2"       classname="Fighter" broadType="singleseat kralienbenfighter">
+    <art     meshfile="dat/ENE_Matt3A.dxs"    diffuseFile="dat/ship4A_diffuse.png"
+             glowFile="dat/ship4A_glow.png"    specularFile="dat/ship4A_specular.png" scale="0.05" pushRadius="80"/>
+    <shields front="5" back="5"/>
+    <performance turnrate="0.008" topspeed="1.0"/>
+    <fleet_ai commonality="100"/>
+    <beam_port x=" 0" y="-1" z="217" damage="0.6" arcwidth="0.3" cycletime="5.0" range="700"/>
+    <engine_port x="0" y="0" z="-230"/>
+    <engine_port x="92" y="-7" z="-240"/>
+    <engine_port x="-92" y="-7" z="-240"/>
+    <impulse_point x="-124" y="-6" z="-248"/>
+    <impulse_point x=" 124" y="-6" z="-248"/>
+    <maneuver_point x="-177" y="-6" z="-132"/>
+    <maneuver_point x=" 177" y="-6" z="-132"/>
+    <long_desc text="Displacement: 0.015 kt. Armament: 1 very light beam."/>
+  </vessel>
+
+
+<!-- **************************************************************************************** -->
+<!-- ***                                End Ben's New Kralien Starships                                 *** -->
+<!-- **************************************************************************************** -->
+
 
 
   <!-- ****************************** Arvonian VESSELS **************************************** -->
 
-  <vessel    uniqueID="3000"    side="3"       classname="Fighter" broadType="singleseat">
+  <vessel    uniqueID="3000"    side="3"       classname="Fighter" broadType="singleseat arvonianvanillafighter">
     <art     meshfile="dat/ENE_Matt3A.dxs"    diffuseFile="dat/ship4A_diffuse.png"
              glowFile="dat/ship4A_glow.png"    specularFile="dat/ship4A_specular.png" scale="0.05" pushRadius="80"/>
     <shields front="15" back="15"/>
@@ -978,17 +2428,17 @@
 
 
 
-  <vessel    uniqueID="3001"    side="3"       classname="Light Carrier" broadType="carrier">
+  <vessel    uniqueID="3001"    side="3"       classname="Light Carrier" broadType="carrier arvonianvanillalightcarrier">
     <art     meshfile="dat/ENE_Matt3B.dxs"    diffuseFile="dat/ship4B_diffuse.png"
              glowFile="dat/ship4B_glow.png"    specularFile="dat/ship4B_specular.png" scale="0.2" pushRadius="200"/>
     <shields front="120" back="120"/>
     <performance turnrate="0.003" topspeed="0.3"/>
     <carrierload baycount="4"/>
     <fleet_ai commonality="50"/>
-    <beam_port x=" 116" y="-7" z="246" damage="1.0" arcwidth="0.3" cycletime="6.0" range="1200"/>
-    <beam_port x="-116" y="-7" z="246" damage="1.0" arcwidth="0.3" cycletime="6.0" range="1200"/>
-    <beam_port x=" 165" y="-35" z="-128" damage="1.0" arcwidth="0.3" cycletime="6.0" range="1200"/>
-    <beam_port x="-165" y="-35" z="-128" damage="1.0" arcwidth="0.3" cycletime="6.0" range="1200"/>
+    <beam_port x=" 116" y="-7" z="246" damage="1" arcwidth="0.3" cycletime="6.0" range="1200"/>
+    <beam_port x="-116" y="-7" z="246" damage="1" arcwidth="0.3" cycletime="6.0" range="1200"/>
+    <beam_port x=" 165" y="-35" z="-128" damage="1" arcwidth="0.3" cycletime="6.0" range="1200"/>
+    <beam_port x="-165" y="-35" z="-128" damage="1" arcwidth="0.3" cycletime="6.0" range="1200"/>
     <engine_port x=" 136" y="-18" z="-284"/>
     <engine_port x="-136" y="-18" z="-284"/>
     <engine_port x=" 23" y="5" z="-165"/>
@@ -1002,19 +2452,19 @@
 
 
 
-  <vessel    uniqueID="3002"    side="3"       classname="Carrier" broadType="carrier">
+  <vessel    uniqueID="3002"    side="3"       classname="Carrier" broadType="carrier arvonianvanillacarrier">
     <art     meshfile="dat/ENE_Matt3C.dxs"    diffuseFile="dat/ship4C_diffuse.png"
              glowFile="dat/ship4C_glow.png"    specularFile="dat/ship4C_specular.png"  scale="0.3" pushRadius="200"/>
     <shields front="200" back="200"/>
     <performance turnrate="0.003" topspeed="0.3"/>
     <carrierload baycount="6"/>
     <fleet_ai commonality="25"/>
-    <beam_port x=" 125" y="-17" z="139" damage="1.0" arcwidth="0.3" cycletime="6.0" range="1400"/>
-    <beam_port x="-125" y="-17" z="139" damage="1.0" arcwidth="0.3" cycletime="6.0" range="1400"/>
-    <beam_port x=" 125" y="-18" z="6" damage="1.0" arcwidth="0.3" cycletime="6.0" range="1400"/>
-    <beam_port x="-125" y="-18" z="6" damage="1.0" arcwidth="0.3" cycletime="6.0" range="1400"/>
-    <beam_port x=" 117" y="-7" z="-89" damage="1.0" arcwidth="0.3" cycletime="6.0" range="1400"/>
-    <beam_port x="-117" y="-7" z="-89" damage="1.0" arcwidth="0.3" cycletime="6.0" range="1400"/>
+    <beam_port x=" 125" y="-17" z="139" damage="1" arcwidth="0.3" cycletime="6.0" range="1400"/>
+    <beam_port x="-125" y="-17" z="139" damage="1" arcwidth="0.3" cycletime="6.0" range="1400"/>
+    <beam_port x=" 125" y="-18" z="6" damage="1" arcwidth="0.3" cycletime="6.0" range="1400"/>
+    <beam_port x="-125" y="-18" z="6" damage="1" arcwidth="0.3" cycletime="6.0" range="1400"/>
+    <beam_port x=" 117" y="-7" z="-89" damage="1" arcwidth="0.3" cycletime="6.0" range="1400"/>
+    <beam_port x="-117" y="-7" z="-89" damage="1" arcwidth="0.3" cycletime="6.0" range="1400"/>
     <engine_port x="0" y="-1" z="-185"/>
     <engine_port x=" 97" y="-22" z="-257"/>
     <engine_port x="-97" y="-22" z="-257"/>
@@ -1025,23 +2475,52 @@
     <long_desc text="Displacement: 45 kt. Armament: 6 long-range beams. Complement: 6 fighters."/>
   </vessel>
 
+<!-- **************************************************************************************** -->
+<!-- ***                                Begin Ben's New Arvonian Starships                                 *** -->
+<!-- **************************************************************************************** -->
 
+  <vessel    uniqueID="3003"    side="3"       classname="Pod Carrier" broadType="carrier arvonianbenpodcarrier">
+    <art     meshfile="dat/ENE_Matt3C.dxs"    diffuseFile="dat/ship4C_diffuse.png"
+             glowFile="dat/ship4C_glow.png"    specularFile="dat/ship4C_specular.png"  scale="0.3" pushRadius="200"/>
+    <shields front="100" back="100"/>
+    <performance turnrate="0.003" topspeed="0.3"/>
+    <carrierload baycount="8"/>
+    <fleet_ai commonality="25"/>
+    <beam_port x=" 125" y="-17" z="139" damage="0.5" arcwidth="0.3" cycletime="6.0" range="700"/>
+    <beam_port x="-125" y="-17" z="139" damage="0.5" arcwidth="0.3" cycletime="6.0" range="700"/>
+    <beam_port x=" 125" y="-18" z="6" damage="0.5" arcwidth="0.3" cycletime="6.0" range="700"/>
+    <beam_port x="-125" y="-18" z="6" damage="0.5" arcwidth="0.3" cycletime="6.0" range="700"/>
+    <beam_port x=" 117" y="-7" z="-89" damage="0.5" arcwidth="0.3" cycletime="6.0" range="700"/>
+    <beam_port x="-117" y="-7" z="-89" damage="0.5" arcwidth="0.3" cycletime="6.0" range="700"/>
+    <engine_port x="0" y="-1" z="-185"/>
+    <engine_port x=" 97" y="-22" z="-257"/>
+    <engine_port x="-97" y="-22" z="-257"/>
+    <impulse_point x=" 82" y="9" z="149"/>
+    <impulse_point x="-82" y="9" z="149"/>
+    <maneuver_point x=" 140" y="-22" z="-166"/>
+    <maneuver_point x="-140" y="-22" z="-166"/>
+    <long_desc text="Displacement: 45 kt. Armament: 6 point-defense beams. Complement: 8 fighters."/>
+  </vessel>
+
+<!-- **************************************************************************************** -->
+<!-- ***                                End Ben's New Arvonian Starships                                 *** -->
+<!-- **************************************************************************************** -->
 
   <!-- ****************************** Torgoth VESSELS **************************************** -->
 
-  <vessel    uniqueID="4000"    side="4"       classname="Goliath" broadType="small">
+  <vessel    uniqueID="4000"    side="4"       classname="Goliath" broadType="small torgothvanillagoliath">
     <art     meshfile="dat/ENE_LeeA.dxs"    diffuseFile="dat/ship1_color_1024.png"
              glowFile="dat/ship1_glow_1024.png"    specularFile="dat/ship1_spec_1024.png" scale="0.3" pushRadius="150"/>
     <shields front="350" back="350"/>
     <performance turnrate="0.002" topspeed="0.3"/>
     <fleet_ai commonality="100"/>
-    <beam_port x="-130" y="-6" z="-13" damage="1.0" arcwidth="0.3" cycletime="6.0" range="1200"/>
-    <beam_port x=" 130" y="-6" z="-13" damage="1.0" arcwidth="0.3" cycletime="6.0" range="1200"/>
-    <beam_port x="-128" y="-6" z=" 69" damage="1.0" arcwidth="0.3" cycletime="6.0" range="1200"/>
-    <beam_port x=" 128" y="-6" z=" 69" damage="1.0" arcwidth="0.3" cycletime="6.0" range="1200"/>
-    <beam_port x=" -81" y="-6" z="244" damage="1.0" arcwidth="0.3" cycletime="6.0" range="1200"/>
-    <beam_port x="  81" y="-6" z="244" damage="1.0" arcwidth="0.3" cycletime="6.0" range="1200"/>
-    <drone_port x="0" y="-10" z="0" damage="30.0" cycletime="30.0" range="5000"/>
+    <beam_port x="-130" y="-6" z="-13" damage="1" arcwidth="0.3" cycletime="6.0" range="1200"/>
+    <beam_port x=" 130" y="-6" z="-13" damage="1" arcwidth="0.3" cycletime="6.0" range="1200"/>
+    <beam_port x="-128" y="-6" z=" 69" damage="1" arcwidth="0.3" cycletime="6.0" range="1200"/>
+    <beam_port x=" 128" y="-6" z=" 69" damage="1" arcwidth="0.3" cycletime="6.0" range="1200"/>
+    <beam_port x=" -81" y="-6" z="244" damage="1" arcwidth="0.3" cycletime="6.0" range="1200"/>
+    <beam_port x="  81" y="-6" z="244" damage="1" arcwidth="0.3" cycletime="6.0" range="1200"/>
+    <drone_port x="0" y="-10" z="0" damage="30" cycletime="30.0" range="5000"/>
     <engine_port x="-107" y="36" z="-328"/>
     <engine_port x=" 107" y="36" z="-328"/>
     <engine_port x="-134" y="-14" z="-328"/>
@@ -1055,18 +2534,18 @@
 
 
 
-  <vessel    uniqueID="4001"    side="4"       classname="Leviathan" broadType="medium">
+  <vessel    uniqueID="4001"    side="4"       classname="Leviathan" broadType="medium torgothvanillaleviathan">
     <art     meshfile="dat/ENE_LeeB.dxs"    diffuseFile="dat/ship2_color_1024.png"
              glowFile="dat/ship2_glow_1024.png"    specularFile="dat/ship2_spec_1024.png" scale="0.35" pushRadius="200"/>
     <shields front="400" back="400"/>
     <performance turnrate="0.002" topspeed="0.3"/>
     <fleet_ai commonality="50"/>
-    <beam_port x=" 98" y="-12" z="270" damage="1.0" arcwidth="0.3" cycletime="6.0" range="1100"/>
-    <beam_port x="-98" y="-12" z="270" damage="1.0" arcwidth="0.3" cycletime="6.0" range="1100"/>
-    <beam_port x="0" y="-11" z="367" damage="2.0" arcwidth="0.2" cycletime="6.0" range="2000"/>
-    <beam_port x=" 59" y="40" z="-30" damage="1.0" arcwidth="0.3" cycletime="6.0" range="1100"/>
-    <beam_port x="-59" y="40" z="-30" damage="1.0" arcwidth="0.3" cycletime="6.0" range="1100"/>
-    <drone_port x="0" y="-10" z="0" damage="30.0" cycletime="30.0" range="5000"/>
+    <beam_port x=" 98" y="-12" z="270" damage="1" arcwidth="0.3" cycletime="6.0" range="1100"/>
+    <beam_port x="-98" y="-12" z="270" damage="1" arcwidth="0.3" cycletime="6.0" range="1100"/>
+    <beam_port x="0" y="-11" z="367" damage="2" arcwidth="0.2" cycletime="6.0" range="2000"/>
+    <beam_port x=" 59" y="40" z="-30" damage="1" arcwidth="0.3" cycletime="6.0" range="1100"/>
+    <beam_port x="-59" y="40" z="-30" damage="1" arcwidth="0.3" cycletime="6.0" range="1100"/>
+    <drone_port x="0" y="-10" z="0" damage="30" cycletime="30.0" range="5000"/>
     <engine_port x=" 125" y="18" z="-178"/>
     <engine_port x="-125" y="18" z="-178"/>
     <engine_port x=" 166" y="-11" z="-369"/>
@@ -1080,23 +2559,45 @@
 
 
 
-  <vessel    uniqueID="4002"    side="4"       classname="Behemoth" broadType="large">
+  <vessel    uniqueID="4002"    side="4"       classname="Behemoth" broadType="large torgothvanillabehemoth">
     <art     meshfile="dat/ENE_LeeC.dxs"    diffuseFile="dat/ship3_color_1024.png"
              glowFile="dat/ship3_glow_1024.png"    specularFile="dat/ship3_spec_1024.png"  scale="0.4" pushRadius="250"/>
     <shields front="600" back="600"/>
     <performance turnrate="0.002" topspeed="0.3"/>
     <fleet_ai commonality="25"/>
-    <beam_port x="-124" y="0" z="   8" damage="1.0" arcwidth="0.3" cycletime="4.0" range="1000"/>
-    <beam_port x=" 124" y="0" z="   8" damage="1.0" arcwidth="0.3" cycletime="4.0" range="1000"/>
-    <beam_port x=" -98" y="0" z=" -57" damage="1.0" arcwidth="0.3" cycletime="4.0" range="1000"/>
-    <beam_port x="  98" y="0" z=" -57" damage="1.0" arcwidth="0.3" cycletime="4.0" range="1000"/>
-    <beam_port x=" -80" y="0" z="-167" damage="1.0" arcwidth="0.3" cycletime="4.0" range="1000"/>
-    <beam_port x="  80" y="0" z="-167" damage="1.0" arcwidth="0.3" cycletime="4.0" range="1000"/>
-    <beam_port x="-128" y="0" z=" 144" damage="1.0" arcwidth="0.3" cycletime="4.0" range="1000"/>
-    <beam_port x=" 128" y="0" z=" 144" damage="1.0" arcwidth="0.3" cycletime="4.0" range="1000"/>
-    <beam_port x=" -96" y="0" z=" 288" damage="1.0" arcwidth="0.3" cycletime="4.0" range="1000"/>
-    <beam_port x="  96" y="0" z=" 288" damage="1.0" arcwidth="0.3" cycletime="4.0" range="1000"/>
-    <drone_port x="0" y="-10" z="0" damage="30.0" cycletime="30.0" range="5000"/>
+    <beam_port x="-124" y="0" z="   8" damage="1" arcwidth="0.3" cycletime="4.0" range="1000"/>
+    <beam_port x=" 124" y="0" z="   8" damage="1" arcwidth="0.3" cycletime="4.0" range="1000"/>
+    <beam_port x=" -98" y="0" z=" -57" damage="1" arcwidth="0.3" cycletime="4.0" range="1000"/>
+    <beam_port x="  98" y="0" z=" -57" damage="1" arcwidth="0.3" cycletime="4.0" range="1000"/>
+    <beam_port x=" -80" y="0" z="-167" damage="1" arcwidth="0.3" cycletime="4.0" range="1000"/>
+    <beam_port x="  80" y="0" z="-167" damage="1" arcwidth="0.3" cycletime="4.0" range="1000"/>
+    <beam_port x="-128" y="0" z=" 144" damage="1" arcwidth="0.3" cycletime="4.0" range="1000"/>
+    <beam_port x=" 128" y="0" z=" 144" damage="1" arcwidth="0.3" cycletime="4.0" range="1000"/>
+    <beam_port x=" -96" y="0" z=" 288" damage="1" arcwidth="0.3" cycletime="4.0" range="1000"/>
+    <beam_port x="  96" y="0" z=" 288" damage="1" arcwidth="0.3" cycletime="4.0" range="1000"/>
+    <drone_port x="0" y="-10" z="0" damage="30" cycletime="30.0" range="5000"/>
+    <engine_port x=" 66" y="22" z="-383"/>
+    <engine_port x="-66" y="22" z="-383"/>
+    <engine_port x=" 54" y="41" z="-370"/>
+    <engine_port x="-54" y="41" z="-370"/>
+    <impulse_point x=" 76" y="39" z="-319"/>
+    <impulse_point x="-76" y="39" z="-319"/>
+    <maneuver_point x=" 98" y="31" z="162"/>
+    <maneuver_point x="-98" y="31" z="162"/>
+    <long_desc text="Displacement: 150 kt. Armament: 10 standard beams, 1 drone launcher"/>
+  </vessel>
+<!-- **************************************************************************************** -->
+<!-- ***                                Begin Ben's New Torgoth Starships                                 *** -->
+<!-- **************************************************************************************** -->
+
+  <vessel    uniqueID="4003"    side="4"       classname="Kraken" broadType="large torgothbenkraken">
+    <art     meshfile="dat/ENE_LeeC.dxs"    diffuseFile="dat/ship3_color_1024.png"
+             glowFile="dat/ship3_glow_1024.png"    specularFile="dat/ship3_spec_1024.png"  scale="0.4" pushRadius="250"/>
+    <shields front="600" back="600"/>
+    <performance turnrate="0.002" topspeed="0.3"/>
+    <fleet_ai commonality="25"/>
+    <beam_port x="0" y="0" z="   8" damage="5" arcwidth="0.3" cycletime="4.0" range="1000"/>
+    <beam_port x="0" y="0" z="   8" damage="5" arcwidth="0.3" cycletime="4.0" range="1000"/>
     <engine_port x=" 66" y="22" z="-383"/>
     <engine_port x="-66" y="22" z="-383"/>
     <engine_port x=" 54" y="41" z="-370"/>
@@ -1108,18 +2609,63 @@
     <long_desc text="Displacement: 150 kt. Armament: 10 standard beams, 1 drone launcher"/>
   </vessel>
 
+  <vessel    uniqueID="4004"    side="4"       classname="Manticore" broadType="medium torgothbenmanticore">
+    <art     meshfile="dat/ENE_LeeB.dxs"    diffuseFile="dat/ship2_color_1024.png"
+             glowFile="dat/ship2_glow_1024.png"    specularFile="dat/ship2_spec_1024.png" scale="0.35" pushRadius="200"/>
+    <shields front="400" back="400"/>
+    <performance turnrate="0.002" topspeed="0.3"/>
+    <fleet_ai commonality="50"/>
+    <beam_port x="  96" y="0" z=" 288" damage="1" arcwidth="0.3" cycletime="4.0" range="1000"/>
+    <drone_port x="0" y="-10" z="0" damage="30.0" cycletime="7.5" range="5000"/>
+    <engine_port x=" 125" y="18" z="-178"/>
+    <engine_port x="-125" y="18" z="-178"/>
+    <engine_port x=" 166" y="-11" z="-369"/>
+    <engine_port x="-166" y="-11" z="-369"/>
+    <impulse_point x="-136" y="18" z="84"/>
+    <impulse_point x=" 136" y="18" z="84"/>
+    <maneuver_point x="-176" y="-10" z="-97"/>
+    <maneuver_point x=" 176" y="-10" z="-97"/>
+    <long_desc text="Displacement: 90 kt. Armament: 1 forward beam, 1 4xSpeed light drone launcher."/>
+  </vessel>
+
+    <vessel    uniqueID="4005"    side="4"       classname="Sledge" broadType="small torgothbensledge">
+    <art     meshfile="dat/ENE_LeeA.dxs"    diffuseFile="dat/ship1_color_1024.png"
+             glowFile="dat/ship1_glow_1024.png"    specularFile="dat/ship1_spec_1024.png" scale="0.3" pushRadius="150"/>
+    <shields front="250" back="250"/>
+    <performance turnrate="0.0025" topspeed="0.6"/>
+    <fleet_ai commonality="100"/>
+    <beam_port x="-130" y="-6" z="-13" damage="1" arcwidth="0.3" cycletime="6.0" range="1200"/>
+    <beam_port x=" 130" y="-6" z="-13" damage="1" arcwidth="0.3" cycletime="6.0" range="1200"/>
+    <beam_port x="-128" y="-6" z=" 69" damage="1" arcwidth="0.3" cycletime="6.0" range="1200"/>
+    <drone_port x="0" y="-10" z="0" damage="30" cycletime="30.0" range="5000"/>
+    <engine_port x="-107" y="36" z="-328"/>
+    <engine_port x=" 107" y="36" z="-328"/>
+    <engine_port x="-134" y="-14" z="-328"/>
+    <engine_port x=" 134" y="-14" z="-328"/>
+    <impulse_point x="-111" y="10" z="-151"/>
+    <impulse_point x=" 111" y="10" z="-151"/>
+    <maneuver_point x="-117" y="8" z="12"/>
+    <maneuver_point x=" 117" y="8" z="12"/>
+    <long_desc text="Displacement: 80 kt. Boosted engines, Armament: 3 medium beams. 1 drone launcher"/>
+  </vessel>
+
+<!-- **************************************************************************************** -->
+<!-- ***                                End Ben's New Torgoth Starships                                 *** -->
+<!-- **************************************************************************************** -->
+
+
 
   <!-- ****************************** Skaraan VESSELS **************************************** -->
 
 
-  <vessel    uniqueID="5000"    side="5"       classname="Defiler" broadType="small">
+  <vessel    uniqueID="5000"    side="5"       classname="Defiler" broadType="small skaraanvanilladefiler">
     <art     meshfile="dat/ENE_EliteC.dxs"    diffuseFile="dat/ship1C_diffuse.png"
              glowFile="dat/ship1C_illum.png"    specularFile="dat/ship1C_specular.png" scale="0.25" pushRadius="150"/>
     <shields front="250" back="100"/>
     <performance turnrate="0.004" topspeed="0.8"/>
     <fleet_ai commonality="25"/>
-    <beam_port x="-35" y="12" z="223" damage="1.0" arcwidth="0.3" cycletime="6.0" range="1200"/>
-    <beam_port x=" 35" y="12" z="223" damage="1.0" arcwidth="0.3" cycletime="6.0" range="1200"/>
+    <beam_port x="-35" y="12" z="223" damage="1" arcwidth="0.3" cycletime="6.0" range="1200"/>
+    <beam_port x=" 35" y="12" z="223" damage="1" arcwidth="0.3" cycletime="6.0" range="1200"/>
     <engine_port x=" 22" y="3" z="-211"/>
     <engine_port x="-22" y="3" z="-211"/>
     <engine_port x=" 90" y="6" z="-83"/>
@@ -1131,16 +2677,16 @@
     <long_desc text="Displacement: 40 kt. Armament: 2 medium beams. The Skaraan's lightest warship."/>
   </vessel>
 
-  <vessel    uniqueID="5001"    side="5"       classname="Enforcer" broadType="medium">
+  <vessel    uniqueID="5001"    side="5"       classname="Enforcer" broadType="medium skaraanvanillaenforcer">
     <art     meshfile="dat/ENE_EliteA.dxs"    diffuseFile="dat/ship1A_diffuse.png"
              glowFile="dat/ship1A_illum.png"    specularFile="dat/ship1A_specular.png" scale="0.25" pushRadius="150"/>
     <shields front="300" back="150"/>
     <performance turnrate="0.004" topspeed="0.8"/>
     <fleet_ai commonality="100"/>
-    <beam_port x=" -155" y="-11" z="-111" damage="1.0" arcwidth="0.3" cycletime="6.0" range="1000"/>
-    <beam_port x="  155" y="-11" z="-111" damage="1.0" arcwidth="0.3" cycletime="6.0" range="1000"/>
-    <beam_port x=" -67" y="-18" z="217" damage="1.0" arcwidth="0.3" cycletime="6.0" range="1000"/>
-    <beam_port x="  67" y="-18" z="217" damage="1.0" arcwidth="0.3" cycletime="6.0" range="1000"/>
+    <beam_port x=" -155" y="-11" z="-111" damage="1" arcwidth="0.3" cycletime="6.0" range="1000"/>
+    <beam_port x="  155" y="-11" z="-111" damage="1" arcwidth="0.3" cycletime="6.0" range="1000"/>
+    <beam_port x=" -67" y="-18" z="217" damage="1" arcwidth="0.3" cycletime="6.0" range="1000"/>
+    <beam_port x="  67" y="-18" z="217" damage="1" arcwidth="0.3" cycletime="6.0" range="1000"/>
     <engine_port x="112" y="-15" z="-230"/>
     <engine_port x="-112" y="-15" z="-230"/>
     <impulse_point x="-155.619507" y="-11.701264" z="-115.636658"/>
@@ -1152,15 +2698,15 @@
 
 
 
-  <vessel    uniqueID="5002"    side="5"       classname="Executor" broadType="large">
+  <vessel    uniqueID="5002"    side="5"       classname="Executor" broadType="large skaraanvanillaexecutor">
     <art     meshfile="dat/ENE_EliteB.dxs"    diffuseFile="dat/ship1B_diffuse.png"
              glowFile="dat/ship1B_illum.png"    specularFile="dat/ship1B_specular.png" scale="0.25" pushRadius="150"/>
     <shields front="350" back="300"/>
     <performance turnrate="0.004" topspeed="0.8"/>
     <fleet_ai commonality="50"/>
-    <beam_port x="-94" y="34" z="310" damage="3.0" arcwidth="0.2" cycletime="6.0" range="2000"/>
-    <beam_port x=" 94" y="34" z="310" damage="3.0" arcwidth="0.2" cycletime="6.0" range="2000"/>
-    <beam_port x="0" y="0" z="-250" damage="3.0" arcwidth="0.4" cycletime="4.0" range="1400"/>
+    <beam_port x="-94" y="34" z="310" damage="3" arcwidth="0.2" cycletime="6.0" range="2000"/>
+    <beam_port x=" 94" y="34" z="310" damage="3" arcwidth="0.2" cycletime="6.0" range="2000"/>
+    <beam_port x="0" y="0" z="-250" damage="3" arcwidth="0.4" cycletime="4.0" range="1400"/>
     <engine_port x=" 142.35" y="-2" z="-263"/>
     <engine_port x="-142.35" y="-2" z="-263"/>
     <impulse_point x="189.647034" y="-1.964812" z="-228.977081"/>
@@ -1170,12 +2716,56 @@
     <long_desc text="Displacement: 70 kt. Armament: 2 super-heavy beams, 1 medium beam. Very dangerous."/>
   </vessel>
 
+<!-- **************************************************************************************** -->
+<!-- ***                                Begin Ben's New Skaraan Starships                                 *** -->
+<!-- **************************************************************************************** -->
 
+    <vessel    uniqueID="5003"    side="5"       classname="Copperhead" broadType="small skaraanbencopperhead">
+    <art     meshfile="dat/ENE_EliteC.dxs"    diffuseFile="dat/ship1C_diffuse.png"
+             glowFile="dat/ship1C_illum.png"    specularFile="dat/ship1C_specular.png" scale="0.25" pushRadius="150"/>
+    <shields front="150" back="75"/>
+    <performance turnrate="0.008" topspeed="1.6"/>
+    <fleet_ai commonality="25"/>
+    <beam_port x="-35" y="12" z="223" damage="1" arcwidth="0.3" cycletime="6.0" range="600"/>
+    <beam_port x=" 35" y="12" z="223" damage="1" arcwidth="0.3" cycletime="6.0" range="600"/>
+    <engine_port x=" 22" y="3" z="-211"/>
+    <engine_port x="-22" y="3" z="-211"/>
+    <engine_port x=" 90" y="6" z="-83"/>
+    <engine_port x="-90" y="6" z="-83"/>
+    <impulse_point x="-121.355705" y="30.381374" z="-20.283379"/>
+    <impulse_point x="121.355705" y="30.381374" z="-20.283379"/>
+    <maneuver_point x="-52.359570" y="7.509293" z="98.323151"/>
+    <maneuver_point x="52.359570" y="7.509293" z="98.323151"/>
+    <long_desc text="Displacement: 38 kt. Armament: 2 medium beams. The Skaraan fast attack warship."/>
+  </vessel>
+
+  <vessel    uniqueID="5004"    side="5"       classname="Titan" broadType="large skaraanbentitan">
+    <art     meshfile="dat/ENE_EliteB.dxs"    diffuseFile="dat/ship1B_diffuse.png"
+             glowFile="dat/ship1B_illum.png"    specularFile="dat/ship1B_specular.png" scale="0.25" pushRadius="150"/>
+    <shields front="550" back="400"/>
+    <performance turnrate="0.003" topspeed="0.6"/>
+    <fleet_ai commonality="25"/>
+    <beam_port x="-94" y="34" z="310" damage="3" arcwidth="0.2" cycletime="6.0" range="2000"/>
+    <beam_port x=" 94" y="34" z="310" damage="3" arcwidth="0.2" cycletime="6.0" range="2000"/>
+    <beam_port x=" 94" y="34" z="310" damage="3" arcwidth="0.2" cycletime="6.0" range="2000"/>
+    <beam_port x="0" y="0" z="-250" damage="3" arcwidth="0.4" cycletime="4.0" range="1400"/>
+    <engine_port x=" 142.35" y="-2" z="-263"/>
+    <engine_port x="-142.35" y="-2" z="-263"/>
+    <impulse_point x="189.647034" y="-1.964812" z="-228.977081"/>
+    <impulse_point x="-189.647034" y="-1.964812" z="-228.977081"/>
+    <maneuver_point x="-33.807400" y="-30.912567" z="83.769875"/>
+    <maneuver_point x="33.807400" y="-30.912567" z="83.769875"/>
+    <long_desc text="Displacement: 180 kt. Armament: 3 super-heavy beams, 1 medium beam. Do not approach from the front."/>
+  </vessel>
+
+<!-- **************************************************************************************** -->
+<!-- ***                                End Ben's New Skaraan Starships                                 *** -->
+<!-- **************************************************************************************** -->
 
   <!-- ****************************** biomech VESSELS **************************************** -->
 
 
-  <vessel    uniqueID="6000"    side="6"       classname="Stage 1" broadType="small asteroideater">
+  <vessel    uniqueID="6000"    side="6"       classname="Stage 1" broadType="small asteroideater biomechvanilla1">
     <art     meshfile="dat/z-drone3.dxs"    diffuseFile="dat/drone3_color.png"
              glowFile="dat/drone3_glow.png"    specularFile="dat/drone3_spec.png" scale="0.25" pushRadius="150"/>
     <shields front="50" back="50"/>
@@ -1185,7 +2775,7 @@
     <long_desc text="Infant stage of BioMech development. Typically docile, occasionally aggressive."/>
   </vessel>
 
-  <vessel    uniqueID="6001"    side="6"       classname="Stage 2" broadType="medium asteroideater">
+  <vessel    uniqueID="6001"    side="6"       classname="Stage 2" broadType="medium asteroideater biomechvanilla2">
     <art     meshfile="dat/z-drone4.dxs"    diffuseFile="dat/drone4_color.png"
              glowFile="dat/drone4_glow.png"    specularFile="dat/drone4_spec.png" scale="0.25" pushRadius="150"/>
     <shields front="150" back="50"/>
@@ -1199,30 +2789,30 @@
     <long_desc text="A BioMech in the childhood stage. Will eventually mature into an adult."/>
   </vessel>
 
-  <vessel    uniqueID="6002"    side="6"       classname="Stage 3" broadType="large anomalyeater">
+  <vessel    uniqueID="6002"    side="6"       classname="Stage 3" broadType="large anomalyeater biomechvanilla3">
     <art     meshfile="dat/z-drone2.dxs"    diffuseFile="dat/drone2_color.png"
              glowFile="dat/drone2_glow.png"    specularFile="dat/drone2_spec.png" scale="0.35" pushRadius="200"/>
     <shields front="350" back="350"/>
     <performance turnrate="0.008" topspeed="1.8"/>
     <fleet_ai commonality="15"/>
-    <beam_port x="-58.056915" y=" 39.918091" z="134.605820" damage="1.0" arcwidth="0.4" cycletime="6.0" range="1200"/>
-    <beam_port x="-57.419849" y="-39.788464" z="135.062057" damage="1.0" arcwidth="0.4" cycletime="6.0" range="1200"/>
-    <beam_port x=" 58.056915" y=" 39.918091" z="134.605820" damage="1.0" arcwidth="0.4" cycletime="6.0" range="1200"/>
-    <beam_port x=" 57.419849" y="-39.788464" z="135.062057" damage="1.0" arcwidth="0.4" cycletime="6.0" range="1200"/>
+    <beam_port x="-58.056915" y=" 39.918091" z="134.605820" damage="1" arcwidth="0.4" cycletime="6.0" range="1200"/>
+    <beam_port x="-57.419849" y="-39.788464" z="135.062057" damage="1" arcwidth="0.4" cycletime="6.0" range="1200"/>
+    <beam_port x=" 58.056915" y=" 39.918091" z="134.605820" damage="1" arcwidth="0.4" cycletime="6.0" range="1200"/>
+    <beam_port x=" 57.419849" y="-39.788464" z="135.062057" damage="1" arcwidth="0.4" cycletime="6.0" range="1200"/>
     <engine_port x="-311.516846" y="-67.804581" z="-62"/>
     <engine_port x=" 311.516846" y="-67.804581" z="-62"/>
     <long_desc text="Young adult BioMech. This is the most aggressive stage of development. Proceed with caution."/>
   </vessel>
 
-  <vessel    uniqueID="6003"    side="6"       classname="Type 4" broadType="large sentient">
+  <vessel    uniqueID="6003"    side="6"       classname="Type 4" broadType="large sentient biomechvanilla4">
     <art     meshfile="dat/z-drone1.dxs"    diffuseFile="dat/drone1_color.png"
              glowFile="dat/drone1_glow.png"    specularFile="dat/drone1_spec.png" scale="0.45" pushRadius="250"/>
     <shields front="550" back="550"/>
     <performance turnrate="0.008" topspeed="1.8"/>
     <fleet_ai commonality="10"/>
-    <beam_port x="0" y="-24" z="147"  damage="2.0" arcwidth="0.4" cycletime="5.0" range="2200"/>
-    <beam_port x="-91.236908" y="17.210005" z="-17.866117" damage="1.0" arcwidth="0.4" cycletime="6.0" range="1200"/>
-    <beam_port x=" 91.236908" y="17.210005" z="-17.866117" damage="1.0" arcwidth="0.4" cycletime="6.0" range="1200"/>
+    <beam_port x="0" y="-24" z="147"  damage="2" arcwidth="0.4" cycletime="5.0" range="2200"/>
+    <beam_port x="-91.236908" y="17.210005" z="-17.866117" damage="1" arcwidth="0.4" cycletime="6.0" range="1200"/>
+    <beam_port x=" 91.236908" y="17.210005" z="-17.866117" damage="1" arcwidth="0.4" cycletime="6.0" range="1200"/>
     <engine_port x="0" y="268" z="-33"/>
     <engine_port x="0" y="-228" z="-83"/>
     <long_desc text="Full grown adult BioMech. Capable of reproduction and communication."/>

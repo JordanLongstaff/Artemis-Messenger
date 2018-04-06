@@ -1,7 +1,8 @@
 package com.walkertribe.ian.vesseldata;
 
-import java.util.HashSet;
 import java.util.Set;
+
+import com.walkertribe.ian.util.Util;
 
 /**
  * A list of attributes for Factions. Corresponds to the &lt;hullRace
@@ -9,9 +10,6 @@ import java.util.Set;
  * @author rjwut
  */
 public final class FactionAttribute {
-	private static final Set<FactionAttribute> allAttributes = new HashSet<FactionAttribute>();
-	private final String name;
-	
 	// stance
 	public static final String PLAYER      = "player";
 	public static final String FRIENDLY    = "friendly";
@@ -29,32 +27,12 @@ public final class FactionAttribute {
 	public static final String HASSPECIALS = "hasspecials";
 	public static final String JUMPMASTER  = "jumpmaster";
 
-	private FactionAttribute(String n) {
-		name = n;
-	}
-
-	public static FactionAttribute get(String n) {
-		for (FactionAttribute attr: allAttributes) {
-			if (n.equalsIgnoreCase(attr.name)) return attr;
-		}
-		
-		FactionAttribute attr = new FactionAttribute(n);
-		allAttributes.add(attr);
-		return attr;
-	}
-
 	/**
-	 * Returns a Set containing the FactionAttributes that correspond to the
-	 * space-delimited list of attribute names in the given String.
+	 * No instantiation allowed.
 	 */
-	public static Set<FactionAttribute> build(String keys) {
-		String[] tokens = keys.split(" ");
-		Set<FactionAttribute> attrs = new HashSet<FactionAttribute>();
-
-		for (String token : tokens) {
-			attrs.add(get(token));
-		}
-
-		return attrs;
+	private FactionAttribute() { }
+	
+	public static Set<String> build(String keys) {
+		return Util.splitSpaceDelimited(keys);
 	}
 }

@@ -1,20 +1,21 @@
 package com.walkertribe.ian.protocol.core.world;
 
-import com.walkertribe.ian.enums.BeamFrequency;
-import com.walkertribe.ian.enums.ObjectType;
-import com.walkertribe.ian.enums.ShipSystem;
-import com.walkertribe.ian.iface.PacketReader;
-import com.walkertribe.ian.iface.PacketWriter;
-import com.walkertribe.ian.vesseldata.FactionAttribute;
-import com.walkertribe.ian.vesseldata.Vessel;
-import com.walkertribe.ian.world.ArtemisNpc;
-import com.walkertribe.ian.world.ArtemisObject;
+import java.util.EnumSet;
 
+import com.walkertribe.ian.enums.ObjectType;
+import com.walkertribe.ian.iface.PacketReader;
+import com.walkertribe.ian.util.Version;
+import com.walkertribe.ian.world.ArtemisNpc;
+
+/**
+ * ObjectParser implementation for NPC ships
+ * @author rjwut
+ */
 public class NpcShipParser extends AbstractObjectParser {
 	private enum Bit {
 		NAME,
 		IMPULSE,
-		UNK_1_3,
+		RUDDER,
 		MAX_IMPULSE,
 		MAX_TURN_RATE,
 		IS_ENEMY,
@@ -39,197 +40,112 @@ public class NpcShipParser extends AbstractObjectParser {
 		SPECIAL_ABILITIES,
 		SPECIAL_STATE,
 
-		UNK_4_1,
-		UNK_4_2,
-		UNK_4_3,
-		UNK_4_4,
+		SINGLE_SCAN,
+		DOUBLE_SCAN,
+		VISIBILITY,
+		SIDE,
 		UNK_4_5,
 		UNK_4_6,
 		UNK_4_7,
-		UNK_4_8,
+		TARGET_X,
 
-		UNK_5_1,
-		UNK_5_2,
+		TARGET_Y,
+		TARGET_Z,
+		TAGGED,
+		UNK_5_4,
 		BEAM_SYSTEM_DAMAGE,
 		TORPEDO_SYSTEM_DAMAGE,
 		SENSOR_SYSTEM_DAMAGE,
 		MANEUVER_SYSTEM_DAMAGE,
+		
 		IMPULSE_SYSTEM_DAMAGE,
 		WARP_SYSTEM_DAMAGE,
-
 		FORE_SHIELD_SYSTEM_DAMAGE,
 		AFT_SHIELD_SYSTEM_DAMAGE,
 		SHIELD_FREQUENCY_A,
 		SHIELD_FREQUENCY_B,
 		SHIELD_FREQUENCY_C,
 		SHIELD_FREQUENCY_D,
+		
 		SHIELD_FREQUENCY_E
 	}
-	private static final Bit[] BITS = Bit.values();
+	private static final EnumSet<Bit> BITS = EnumSet.allOf(Bit.class);
 	
-	private static final Bit[] ACCEPTED_BITS = new Bit[] {
-		Bit.NAME,
-		Bit.IS_ENEMY,
-		Bit.SHIP_TYPE,
-		Bit.FORE_SHIELD,
-		Bit.FORE_SHIELD_MAX,
-		Bit.AFT_SHIELD,
-		Bit.AFT_SHIELD_MAX,
-		Bit.X,
-		Bit.Y,
-		Bit.Z
-	};
-
-	private static final Bit[] SYSTEM_DAMAGES = new Bit[] {
-		Bit.BEAM_SYSTEM_DAMAGE,
-		Bit.TORPEDO_SYSTEM_DAMAGE,
-		Bit.SENSOR_SYSTEM_DAMAGE,
-		Bit.MANEUVER_SYSTEM_DAMAGE,
-		Bit.IMPULSE_SYSTEM_DAMAGE,
-		Bit.WARP_SYSTEM_DAMAGE,
-		Bit.FORE_SHIELD_SYSTEM_DAMAGE,
-		Bit.AFT_SHIELD_SYSTEM_DAMAGE
-	};
-
-	private static final Bit[] SHLD_FREQS = new Bit[] {
-		Bit.SHIELD_FREQUENCY_A,
-		Bit.SHIELD_FREQUENCY_B,
-		Bit.SHIELD_FREQUENCY_C,
-		Bit.SHIELD_FREQUENCY_D,
-		Bit.SHIELD_FREQUENCY_E
-    };
+	private static final Version TAG_VERSION = new Version("2.6.204");
+	private static final Version UNK_VERSION = new Version("2.6.3");
+	private static final Version CURRENT_VERSION = new Version("2.7.0");
 
 	NpcShipParser() {
 		super(ObjectType.NPC_SHIP);
 	}
 
 	@Override
-	public Bit[] getBits() {
-		return BITS;
-	}
-	
-	@Override
-	public Bit[] getAcceptedBits() {
-		return ACCEPTED_BITS;
+	public int getBitCount() {
+		return BITS.size();
 	}
 
 	@Override
 	protected ArtemisNpc parseImpl(PacketReader reader) {
         ArtemisNpc obj = new ArtemisNpc(reader.getObjectId());
         obj.setName(reader.readString(Bit.NAME));
-        obj.setImpulse(reader.readFloat(Bit.IMPULSE, -1));
-
-        reader.readObjectUnknown(Bit.UNK_1_3, 4);
-
-        obj.setTopSpeed(reader.readFloat(Bit.MAX_IMPULSE, -1));
-        obj.setTurnRate(reader.readFloat(Bit.MAX_TURN_RATE, -1));
+        obj.setImpulse(reader.readFloat(Bit.IMPULSE));
+        
+        reader.readFloat(Bit.RUDDER);
+        reader.readFloat(Bit.MAX_IMPULSE);
+        reader.readFloat(Bit.MAX_TURN_RATE);
+        
         obj.setEnemy(reader.readBool(Bit.IS_ENEMY, 4));
         obj.setHullId(reader.readInt(Bit.SHIP_TYPE, -1));
-        obj.setX(reader.readFloat(Bit.X, Float.MIN_VALUE));
-        obj.setY(reader.readFloat(Bit.Y, Float.MIN_VALUE));
-        obj.setZ(reader.readFloat(Bit.Z, Float.MIN_VALUE));
-        obj.setPitch(reader.readFloat(Bit.PITCH, Float.MIN_VALUE));
-        obj.setRoll(reader.readFloat(Bit.ROLL, Float.MIN_VALUE));
-        obj.setHeading(reader.readFloat(Bit.HEADING, Float.MIN_VALUE));
-        obj.setVelocity(reader.readFloat(Bit.VELOCITY, -1));
-        obj.setSurrendered(reader.readBool(Bit.SURRENDERED, 1));
+        obj.setX(reader.readFloat(Bit.X));
+        obj.setY(reader.readFloat(Bit.Y));
+        obj.setZ(reader.readFloat(Bit.Z));
+        
+        reader.readFloat(Bit.PITCH);
+        reader.readFloat(Bit.ROLL);
+        reader.readFloat(Bit.HEADING);
+        reader.readFloat(Bit.VELOCITY);
+        reader.readBool(Bit.SURRENDERED, 1);
+        reader.readObjectUnknown(Bit.UNK_2_8, reader.getVersion().lt(CURRENT_VERSION) ? 2 : 1);
 
-        reader.readObjectUnknown(Bit.UNK_2_8, 2);
-
-        obj.setShieldsFront(reader.readFloat(Bit.FORE_SHIELD, Float.MIN_VALUE));
-        obj.setShieldsFrontMax(reader.readFloat(Bit.FORE_SHIELD_MAX, -1));
-        obj.setShieldsRear(reader.readFloat(Bit.AFT_SHIELD, Float.MIN_VALUE));
-        obj.setShieldsRearMax(reader.readFloat(Bit.AFT_SHIELD_MAX, -1));
+        obj.setShieldsFront(reader.readFloat(Bit.FORE_SHIELD));
+        obj.setShieldsFrontMax(reader.readFloat(Bit.FORE_SHIELD_MAX));
+        obj.setShieldsRear(reader.readFloat(Bit.AFT_SHIELD));
+        obj.setShieldsRearMax(reader.readFloat(Bit.AFT_SHIELD_MAX));
 
         reader.readObjectUnknown(Bit.UNK_3_5, 2);
-
-        obj.setFleetNumber(reader.readByte(Bit.FLEET_NUMBER, (byte) -1));
-        int special = reader.readInt(Bit.SPECIAL_ABILITIES, -1);
-        int specialState = reader.readInt(Bit.SPECIAL_STATE, -1);
-        Vessel vessel = obj.getVessel(reader.getContext());
-
-        if (vessel != null && vessel.getFaction().is(FactionAttribute.HASSPECIALS)) {
-            obj.setSpecialBits(special);
-            obj.setSpecialStateBits(specialState);
-        }
-
-        obj.setScanLevel((byte) reader.readInt(Bit.UNK_4_1));
-
-        reader.readObjectUnknown(Bit.UNK_4_2, 4);
-
-        // TODO What are these?
-        reader.readObjectUnknown(Bit.UNK_4_3, 4);
-        reader.readObjectUnknown(Bit.UNK_4_4, 1);
+        reader.readByte(Bit.FLEET_NUMBER, (byte) -1);
+        reader.readInt(Bit.SPECIAL_ABILITIES, -1);
+        reader.readInt(Bit.SPECIAL_STATE, -1);
+        reader.readInt(Bit.SINGLE_SCAN, -1);
+        reader.readInt(Bit.DOUBLE_SCAN, -1);
+        reader.readInt(Bit.VISIBILITY, 0);
+        
+        obj.setSide(reader.readByte(Bit.SIDE, (byte) -1));
+        
         reader.readObjectUnknown(Bit.UNK_4_5, 1);
         reader.readObjectUnknown(Bit.UNK_4_6, 1);
         reader.readObjectUnknown(Bit.UNK_4_7, 1);
-        reader.readObjectUnknown(Bit.UNK_4_8, 4);
-        reader.readObjectUnknown(Bit.UNK_5_1, 4);
-        reader.readObjectUnknown(Bit.UNK_5_2, 4);
 
-        // system damage
-        ShipSystem[] systems = ShipSystem.values();
-
-        for (int i = 0; i < SYSTEM_DAMAGES.length; i++) {
-        	obj.setSystemDamage(systems[i], reader.readFloat(SYSTEM_DAMAGES[i], -1));
-        }
-
-        // shield frequencies
-        BeamFrequency[] freqs = BeamFrequency.values();
-
-        for (int i = 0; i < SHLD_FREQS.length; i++) {
-        	obj.setShieldFreq(freqs[i], reader.readFloat(SHLD_FREQS[i], -1));
-        }
+        reader.readFloat(Bit.TARGET_X);
+        reader.readFloat(Bit.TARGET_Y);
+        reader.readFloat(Bit.TARGET_Z);
+        
+        if (BITS.contains(Bit.TAGGED)) reader.readBool(Bit.TAGGED, 1);
+        if (BITS.contains(Bit.UNK_5_4)) reader.readObjectUnknown(Bit.UNK_5_4, 1);
+        
+        int adjustment = Bit.values().length - BITS.size();
+        for (int i = Bit.BEAM_SYSTEM_DAMAGE.ordinal() - adjustment; i < BITS.size(); i++)
+        	reader.readFloat(i);
 
         return obj;
 	}
-
+	
 	@Override
-	public void write(ArtemisObject obj, PacketWriter writer) {
-		ArtemisNpc npc = (ArtemisNpc) obj;
-		writer	.writeString(Bit.NAME, npc.getName())
-				.writeFloat(Bit.IMPULSE, npc.getImpulse(), -1)
-				.writeUnknown(Bit.UNK_1_3)
-				.writeFloat(Bit.MAX_IMPULSE, npc.getTopSpeed(), -1)
-				.writeFloat(Bit.MAX_TURN_RATE, npc.getTurnRate(), -1)
-				.writeBool(Bit.IS_ENEMY, npc.isEnemy(), 4)
-				.writeInt(Bit.SHIP_TYPE, npc.getHullId(), -1)
-				.writeFloat(Bit.X, npc.getX(), Float.MIN_VALUE)
-				.writeFloat(Bit.Y, npc.getY(), Float.MIN_VALUE)
-				.writeFloat(Bit.Z, npc.getZ(), Float.MIN_VALUE)
-				.writeFloat(Bit.PITCH, npc.getPitch(), Float.MIN_VALUE)
-				.writeFloat(Bit.ROLL, npc.getRoll(), Float.MIN_VALUE)
-				.writeFloat(Bit.HEADING, npc.getHeading(), Float.MIN_VALUE)
-				.writeFloat(Bit.VELOCITY, npc.getVelocity(), -1)
-				.writeBool(Bit.SURRENDERED, npc.isSurrendered(), 1)
-				.writeUnknown(Bit.UNK_2_8)
-				.writeFloat(Bit.FORE_SHIELD, npc.getShieldsFront(), Float.MIN_VALUE)
-				.writeFloat(Bit.FORE_SHIELD_MAX, npc.getShieldsFrontMax(), -1)
-				.writeFloat(Bit.AFT_SHIELD, npc.getShieldsRear(), Float.MIN_VALUE)
-				.writeFloat(Bit.AFT_SHIELD_MAX, npc.getShieldsRearMax(), -1)
-				.writeUnknown(Bit.UNK_3_5)
-				.writeByte(Bit.FLEET_NUMBER, npc.getFleetNumber(), (byte) -1)
-				.writeInt(Bit.SPECIAL_ABILITIES, npc.getSpecialBits(), -1)
-				.writeInt(Bit.SPECIAL_STATE, npc.getSpecialStateBits(), -1)
-				.writeInt(Bit.UNK_4_1, npc.getScanLevel(), -1)
-				.writeUnknown(Bit.UNK_4_2)
-				.writeUnknown(Bit.UNK_4_3)
-				.writeUnknown(Bit.UNK_4_4)
-				.writeUnknown(Bit.UNK_4_5)
-				.writeUnknown(Bit.UNK_4_6)
-				.writeUnknown(Bit.UNK_4_7)
-				.writeUnknown(Bit.UNK_4_8)
-				.writeUnknown(Bit.UNK_5_1)
-				.writeUnknown(Bit.UNK_5_2);
-
-		for (ShipSystem sys : ShipSystem.values()) {
-			Bit bit = SYSTEM_DAMAGES[sys.ordinal()];
-			writer.writeFloat(bit, npc.getSystemDamage(sys), -1);
-		}
-
-		for (BeamFrequency freq : BeamFrequency.values()) {
-			Bit bit = SHLD_FREQS[freq.ordinal()];
-			writer.writeFloat(bit, npc.getShieldFreq(freq), -1);
-		}
+	public void reconcile(Version version) {
+		if (version.lt(TAG_VERSION)) BITS.remove(Bit.TAGGED);
+		else BITS.add(Bit.TAGGED);
+		
+		if (version.lt(UNK_VERSION)) BITS.remove(Bit.UNK_5_4);
+		else BITS.add(Bit.UNK_5_4);
 	}
 }

@@ -16,39 +16,33 @@ public class DisconnectEvent extends ConnectionEvent {
 		 * The connection was closed from this side; in other words, the user
 		 * terminated the connection intentionally.
 		 */
-		LOCAL_DISCONNECT(true),
+		LOCAL_DISCONNECT,
 
 		/**
 		 * The connection was closed from the remote side. This could be because
 		 * the remote machine terminated the connection intentionally, or a
 		 * network problem caused the connection to drop.
 		 */
-		REMOTE_DISCONNECT(true),
+		REMOTE_DISCONNECT,
 
 		/**
-		 * IAN received a packet with an unexpected format. This would typically
-		 * be caused by a bug in IAN or in a protocol extension being used by a
-		 * custom proxy.
+		 * IAN encountered an error from which it could not recover while
+		 * attempting to parse a packet. This would typically be caused by a
+		 * bug in IAN or in a protocol extension being used by a custom proxy.
 		 */
-		PACKET_PARSE_EXCEPTION(false),
+		PACKET_PARSE_EXCEPTION,
 
 		/**
 		 * An I/O exception occurred. The {@link #exception} property may have
 		 * more information, but this is generally an external problem that
 		 * IAN can't do anything about.
 		 */
-		IO_EXCEPTION(false),
+		IO_EXCEPTION,
 
 		/**
 		 * The server version in use is not supported by IAN.
 		 */
-		UNSUPPORTED_SERVER_VERSION(false);
-
-		private boolean normal;
-
-		private Cause(boolean normal) {
-			this.normal = normal;
-		}
+		UNSUPPORTED_SERVER_VERSION
 	}
 
 	private Cause cause;
@@ -74,7 +68,7 @@ public class DisconnectEvent extends ConnectionEvent {
 	 * it could have been. 
 	 */
 	public boolean isNormal() {
-		return cause.normal;
+		return cause == Cause.LOCAL_DISCONNECT || cause == Cause.REMOTE_DISCONNECT;
 	}
 
 	/**

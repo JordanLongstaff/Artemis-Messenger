@@ -1,12 +1,6 @@
 package com.walkertribe.ian.enums;
 
-import com.walkertribe.ian.world.ArtemisAnomaly;
 import com.walkertribe.ian.world.ArtemisBase;
-import com.walkertribe.ian.world.ArtemisCreature;
-import com.walkertribe.ian.world.ArtemisDrone;
-import com.walkertribe.ian.world.ArtemisGenericObject;
-import com.walkertribe.ian.world.ArtemisMesh;
-import com.walkertribe.ian.world.ArtemisNebula;
 import com.walkertribe.ian.world.ArtemisNpc;
 import com.walkertribe.ian.world.ArtemisObject;
 import com.walkertribe.ian.world.ArtemisPlayer;
@@ -22,16 +16,16 @@ public enum ObjectType {
 	UPGRADES(4, false, ArtemisPlayer.class),
 	NPC_SHIP(5, true, ArtemisNpc.class),
 	BASE(6, true, ArtemisBase.class),
-	MINE(7, false, ArtemisGenericObject.class),
-	ANOMALY(8, true, ArtemisAnomaly.class),
+	MINE(7, false, null),
+	ANOMALY(8, true, null),
 	// 9 is unused
-	NEBULA(10, false, ArtemisNebula.class),
-	TORPEDO(11, false, ArtemisGenericObject.class),
-	BLACK_HOLE(12, false, ArtemisGenericObject.class),
-	ASTEROID(13, false, ArtemisGenericObject.class),
-	GENERIC_MESH(14, true, ArtemisMesh.class),
-	CREATURE(15, true, ArtemisCreature.class),
-	DRONE(16, false, ArtemisDrone.class);
+	NEBULA(10, false, null),
+	TORPEDO(11, false, null),
+	BLACK_HOLE(12, false, null),
+	ASTEROID(13, false, null),
+	GENERIC_MESH(14, true, null),
+	CREATURE(15, true, null),
+	DRONE(16, false, null);
 
 	public static ObjectType fromId(int id) {
 		if (id == 0) {
@@ -47,10 +41,10 @@ public enum ObjectType {
 		throw new IllegalArgumentException("No ObjectType with this ID: " + id);
 	}
 
-	private byte id;
-	private boolean named;
-	private Class<? extends ArtemisObject> objectClass;
-	private float scale;
+	private final byte id;
+	private final boolean named;
+	private final Class<? extends ArtemisObject> objectClass;
+	private final float scale;
 
 	ObjectType(int id, boolean named, Class<? extends ArtemisObject> objectClass) {
 		this.id = (byte) id;

@@ -1,6 +1,6 @@
 package com.walkertribe.ian.world;
 
-import com.walkertribe.ian.Context;
+import com.walkertribe.ian.ArtemisContext;
 import com.walkertribe.ian.vesseldata.Vessel;
 
 /**
@@ -22,7 +22,7 @@ public interface ArtemisShielded extends ArtemisObject {
      * given VesselData object. If the hull ID is unspecified or vesselData.xml
      * contains no Vessel with that ID, getVessel() returns null.
      */
-    public Vessel getVessel(Context ctx);
+    public Vessel getVessel(ArtemisContext ctx);
 
     /**
 	 * The strength of the forward shields.

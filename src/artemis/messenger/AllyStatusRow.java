@@ -4,7 +4,6 @@ import com.walkertribe.ian.world.ArtemisNpc;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.widget.TableRow;
 import android.widget.TextView;
 
 /**
@@ -12,12 +11,12 @@ import android.widget.TextView;
  * @author Jordan Longstaff
  *
  */
-public class AllyStatusRow extends TableRow {
+public class AllyStatusRow extends ObjectStatusRow {
 	// Ally ship information
 	private final ArtemisNpc ally;
-	private int front, rear, missions;
+	private int front, rear;
 	private final int fMax, rMax;
-	private boolean energy, blind, torps, building;
+	private boolean energy, blind, torps, building, pirate;
 	private AllyStatus status;
 	
 	// Colours to paint row in based on ally ship's status
@@ -26,12 +25,15 @@ public class AllyStatusRow extends TableRow {
 		Color.parseColor("#bf9000"), // Yellow
 		Color.parseColor("#bf9000"), // Yellow
 		Color.parseColor("#c55a11"), // Orange
-		Color.RED                    // Red - duh
+		Color.RED,                   // Red - duh
+		Color.BLACK                  // Black - destroyed ships
 	};
+	
+	private static final int STATUS_TEXT_COLUMN = 2;
 
 	public AllyStatusRow(Context context, ArtemisNpc npc, String n) {
 		// Initialize ally ship information
-		super(context);
+		super(context, STATUS_TEXT_COLUMN);
 		ally = npc;
 		front = (int) npc.getShieldsFront();
 		rear = (int) npc.getShieldsRear();
@@ -68,7 +70,8 @@ public class AllyStatusRow extends TableRow {
 		
 		// Update text
 		updateShields();
-		updateStatus(getStatusText());
+		updateStatusText();
+		updateStatusUI();
 		updateColor();
 	}
 	
@@ -76,19 +79,6 @@ public class AllyStatusRow extends TableRow {
 	public ArtemisNpc getAllyShip() {
 		return ally;
 	}
-	
-	// Add mission
-	public void addMission() {
-		missions++;
-	}
-	
-	// Remove mission
-	public void removeMission() {
-		if (--missions < 0) missions = 0;
-	}
-	
-	// Number of missions ship is involved with
-	public int getMissions() { return missions; }
 	
 	// Set front shields - minimum 0
 	public void setFront(int f) {
@@ -121,6 +111,7 @@ public class AllyStatusRow extends TableRow {
 	
 	// Set ship status
 	public void setStatus(AllyStatus as) {
+		if (status == AllyStatus.DESTROYED) return;
 		status = as;
 		if (as == AllyStatus.FLYING_BLIND || as == AllyStatus.REWARD) blind = true;
 	}
@@ -130,10 +121,23 @@ public class AllyStatusRow extends TableRow {
 	public boolean isFlyingBlind() { return blind; }
 	public void setBlind(boolean b) { blind = b; }
 	
+	// Is ship aware that you are a Pirate?
+	public boolean isPirateAware() { return pirate; }
+	public void setPirateAware(boolean p) { pirate = p; }
+	
 	// Update status text
 	public String getStatusText() {
+		if (status == AllyStatus.DESTROYED) return status.m1;
 		String line2 = status.m2;
 		if (status.ordinal() < AllyStatus.FIGHTERS.ordinal()) {
+			if (pirate) {
+				if (status == AllyStatus.PIRATE_DATA) {
+					return status.m1 + "\n" + status.m3;
+				} else if (status == AllyStatus.PIRATE_SUPPLIES) {
+					line2 = status.m3;
+				}
+			}
+			int missions = getMissions();
 			if (energy) {
 				line2 = "Energy";
 				if (torps) line2 += ", torpedoes";
@@ -149,14 +153,11 @@ public class AllyStatusRow extends TableRow {
 		return status.m1 + "\n" + line2;
 	}
 	
-	public void updateStatus(String statusString) {
-		final TextView statusText = (TextView) getChildAt(2);
-		statusText.setText(statusString);
-	}
-	
-	public void updateColor() {
-		for (int i = 0; i < getChildCount(); i++)
-			getChildAt(i).setBackgroundColor(statusColors[status.ordinal() >> 1]);
+	@Override
+	public int getColor() {
+		int index = status.ordinal();
+		if (index >= AllyStatus.AMBASSADOR.ordinal()) index -= 3;
+		return statusColors[index >> 1];
 	}
 	
 	// Update shields text

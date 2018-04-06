@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.CheckBoxPreference;
+import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
@@ -137,6 +138,7 @@ public class SettingsActivity extends PreferenceActivity {
 				.putBoolean(getString(R.string.needEnergyKey), true)
 				.putBoolean(getString(R.string.needDamConKey), true)
 				.putBoolean(getString(R.string.malfunctionKey), true)
+				.putBoolean(getString(R.string.ambassadorKey), true)
 				.putBoolean(getString(R.string.hostageKey), true)
 				.putBoolean(getString(R.string.commandeeredKey), true)
 				.commit();
@@ -161,6 +163,10 @@ public class SettingsActivity extends PreferenceActivity {
 						(CheckBoxPreference) findPreference(getString(R.string.malfunctionKey));
 				malfunctionPref.setChecked(true);
 				
+				CheckBoxPreference ambassadorPref =
+						(CheckBoxPreference) findPreference(getString(R.string.ambassadorKey));
+				ambassadorPref.setChecked(true);
+				
 				CheckBoxPreference hostagePref =
 						(CheckBoxPreference) findPreference(getString(R.string.hostageKey));
 				hostagePref.setChecked(true);
@@ -184,6 +190,7 @@ public class SettingsActivity extends PreferenceActivity {
 				.putBoolean(getString(R.string.needEnergyKey), false)
 				.putBoolean(getString(R.string.needDamConKey), false)
 				.putBoolean(getString(R.string.malfunctionKey), false)
+				.putBoolean(getString(R.string.ambassadorKey), false)
 				.putBoolean(getString(R.string.hostageKey), false)
 				.putBoolean(getString(R.string.commandeeredKey), false)
 				.commit();
@@ -207,6 +214,10 @@ public class SettingsActivity extends PreferenceActivity {
 				CheckBoxPreference malfunctionPref =
 						(CheckBoxPreference) findPreference(getString(R.string.malfunctionKey));
 				malfunctionPref.setChecked(false);
+				
+				CheckBoxPreference ambassadorPref =
+						(CheckBoxPreference) findPreference(getString(R.string.ambassadorKey));
+				ambassadorPref.setChecked(false);
 				
 				CheckBoxPreference hostagePref =
 						(CheckBoxPreference) findPreference(getString(R.string.hostageKey));
@@ -272,6 +283,10 @@ public class SettingsActivity extends PreferenceActivity {
 						(CheckBoxPreference) findPreference(getString(R.string.malfunctionKey));
 				malfunctionPref.setChecked(sharedPreferences.getBoolean(getString(R.string.malfunctionKey), false));
 				
+				CheckBoxPreference ambassadorPref =
+						(CheckBoxPreference) findPreference(getString(R.string.ambassadorKey));
+				ambassadorPref.setChecked(sharedPreferences.getBoolean(getString(R.string.ambassadorKey), false));
+				
 				CheckBoxPreference hostagePref =
 						(CheckBoxPreference) findPreference(getString(R.string.hostageKey));
 				hostagePref.setChecked(sharedPreferences.getBoolean(getString(R.string.hostageKey), false));
@@ -280,13 +295,25 @@ public class SettingsActivity extends PreferenceActivity {
 						(CheckBoxPreference) findPreference(getString(R.string.commandeeredKey));
 				commandeeredPref.setChecked(sharedPreferences.getBoolean(getString(R.string.commandeeredKey), false));
 				
-				CheckBoxPreference helpStartupPref =
-						(CheckBoxPreference) findPreference(getString(R.string.helpStartupKey));
-				helpStartupPref.setChecked(sharedPreferences.getBoolean(getString(R.string.helpStartupKey), true));
+				CheckBoxPreference connectStartupPref =
+						(CheckBoxPreference) findPreference(getString(R.string.connectStartupKey));
+				connectStartupPref.setChecked(sharedPreferences.getBoolean(getString(R.string.connectStartupKey), true));
 				
 				return false;
 			}
 		});
+		
+		EditTextPreference serverPortPref = (EditTextPreference)
+				findPreference(getString(R.string.serverPortKey));
+		bindPreferenceSummaryToValue(serverPortPref);
+		
+		EditTextPreference serverTimeoutPref = (EditTextPreference)
+				findPreference(getString(R.string.serverTimeoutKey));
+		bindPreferenceSummaryToValue(serverTimeoutPref);
+		
+		EditTextPreference udpTimeoutPref = (EditTextPreference)
+				findPreference(getString(R.string.udpTimeoutKey));
+		bindPreferenceSummaryToValue(udpTimeoutPref);
 		
 		RingtonePreference newMissionPref = (RingtonePreference)
 				findPreference(getString(R.string.newMissionPrefKey));
@@ -307,6 +334,10 @@ public class SettingsActivity extends PreferenceActivity {
 		RingtonePreference baseDestroyedPref = (RingtonePreference)
 				findPreference(getString(R.string.baseDestroyedPrefKey));
 		bindPreferenceSummaryToValue(baseDestroyedPref);
+		
+		RingtonePreference productionPref = (RingtonePreference)
+				findPreference(getString(R.string.productionPrefKey));
+		bindPreferenceSummaryToValue(productionPref);
 	}
 	
 	private static Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener =
@@ -324,6 +355,10 @@ public class SettingsActivity extends PreferenceActivity {
 				// Set the summary to reflect the new value.
 				preference.setSummary(index >= 0 ? listPreference.getEntries()[index] : null);
 
+			} else if (preference instanceof EditTextPreference) {
+				if (stringValue.equals("")) return false; 
+				preference.setSummary(stringValue + (preference.getKey().contains("Port") ? "" : " seconds"));
+				
 			} else if (preference instanceof RingtonePreference) {
 				// For ringtone preferences, look up the correct display value
 				// using RingtoneManager.

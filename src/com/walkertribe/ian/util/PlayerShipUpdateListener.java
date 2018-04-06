@@ -2,7 +2,7 @@ package com.walkertribe.ian.util;
 
 import com.walkertribe.ian.iface.DisconnectEvent;
 import com.walkertribe.ian.iface.Listener;
-import com.walkertribe.ian.protocol.core.GameOverPacket;
+import com.walkertribe.ian.protocol.core.EndGamePacket;
 import com.walkertribe.ian.world.ArtemisPlayer;
 
 /**
@@ -36,7 +36,7 @@ public abstract class PlayerShipUpdateListener {
 		if (!found) {
 			synchronized (this) {
 				// We don't know the ship's ID yet
-				int curNumber = player.getShipNumber();
+				int curNumber = player.getShipIndex();
 
 				if (curNumber == -1 || curNumber != number) {
 					return; // this isn't the one we want
@@ -58,7 +58,7 @@ public abstract class PlayerShipUpdateListener {
 	}
 
 	@Listener
-	public void onGameOver(GameOverPacket pkt) {
+	public void onGameOver(EndGamePacket pkt) {
         found = false; // ship will probably have a different ID next game
 	}
 

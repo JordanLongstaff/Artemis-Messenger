@@ -21,6 +21,10 @@ public class RouteEntryRow extends TableRow {
 	private final ArtemisObject point;
 	private final EnumMap<RouteEntryReason, Integer> reasons;
 	
+	private final TextView pointText, distanceText;
+	
+	private static final int clr_blue = Color.parseColor("#002060");
+	
 	public RouteEntryRow(Context context, ArtemisObject pt, String object) {
 		super(context);
 		point = pt;
@@ -32,21 +36,21 @@ public class RouteEntryRow extends TableRow {
 		LayoutParams leftLayout = new LayoutParams(0, LayoutParams.MATCH_PARENT, 3);
 		LayoutParams rightLayout = new LayoutParams(0, LayoutParams.MATCH_PARENT, 2);
 		
-		TextView pointText = new TextView(context);
+		pointText = new TextView(context);
 		pointText.setTypeface(ListActivity.APP_FONT);
 		pointText.setText(object);
 		pointText.setLayoutParams(leftLayout);
 		pointText.setPadding(3, 3, 3, 3);
 		addView(pointText);
 		
-		TextView distanceText = new TextView(context);
+		distanceText = new TextView(context);
 		distanceText.setTypeface(ListActivity.APP_FONT);
 		distanceText.setLayoutParams(rightLayout);
 		distanceText.setPadding(3, 3, 3, 3);
 		addView(distanceText);
 		
 		// Paint row in blue
-		setBackgroundColor(Color.parseColor("#002060"));
+		setBackgroundColor(clr_blue);
 	}
 	
 	public String getObjectName() {
@@ -54,17 +58,17 @@ public class RouteEntryRow extends TableRow {
 		return pointText.getText().toString().split("\n")[0];
 	}
 	
-	public void updateDistance(ArtemisObject player) {
+	public void updateDistance(ArtemisObject player, boolean forceThreeDigits) {
 		float distX = point.getX() - player.getX();
-		float distY = point.getY() - player.getY();
 		float distZ = point.getZ() - player.getZ();
 		
 		double angle = Math.atan2(distZ, distX);
 		int direction = (270 - (int)Math.toDegrees(angle)) % 360;
-		double distance = Math.sqrt(distX * distX + distY * distY + distZ * distZ);
+		float distance = point.distance(player);
 
-		TextView distanceText = (TextView) getChildAt(1);
-		distanceText.setText(String.format("DIR %d\nRANGE %.1f", direction, distance));
+		distanceText.setText(String.format("DIR %" +
+		(forceThreeDigits ? "03" : "") +
+		"d\nRANGE %.1f", direction, distance));
 	}
 	
 	public void setReasons(RouteEntryReason... rers) {
@@ -99,6 +103,7 @@ public class RouteEntryRow extends TableRow {
 				if (numMissions == 1) break;
 				entry = numMissions + " missions";
 				break;
+			case AMBASSADOR:
 			case MALFUNCTION:
 				malfunction = true;
 				break;
@@ -112,12 +117,9 @@ public class RouteEntryRow extends TableRow {
 			line2 += ", " + entry;
 		}
 		if (!line2.equals("")) line2 = "\n" + Character.toUpperCase(line2.charAt(2)) + line2.substring(3);
-		
-		TextView pointText = (TextView) getChildAt(0);
 		pointText.setText(getObjectName() + line2);
 		
-		int color = Color.parseColor("#002060");
-		
+		int color = clr_blue;
 		boolean damaged = false;
 		if (point instanceof ArtemisNpc) {
 			ArtemisNpc npc = (ArtemisNpc) point;

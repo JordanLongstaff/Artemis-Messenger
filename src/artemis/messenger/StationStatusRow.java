@@ -1,14 +1,13 @@
 package artemis.messenger;
 
 import java.util.Date;
-import java.util.HashMap;
 
+import com.walkertribe.ian.ArtemisContext;
 import com.walkertribe.ian.enums.OrdnanceType;
 import com.walkertribe.ian.world.ArtemisBase;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.widget.TableRow;
 import android.widget.TextView;
 
 /**
@@ -17,9 +16,9 @@ import android.widget.TextView;
  * @author Jordan Longstaff
  *
  */
-public class StationStatusRow extends TableRow {
+public class StationStatusRow extends ObjectStatusRow {
 	// Station info
-	private int shields, missions, fighters;
+	private int shields, fighters;
 	private final int maxShields;
 	private final int[] ordnance;
 	private OrdnanceType building;
@@ -28,41 +27,32 @@ public class StationStatusRow extends TableRow {
 	private final String name;
 	private boolean docking, docked, ready, paused, closest;
 	private int speed, rowColor;
+	private final int productionCoeff;
 	
 	private static final int ONE_MINUTE = 60000;
 	
-	public static final String INDUSTRIAL = "Industrial";
-	public static final String SCIENCE    = "Science";
-	public static final String DEEP_SPACE = "Deep";
-	public static final String COMMAND    = "Command";
-	public static final String CIVILIAN   = "Civilian";
+	private static final int damagedColor = Color.parseColor("#bf9000");
+	private static final int healthyColor = Color.parseColor("#008000");
 	
-	private static final HashMap<String, Integer> buildFactors = new HashMap<String, Integer>(); 
+	public static final int STATUS_TEXT_COLUMN = 0; 
+	public static final int ORDNANCE_TEXT_COLUMN = 1;
 
-	public StationStatusRow(Context base, ArtemisBase ab, com.walkertribe.ian.Context context) {
-		super(base);
+	public StationStatusRow(Context base, ArtemisBase ab, ArtemisContext context) {
+		super(base, STATUS_TEXT_COLUMN);
 		
 		// Set up final fields
-		shields = (int) ab.getShieldsFront();
 		maxShields = (int) ab.getShieldsRear();
-		ordnance = new int[OrdnanceType.COUNT];
+		ordnance = new int[OrdnanceType.ordnances().size()];
 		
-		// Set color
-		if (shields < maxShields) rowColor = Color.parseColor("#bf9000");
-		else rowColor = Color.parseColor("#008000");
+		// Set shields/color
+		setShields((int) ab.getShieldsFront());
 		
-		// Set up build factor map
-		if (buildFactors.isEmpty()) {
-			buildFactors.put(INDUSTRIAL, 6);
-			buildFactors.put(SCIENCE, 1);
-			buildFactors.put(DEEP_SPACE, 2);
-			buildFactors.put(COMMAND, 4);
-			buildFactors.put(CIVILIAN, 1);
-		}
+		// Set production coefficient
+		productionCoeff = (int) (ab.getVessel(context).getProductionCoeff() * 2);
 		
 		// Set up layout
 		LayoutParams cellLayout = new LayoutParams(0, LayoutParams.MATCH_PARENT, 1);
-		name = ab.getName() + " Terran " + ab.getVessel(context).getName();
+		name = ab.getName() + " " + ab.getVessel(context).getFullName();
 		
 		TextView nameText = new TextView(base);
 		nameText.setTypeface(ListActivity.APP_FONT);
@@ -81,7 +71,8 @@ public class StationStatusRow extends TableRow {
 		firstMissile = false;
 		speed = 1;
 		
-		updateStatus(getStatusText());
+		updateStatusText();
+		updateStatusUI();
 	}
 	
 	public void setShields(int sh) {
@@ -90,22 +81,9 @@ public class StationStatusRow extends TableRow {
 		if (sh < 0) shields = 0;
 		
 		// If station has been hit, turn row yellow, otherwise green
-		if (shields < maxShields) rowColor = Color.parseColor("#bf9000");
-		else rowColor = Color.parseColor("#008000");
+		if (shields < maxShields) rowColor = damagedColor;
+		else rowColor = healthyColor;
 	}
-	
-	// Add mission
-	public void addMission() {
-		missions++;
-	}
-	
-	// Remove mission
-	public void removeMission() {
-		if (--missions < 0) missions = 0;
-	}
-	
-	// Number of missions station is involved with
-	public int getMissions() { return missions; }
 	
 	// Increase production speed
 	public void incProductionSpeed() {
@@ -113,19 +91,27 @@ public class StationStatusRow extends TableRow {
 	}
 	
 	// Ordnance type station is building
+	public OrdnanceType getOrdnanceType() {
+		return building;
+	}
+	
 	public void setOrdnanceType(OrdnanceType type) {
 		if (setMissile) return;
 		startTime = new Date().getTime();
 		building = type;
 		if (firstMissile) {
 			int buildTime = type.getBuildTime() << 1;
-			TextView statusText = (TextView) getChildAt(0);
-			buildTime /= buildFactors.get(statusText.getText().toString().split(" ")[2]);
+			buildTime /= productionCoeff;
 			buildTime /= speed;
 			endTime = startTime + buildTime;
 		}
 		firstMissile = true;
 		setMissile = true;
+	}
+	
+	// Set on-click listeners on components of the row
+	public void setOnClickListener(int viewIndex, OnClickListener listener) {
+		this.getChildAt(viewIndex).setOnClickListener(listener);
 	}
 	
 	// Override previous missile type we were building
@@ -194,8 +180,10 @@ public class StationStatusRow extends TableRow {
 	}
 	
 	// Update status text
+	@Override
 	public String getStatusText() {
 		String status = name + "\nShields " + shields + "/" + maxShields;
+		int missions = getMissions();
 		if (missions == 1) status += ", 1 mission";
 		else if (missions > 1) status += ", " + missions + " missions";
 		if (fighters == 1) status += ", 1 fighter";
@@ -206,24 +194,18 @@ public class StationStatusRow extends TableRow {
 		else if (closest) status += " (closest)";
 		return status;
 	}
-	
-	public void updateStatus(String status) {
-		final TextView statusText = (TextView) getChildAt(0);
-		statusText.setText(status);
-	}
-	
-	public void updateColor() {
-		for (int i = 0; i < getChildCount(); i++) {
-			getChildAt(i).setBackgroundColor(rowColor);
-		}
+
+	@Override
+	public int getColor() {
+		return rowColor;
 	}
 	
 	// Update ordnance text
 	public String getOrdnanceText() {
 		String stock = "";
-		for (OrdnanceType t: OrdnanceType.values()) {
+		for (OrdnanceType t: OrdnanceType.ordnances()) {
 			if (!stock.equals("")) stock += "/";
-			stock += ordnance[t.ordinal()] + " " + t; 
+			stock += ordnance[t.ordinal()] + " " + t.getLabel();
 		}
 		if (speed > 1) {
 			stock += " (speed x" + speed + ")";
@@ -246,7 +228,7 @@ public class StationStatusRow extends TableRow {
 					minutes++;
 				}
 			}
-			stock += String.format("\nType %d %s ready in %d:%02d", building.getType(), building.toString(), minutes, seconds);
+			stock += String.format("\n%s ready in %d:%02d", building.toString(), minutes, seconds);
 		}
 		return stock;
 	}

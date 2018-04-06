@@ -2,7 +2,7 @@ package com.walkertribe.ian.protocol;
 
 import java.io.IOException;
 
-import com.walkertribe.ian.enums.ConnectionType;
+import com.walkertribe.ian.enums.Origin;
 import com.walkertribe.ian.iface.Debugger;
 import com.walkertribe.ian.iface.PacketWriter;
 
@@ -16,17 +16,23 @@ public interface ArtemisPacket {
 	public static final int HEADER = 0xdeadbeef;
 
     /**
-     * Returns a ConnectionType value indicating the type of connection from
-     * which this packet originates. SERVER means that this packet type is sent
-     * by the server; CLIENT means it's sent by the client.
+     * Returns an Origin value indicating the type of connection from which
+     * this packet originates. SERVER means that this packet type is sent by
+     * the server; CLIENT means it's sent by the client.
      */
-    public ConnectionType getConnectionType();
+    public Origin getOrigin();
 
     /**
      * Returns the type value for this packet, specified as the last field of
      * the preamble.
      */
     public int getType();
+    
+    /**
+     * Returns a long value representing the value of System.nanoTime() when
+     * this packet was received.
+     */
+    public long getTimestamp();
 
     /**
      * Writes this packet to the given PacketWriter, then returns the array of

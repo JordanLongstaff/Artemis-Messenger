@@ -3,7 +3,7 @@ package artemis.messenger;
 import java.io.IOException;
 import java.io.InputStream;
 
-import com.walkertribe.ian.vesseldata.PathResolver;
+import com.walkertribe.ian.PathResolver;
 
 import android.content.res.AssetManager;
 

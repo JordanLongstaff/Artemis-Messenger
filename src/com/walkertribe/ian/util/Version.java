@@ -14,8 +14,8 @@ import com.walkertribe.ian.iface.PacketWriter;
 public class Version implements Comparable<Version> {
 	private static final Version MODERN = new Version("2.1");
 
-	private int[] mParts;
-	private int hash;
+	private final int[] mParts;
+	private final int hash;
 
 	/**
 	 * Constructs a Version from integer parts, with the most significant part
@@ -23,7 +23,18 @@ public class Version implements Comparable<Version> {
 	 * version numbers.
 	 */
 	public Version(int... parts) {
-		mParts = parts;
+		if (parts == null)
+			throw new IllegalArgumentException("Version cannot be null");
+		if (parts.length == 0)
+			throw new IllegalArgumentException("Version must have at least one part");
+		
+		for (int part: parts) {
+			if (part < 0)
+				throw new IllegalArgumentException("Version numbers cannot be negative");
+		}
+		
+		mParts = new int[Math.max(3, parts.length)];
+		System.arraycopy(parts, 0, mParts, 0, Math.min(parts.length, mParts.length));
 		hash = Arrays.hashCode(mParts);
 	}
 
@@ -36,11 +47,10 @@ public class Version implements Comparable<Version> {
 	 * @see http://artemiswiki.pbworks.com/w/page/53699717/Version%20history
 	 */
 	public Version(float version) {
-		if (version >= 2.1) {
-			throw new IllegalArgumentException(
-					"Legacy version constructor is not valid for Artemis 2.1+"
-			);
-		}
+		if (version < 0)
+			throw new IllegalArgumentException("Version numbers cannot be negative");
+		if (version > 2.0999999)
+			throw new IllegalArgumentException("Legacy version constructor is not valid for Artemis 2.1+");
 
 		int major = (int) Math.floor(version);
 		int minor = (int) Math.floor((version - major) * 100);
@@ -58,11 +68,16 @@ public class Version implements Comparable<Version> {
 	 * create both modern and legacy version numbers.
 	 */
 	public Version(String version) {
+		if (version == null)
+			throw new IllegalArgumentException("Version cannot be null");
+		
 		String[] strParts = version.split("\\.");
 		mParts = new int[strParts.length];
 
 		for (int i = 0; i < strParts.length; i++) {
-			mParts[i] = Integer.parseInt(strParts[i]);
+			mParts[i] = Integer.parseInt(strParts[i].substring(0, 1));
+			if (mParts[i] < 0)
+				throw new IllegalArgumentException("Version numbers cannot be negative");
 		}
 
 		hash = Arrays.hashCode(mParts);
@@ -116,7 +131,7 @@ public class Version implements Comparable<Version> {
 
 		if (!legacy) {
 			for (int i = 0; i < 3; i++) {
-				writer.writeInt(getPart(mParts, i));
+				writer.writeInt(getPart(i));
 			}
 		}
 	}
@@ -142,12 +157,12 @@ public class Version implements Comparable<Version> {
 	@Override
 	public String toString() {
 		if (isLegacy()) {
-			return mParts[0] + "." + mParts[1];
+			return getPart(0) + "." + getPart(1);
 		}
 
 		StringBuilder b = new StringBuilder();
 
-		for (int part : mParts) {
+		for (int part: mParts) {
 			if (b.length() != 0) {
 				b.append('.');
 			}
@@ -168,7 +183,7 @@ public class Version implements Comparable<Version> {
 		int partCount = Math.max(mParts.length, o.mParts.length);
 
 		for (int i = 0; i < partCount; i++) {
-			int c = getPart(mParts, i) - getPart(o.mParts, i);
+			int c = getPart(i) - o.getPart(i);
 
 			if (c != 0) {
 				return c;
@@ -182,7 +197,7 @@ public class Version implements Comparable<Version> {
 	 * Returns the indicated part value for the given array of parts, or 0 if
 	 * the index is greater than that of the last part.
 	 */
-	private static int getPart(int[] parts, int index) {
-		return parts.length > index ? parts[index] : 0;
+	private int getPart(int index) {
+		return mParts.length > index ? mParts[index] : 0;
 	}
 }

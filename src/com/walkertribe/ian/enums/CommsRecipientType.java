@@ -1,6 +1,6 @@
 package com.walkertribe.ian.enums;
 
-import com.walkertribe.ian.Context;
+import com.walkertribe.ian.ArtemisContext;
 import com.walkertribe.ian.util.BoolState;
 import com.walkertribe.ian.vesseldata.FactionAttribute;
 import com.walkertribe.ian.vesseldata.Vessel;
@@ -54,7 +54,7 @@ public enum CommsRecipientType {
 	 * ArtemisObject; or null if the object in question cannot receive COMMs
 	 * messages.
 	 */
-	public static CommsRecipientType fromObject(ArtemisObject obj, Context ctx) {
+	public static CommsRecipientType fromObject(ArtemisObject obj, ArtemisContext ctx) {
 		ObjectType type = obj.getType();
 
 		switch (type) {

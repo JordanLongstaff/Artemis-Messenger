@@ -1,10 +1,12 @@
 package com.walkertribe.ian.vesseldata;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.walkertribe.ian.Context;
-import com.walkertribe.ian.enums.OrdnanceType;
+import com.walkertribe.ian.ArtemisContext;
+
+import android.util.Log;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -27,34 +29,44 @@ public class SAXVesselDataHandler extends DefaultHandler {
 		void parse(Attributes attrs);
 	}
 
-	VesselData vesselData;
-	private Context ctx;
+	private VesselData vesselData;
+	private ArtemisContext ctx;
 	private Map<String, Parser> parsers = new HashMap<String, Parser>();
 	private Faction faction;
 	private Vessel vessel;
+	
+	private static final ArrayList<String> TORPEDO_TYPE_VARIABLES = new ArrayList<String>();
 
-	SAXVesselDataHandler(Context ctx) {
+	public SAXVesselDataHandler(ArtemisContext ctx) {
 		this.ctx = ctx;
+		
+		Parser vesselPointParser = new VesselPointParser();
+		Parser weaponPortParser = new WeaponPortParser();
+		
 		parsers.put("art", new ArtParser());
 		parsers.put("beam_port", new BeamPortParser());
 		parsers.put("carrierload", new CarrierLoadParser());
-		parsers.put("drone_port", new DronePortParser());
-		parsers.put("engine_port", new EnginePortParser());
+		parsers.put("drone_port", weaponPortParser);
+		parsers.put("engine_port", vesselPointParser);
 		parsers.put("fleet_ai", new FleetAiParser());
 		parsers.put("hullRace", new HullRaceParser());
-		parsers.put("impulse_point", new ImpulsePointParser());
+		parsers.put("impulse_point", vesselPointParser);
 		parsers.put("internal_data", new InternalDataParser());
 		parsers.put("long_desc", new LongDescParser());
-		parsers.put("maneuver_point", new ManeuverPointParser());
+		parsers.put("maneuver_point", vesselPointParser);
 		parsers.put("performance", new PerformanceParser());
 		parsers.put("production", new ProductionParser());
 		parsers.put("shields", new ShieldsParser());
 		parsers.put("taunt", new TauntParser());
-		parsers.put("torpedo_station_port", new TorpedoStationPortParser());
+		parsers.put("torpedo_station_port", weaponPortParser);
 		parsers.put("torpedo_storage", new TorpedoStorageParser());
-		parsers.put("torpedo_tube", new TorpedoTubeParser());
+		parsers.put("torpedo_tube", vesselPointParser);
 		parsers.put("vessel", new VesselParser());
 		parsers.put("vessel_data", new VesselDataParser());
+	}
+	
+	public VesselData getVesselData() {
+		return vesselData;
 	}
 
 	@Override
@@ -65,7 +77,7 @@ public class SAXVesselDataHandler extends DefaultHandler {
 		if (parser != null) {
 			parser.parse(attrs);
 		} else {
-			System.err.println("Unknown element: " + qName);
+			Log.e(getClass().getName(), "Unknown element: " + qName);
 		}
 	}
 
@@ -84,28 +96,45 @@ public class SAXVesselDataHandler extends DefaultHandler {
 	 */
 	private static int parseInt(Attributes attrs, String name) {
 		String value = attrs.getValue(name);
-		return value != null ? Integer.parseInt(value) : 0;
+		return value != null ? getInt(value) : 0;
+	}
+	
+	/**
+	 * Attempts to parse an XML attribute to an int value. If it fails, the attribute
+	 * must be a variable, so it gets the value of the variable instead.
+	 */
+	private static int getInt(String value) {
+		try {
+			return Integer.parseInt(value);
+		} catch (NumberFormatException ex) {
+			int index = TORPEDO_TYPE_VARIABLES.indexOf(value);
+			if (index < 0) {
+				index = TORPEDO_TYPE_VARIABLES.size();
+				TORPEDO_TYPE_VARIABLES.add(value);
+			}
+			return index;
+		}
 	}
 
 	/**
 	 * Extracts the x, y, and z attributes and writes them to the given
 	 * VesselPoint object.
 	 */
-	private static void parseVesselPoint(VesselPoint point, Attributes attrs) {
-		point.x = Float.parseFloat(attrs.getValue("x"));
-		point.y = Float.parseFloat(attrs.getValue("y"));
-		point.z = Float.parseFloat(attrs.getValue("z"));
+	private static void parseVesselPoint(Attributes attrs) {
+		attrs.getValue("x");
+		attrs.getValue("y");
+		attrs.getValue("z");
 	}
 
 	/**
 	 * Extracts weapon port attributes and writes them to the given WeaponPort
 	 * object.
 	 */
-	public static void parseWeaponPort(WeaponPort port, Attributes attrs) {
-		parseVesselPoint(port, attrs);
-		port.damage = parseFloat(attrs, "damage");
-		port.cycleTime = parseFloat(attrs, "cycletime");
-		port.range = parseInt(attrs, "range");
+	public static void parseWeaponPort(Attributes attrs) {
+		parseVesselPoint(attrs);
+		attrs.getValue("damage");
+		attrs.getValue("cycletime");
+		attrs.getValue("range");
 	}
 
 	/**
@@ -114,15 +143,12 @@ public class SAXVesselDataHandler extends DefaultHandler {
 	private class ArtParser implements Parser {
 		@Override
 		public void parse(Attributes attrs) {
-			Art art = new Art(
-					attrs.getValue("meshfile"),
-					attrs.getValue("diffuseFile"),
-					attrs.getValue("glowFile"),
-					attrs.getValue("specularFile")
-			);
-			vessel.artList.add(art);
-			vessel.scale = parseFloat(attrs, "scale");
-			vessel.pushRadius = parseInt(attrs, "pushRadius");
+			attrs.getValue("meshfile");
+			attrs.getValue("diffuseFile");
+			attrs.getValue("glowFile");
+			attrs.getValue("specularFile");
+			attrs.getValue("scale");
+			attrs.getValue("pushRadius");
 		}
 	}
 
@@ -132,10 +158,8 @@ public class SAXVesselDataHandler extends DefaultHandler {
 	private class BeamPortParser implements Parser {
 		@Override
 		public void parse(Attributes attrs) {
-			BeamPort port = new BeamPort();
-			parseWeaponPort(port, attrs);
-			port.arcWidth = parseFloat(attrs, "arcwidth");
-			vessel.beamPorts.add(port);
+			parseWeaponPort(attrs);
+			attrs.getValue("arcwidth");
 		}
 	}
 
@@ -145,32 +169,8 @@ public class SAXVesselDataHandler extends DefaultHandler {
 	private class CarrierLoadParser implements Parser {
 		@Override
 		public void parse(Attributes attrs) {
-		    vessel.fighterCount = parseInt(attrs, "fighter");
-		    vessel.bomberCount = parseInt(attrs, "bomber");
-		}
-	}
-
-	/**
-	 * Parser for <drone_port> elements.
-	 */
-	private class DronePortParser implements Parser {
-		@Override
-		public void parse(Attributes attrs) {
-			WeaponPort port = new WeaponPort();
-			parseWeaponPort(port, attrs);
-			vessel.dronePorts.add(port);
-		}
-	}
-
-	/**
-	 * Parser for <engine_port> elements.
-	 */
-	private class EnginePortParser implements Parser {
-		@Override
-		public void parse(Attributes attrs) {
-			VesselPoint point = new VesselPoint();
-			parseVesselPoint(point, attrs);
-			vessel.enginePorts.add(point);
+			attrs.getValue("fighter");
+			attrs.getValue("bomber");
 		}
 	}
 
@@ -180,7 +180,7 @@ public class SAXVesselDataHandler extends DefaultHandler {
 	private class FleetAiParser implements Parser {
 		@Override
 		public void parse(Attributes attrs) {
-			vessel.fleetAiCommonality = parseInt(attrs, "commonality");
+			attrs.getValue("commonality");
 		}
 	}
 
@@ -191,11 +191,7 @@ public class SAXVesselDataHandler extends DefaultHandler {
 		@Override
 		public void parse(Attributes attrs) {
 			int id = parseInt(attrs, "ID");
-			faction = new Faction(
-					id,
-					attrs.getValue("name"),
-					attrs.getValue("keys")
-			);
+			faction = new Faction(id, attrs.getValue("name"), attrs.getValue("keys"));
 
 			while (vesselData.factions.size() <= id) {
 				vesselData.factions.add(null);
@@ -206,24 +202,12 @@ public class SAXVesselDataHandler extends DefaultHandler {
 	}
 
 	/**
-	 * Parser for <impulse_point> elements.
-	 */
-	private class ImpulsePointParser implements Parser {
-		@Override
-		public void parse(Attributes attrs) {
-			VesselPoint point = new VesselPoint();
-			parseVesselPoint(point, attrs);
-			vessel.impulsePoints.add(point);
-		}
-	}
-
-	/**
 	 * Parser for <internal_data> elements.
 	 */
 	private class InternalDataParser implements Parser{
 		@Override
 		public void parse(Attributes attrs) {
-			vessel.internalDataFile = attrs.getValue("file");
+			attrs.getValue("file");
 		}
 	}
 
@@ -233,19 +217,7 @@ public class SAXVesselDataHandler extends DefaultHandler {
 	private class LongDescParser implements Parser {
 		@Override
 		public void parse(Attributes attrs) {
-			vessel.description = attrs.getValue("text").replaceAll("\\^", "\n");
-		}
-	}
-
-	/**
-	 * Parser for <maneuver_point> elements.
-	 */
-	private class ManeuverPointParser implements Parser {
-		@Override
-		public void parse(Attributes attrs) {
-			VesselPoint point = new VesselPoint();
-			parseVesselPoint(point, attrs);
-			vessel.maneuverPoints.add(point);
+			attrs.getValue("text");
 		}
 	}
 
@@ -255,9 +227,9 @@ public class SAXVesselDataHandler extends DefaultHandler {
 	private class PerformanceParser implements Parser {
 		@Override
 		public void parse(Attributes attrs) {
-			vessel.turnRate = parseFloat(attrs, "turnrate");
-			vessel.topSpeed = parseFloat(attrs, "topspeed");
-			vessel.efficiency = parseFloat(attrs, "efficiency");
+			attrs.getValue("turnrate");
+			attrs.getValue("topspeed");
+			attrs.getValue("efficiency");
 		}
 	}
 
@@ -277,13 +249,9 @@ public class SAXVesselDataHandler extends DefaultHandler {
 	private class ShieldsParser implements Parser {
 		@Override
 		public void parse(Attributes attrs) {
-			vessel.foreShields = parseInt(attrs, "front");
-			vessel.aftShields = parseInt(attrs, "back");
-			String playerShields = attrs.getValue("player");
-
-			if (playerShields != null) {
-				vessel.playerShields = Integer.parseInt(playerShields);
-			}
+			attrs.getValue("front");
+			attrs.getValue("back");
+			attrs.getValue("player");
 		}
 	}
 
@@ -293,22 +261,8 @@ public class SAXVesselDataHandler extends DefaultHandler {
 	private class TauntParser implements Parser {
 		@Override
 		public void parse(Attributes attrs) {
-			faction.taunts.add(new Taunt(
-					attrs.getValue("immunity"),
-					attrs.getValue("text")
-			));
-		}
-	}
-
-	/**
-	 * Parser for <torpedo_station_port> elements.
-	 */
-	private class TorpedoStationPortParser implements Parser {
-		@Override
-		public void parse(Attributes attrs) {
-			WeaponPort port = new WeaponPort();
-			parseWeaponPort(port, attrs);
-			vessel.baseTorpedoPorts.add(port);
+			attrs.getValue("immunity");
+			attrs.getValue("text");
 		}
 	}
 
@@ -318,22 +272,8 @@ public class SAXVesselDataHandler extends DefaultHandler {
 	private class TorpedoStorageParser implements Parser {
 		@Override
 		public void parse(Attributes attrs) {
-			OrdnanceType type = OrdnanceType.values()[parseInt(attrs, "type")];
-			Integer amount = Integer.valueOf(attrs.getValue("amount"));
-			vessel.torpedoStorage.put(type, amount);
-			vessel.totalTorpedoStorage += amount.intValue();
-		}
-	}
-
-	/**
-	 * Parser for <torpedo_tube> elements.
-	 */
-	private class TorpedoTubeParser implements Parser {
-		@Override
-		public void parse(Attributes attrs) {
-			VesselPoint point = new VesselPoint();
-			parseVesselPoint(point, attrs);
-			vessel.torpedoTubes.add(point);
+			attrs.getValue("type");
+			attrs.getValue("amount");
 		}
 	}
 
@@ -362,6 +302,26 @@ public class SAXVesselDataHandler extends DefaultHandler {
 		@Override
 		public void parse(Attributes attrs) {
 			vesselData = new VesselData(ctx, attrs.getValue("version"));
+		}
+	}
+
+	/**
+	 * Parser for <engine_port>, <impulse_point>, <maneuver_point> and <torpedo_tube> elements.
+	 */
+	private class VesselPointParser implements Parser {
+		@Override
+		public void parse(Attributes attrs) {
+			parseVesselPoint(attrs);
+		}
+	}
+
+	/**
+	 * Parser for <drone_port> and <torpedo_station_port> elements.
+	 */
+	private class WeaponPortParser implements Parser {
+		@Override
+		public void parse(Attributes attrs) {
+			parseWeaponPort(attrs);
 		}
 	}
 }

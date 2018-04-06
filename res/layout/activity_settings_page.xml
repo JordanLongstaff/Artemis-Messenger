@@ -56,7 +56,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/activity_vertical_margin"
-            android:text="@string/settingsFilterHeader"
+            android:text="@string/settingsNetworkHeader"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <TextView
@@ -71,7 +71,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/activity_vertical_margin"
-            android:text="@string/settingsSortHeader"
+            android:text="@string/settingsFilterHeader"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <TextView
@@ -86,7 +86,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/activity_vertical_margin"
-            android:text="@string/settingsRouteHeader"
+            android:text="@string/settingsSortHeader"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <TextView
@@ -101,7 +101,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/activity_vertical_margin"
-            android:text="@string/settingsRingtoneHeader"
+            android:text="@string/settingsRouteHeader"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <TextView
@@ -116,7 +116,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/activity_vertical_margin"
-            android:text="@string/settingsHelpHeader"
+            android:text="@string/settingsRingtoneHeader"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <TextView
@@ -125,6 +125,21 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/activity_vertical_margin"
             android:text="@string/settingsParagraph7" />
+
+        <TextView
+            android:id="@+id/settingsHeader8"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:text="@string/settingsHelpHeader"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <TextView
+            android:id="@+id/settingsPar8"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:text="@string/settingsParagraph8" />
 
         <Button
             android:id="@+id/settingsBack"

@@ -1,12 +1,10 @@
 package com.walkertribe.ian.protocol.core.setup;
 
-import com.walkertribe.ian.enums.ConnectionType;
-import com.walkertribe.ian.iface.PacketFactory;
-import com.walkertribe.ian.iface.PacketFactoryRegistry;
+import com.walkertribe.ian.enums.Origin;
 import com.walkertribe.ian.iface.PacketReader;
-import com.walkertribe.ian.protocol.ArtemisPacket;
-import com.walkertribe.ian.protocol.ArtemisPacketException;
-import com.walkertribe.ian.protocol.core.ShipActionPacket;
+import com.walkertribe.ian.protocol.Packet;
+import com.walkertribe.ian.protocol.core.CorePacketType;
+import com.walkertribe.ian.protocol.core.ValueIntPacket;
 
 /**
  * Signals to the server that this console is ready to join the game. If the
@@ -17,29 +15,14 @@ import com.walkertribe.ian.protocol.core.ShipActionPacket;
  * updates again.
  * @author dhleong
  */
-public class ReadyPacket extends ShipActionPacket {
-	public static void register(PacketFactoryRegistry registry) {
-		registry.register(ConnectionType.CLIENT, TYPE, TYPE_READY,
-				new PacketFactory() {
-			@Override
-			public Class<? extends ArtemisPacket> getFactoryClass() {
-				return ReadyPacket.class;
-			}
-
-			@Override
-			public ArtemisPacket build(PacketReader reader)
-					throws ArtemisPacketException {
-				return new ReadyPacket(reader);
-			}
-		});
-	}
-
+@Packet(origin = Origin.CLIENT, type = CorePacketType.VALUE_INT, subtype = ValueIntPacket.Subtype.READY)
+public class ReadyPacket extends ValueIntPacket {
     public ReadyPacket() {
-        super(TYPE_READY, 0);
+        super(0);
     }
 
-    private ReadyPacket(PacketReader reader) {
-    	super(TYPE_READY, reader);
+    public ReadyPacket(PacketReader reader) {
+    	super(reader);
     }
 
     @Override

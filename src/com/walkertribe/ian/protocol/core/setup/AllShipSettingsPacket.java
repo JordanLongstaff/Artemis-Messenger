@@ -1,15 +1,14 @@
 package com.walkertribe.ian.protocol.core.setup;
 
-import com.walkertribe.ian.Context;
-import com.walkertribe.ian.enums.ConnectionType;
-import com.walkertribe.ian.enums.DriveType;
-import com.walkertribe.ian.iface.PacketFactory;
-import com.walkertribe.ian.iface.PacketFactoryRegistry;
+import com.walkertribe.ian.ArtemisContext;
+import com.walkertribe.ian.enums.Origin;
 import com.walkertribe.ian.iface.PacketReader;
 import com.walkertribe.ian.iface.PacketWriter;
-import com.walkertribe.ian.protocol.ArtemisPacket;
-import com.walkertribe.ian.protocol.ArtemisPacketException;
-import com.walkertribe.ian.protocol.BaseArtemisPacket;
+import com.walkertribe.ian.protocol.Packet;
+import com.walkertribe.ian.protocol.core.CorePacketType;
+import com.walkertribe.ian.protocol.core.SimpleEventPacket;
+import com.walkertribe.ian.util.Util;
+import com.walkertribe.ian.util.Version;
 import com.walkertribe.ian.vesseldata.Vessel;
 import com.walkertribe.ian.world.Artemis;
 
@@ -17,140 +16,118 @@ import com.walkertribe.ian.world.Artemis;
  * Sent by the server to update the names, types and drives for each ship.
  * @author dhleong
  */
-public class AllShipSettingsPacket extends BaseArtemisPacket {
-    private static final int TYPE = 0xf754c8fe;
-    private static final byte MSG_TYPE = 0x0f;
-    
-	public static void register(PacketFactoryRegistry registry) {
-		registry.register(ConnectionType.SERVER, TYPE, MSG_TYPE, new PacketFactory() {
-			@Override
-			public Class<? extends ArtemisPacket> getFactoryClass() {
-				return AllShipSettingsPacket.class;
-			}
-
-			@Override
-			public ArtemisPacket build(PacketReader reader)
-					throws ArtemisPacketException {
-				return new AllShipSettingsPacket(reader);
-			}
-		});
-	}
-
+@Packet(origin = Origin.SERVER, type = CorePacketType.SIMPLE_EVENT, subtype = SimpleEventPacket.Subtype.SHIP_SETTINGS)
+public class AllShipSettingsPacket extends SimpleEventPacket {
 	public static class Ship {
-		private String mName;
+		private CharSequence mName;
 		private int mShipType;
-		private int mAccentColor;
-		private DriveType mDrive;
-
-		public Ship(String name, int shipType, int accentColor, DriveType drive) {
-			mName = name;
-			mShipType = shipType;
-			mAccentColor = accentColor;
-			mDrive = drive;
+		
+		public Ship(CharSequence name, int shipType) {
+			setName(name);
+			setShipType(shipType);
 		}
 
-		public String getName() {
+		/**
+		 * The name of the ship
+		 */
+		public CharSequence getName() {
 			return mName;
 		}
 
+		public void setName(CharSequence name) {
+			if (!Util.isBlank(name))
+				mName = name;
+		}
+
+		/**
+		 * The hullId for this ship
+		 */
 		public int getShipType() {
 			return mShipType;
 		}
 
-		public Vessel getVessel(Context ctx) {
+		public void setShipType(int shipType) {
+			mShipType = shipType;
+		}
+
+		/**
+		 * Returns the Vessel identified by the ship's hull ID, or null if no such Vessel can be found.
+		 */
+		public Vessel getVessel(ArtemisContext ctx) {
 			return ctx.getVesselData().getVessel(mShipType);
 		}
 
-		public int getAccentColor() {
-			return mAccentColor;
-		}
-
-		public DriveType getDrive() {
-			return mDrive;
+		public void setVessel(Vessel vessel) {
+			setShipType(vessel.getId());
 		}
 
 		@Override
 		public String toString() {
-			StringBuilder b = new StringBuilder();
-        	b	.append(mName)
-    			.append(" (type #")
-    			.append(mShipType)
-    			.append(") [")
-    			.append(mDrive)
-    			.append("] color=")
-    			.append(mAccentColor);
-        	return b.toString();
+			return mName + ": (type #" + mShipType + ")";
 		}
 	}
+	
+	private static final Version COLOR_VERSION = new Version("2.4.0");
 
 	private final Ship[] mShips;
 
-    private AllShipSettingsPacket(PacketReader reader) {
-        super(ConnectionType.SERVER, TYPE);
+    public AllShipSettingsPacket(PacketReader reader) {
+        super(reader);
         mShips = new Ship[Artemis.SHIP_COUNT];
-        reader.skip(4); // subtype
         
         for (int i = 0; i < Artemis.SHIP_COUNT; i++) {
-        	DriveType drive = DriveType.values()[reader.readInt()];
-        	int shipType = reader.readInt();
-        	int accentColor = reader.readInt();
-        	if (accentColor != 1) reader.skip(4); // RJW: UNKNOWN INT (always seems to be 1 0 0 0)
-        	String name = reader.readString();
-        	mShips[i] = new Ship(name, shipType, accentColor, drive);
+        	reader.readInt();
+        	int hullId = reader.readInt();
+        	if (reader.getVersion().ge(COLOR_VERSION)) reader.readFloat();
+        	CharSequence name = null;
+        	if (reader.readInt() != 0) name = reader.readString();
+        	mShips[i] = new Ship(name, hullId);
         }
     }
 
     public AllShipSettingsPacket(Ship[] ships) {
-        super(ConnectionType.SERVER, TYPE);
-
-        if (ships.length != Artemis.SHIP_COUNT) {
-        	throw new IllegalArgumentException(
-        			"Must specify " + Artemis.SHIP_COUNT + " ships"
-        	);
-        }
-
-        for (Ship ship : ships) {
-        	if (ship == null) {
-            	throw new IllegalArgumentException(
-            			"Must specify " + Artemis.SHIP_COUNT + " ships"
-            	);
-        	}
-
-        	if (ship.getDrive() == null) {
-            	throw new IllegalArgumentException("Must specify ship drive");
-        	}
-
-        	String name = ship.getName();
-
-        	if (name == null || name.trim().length() == 0) {
-            	throw new IllegalArgumentException("Must specify ship name");
-        	}
+        super(Subtype.SHIP_SETTINGS);
+        
+        if (ships == null)
+        	throw new IllegalArgumentException("Ship array cannot be null");
+        if (ships.length != Artemis.SHIP_COUNT)
+        	throw new IllegalArgumentException("Must specify exactly " + Artemis.SHIP_COUNT + " ships");
+        for (int i = 0; i < ships.length; i++) {
+        	Ship ship = ships[i];
+        	if (ship == null)
+            	throw new IllegalArgumentException("Ships in array cannot be null");
         }
 
         mShips = ships;
     }
 
-    public Ship getShip(int shipNumber) {
-    	return mShips[shipNumber - 1];
+    /**
+     * Returns the ship with the given index (0-based).
+     */
+    public Ship getShip(int shipIndex) {
+    	return mShips[shipIndex];
     }
 
 	@Override
 	protected void writePayload(PacketWriter writer) {
-		writer.writeInt(MSG_TYPE);
+		super.writePayload(writer);
 
-		for (Ship ship : mShips) {
-			writer.writeInt(ship.mDrive.ordinal());
-			writer.writeInt(ship.mShipType);
-			writer.writeInt(ship.mAccentColor);
-			writer.writeInt(1); // RJW: UNKNOWN INT (always seems to be 1 0 0 0)
-			writer.writeString(ship.mName);
+		for (Ship ship: mShips) {
+			writer
+			.writeInt(0)
+			.writeInt(ship.mShipType);
+			
+			if (writer.getVersion().ge(COLOR_VERSION))
+				writer.writeFloat(0f);
+			
+			if (ship.mName == null) writer.writeInt(0);
+			else                    writer.writeInt(1).writeString(ship.mName);
 		}
 	}
 
     @Override
 	protected void appendPacketDetail(StringBuilder b) {
-        for (int i = 0; i < Artemis.SHIP_COUNT; i++) {
+        for (int i = 0; i < Artemis.SHIP_COUNT; i++)
         	b.append("\n\t").append(mShips[i]);
-        }
 	}
 }

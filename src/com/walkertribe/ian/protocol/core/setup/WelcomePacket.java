@@ -1,47 +1,44 @@
 package com.walkertribe.ian.protocol.core.setup;
 
-import com.walkertribe.ian.enums.ConnectionType;
-import com.walkertribe.ian.iface.PacketFactory;
-import com.walkertribe.ian.iface.PacketFactoryRegistry;
+import com.walkertribe.ian.enums.Origin;
 import com.walkertribe.ian.iface.PacketReader;
 import com.walkertribe.ian.iface.PacketWriter;
-import com.walkertribe.ian.protocol.ArtemisPacket;
-import com.walkertribe.ian.protocol.ArtemisPacketException;
 import com.walkertribe.ian.protocol.BaseArtemisPacket;
+import com.walkertribe.ian.protocol.Packet;
+import com.walkertribe.ian.protocol.core.CorePacketType;
+import com.walkertribe.ian.util.Util;
 
 /**
  * Sent by the server immediately on connection. The receipt of this packet
  * indicates a successful connection to the server.
  * @author rjwut
  */
+@Packet(origin = Origin.SERVER, type = CorePacketType.PLAIN_TEXT_GREETING)
 public class WelcomePacket extends BaseArtemisPacket {
-	public static final int TYPE = 0x6d04b3da;
-	protected static final String MSG = "You have connected to Thom Robertson's Artemis Bridge Simulator.  Please connect with an authorized game client.";
+	protected static final String MSG =
+			"You have connected to Thom Robertson's Artemis Bridge Simulator.  " +
+			"Please connect with an authorized game client.";
 
-	public static void register(PacketFactoryRegistry registry) {
-		registry.register(ConnectionType.SERVER, TYPE, new PacketFactory() {
-			@Override
-			public Class<? extends ArtemisPacket> getFactoryClass() {
-				return WelcomePacket.class;
-			}
+	private String msg;
 
-			@Override
-			public ArtemisPacket build(PacketReader reader)
-					throws ArtemisPacketException {
-				return new WelcomePacket(reader);
-			}
-		});
-	}
-
-	private String msg = MSG;
-
-	private WelcomePacket(PacketReader reader) {
-		super(ConnectionType.SERVER, TYPE);
+	public WelcomePacket(PacketReader reader) {
 		msg = reader.readUsAsciiString();
 	}
 
+	/**
+	 * Uses the default message given by the Artemis server on connection.
+	 */
 	public WelcomePacket() {
-		super(ConnectionType.SERVER, TYPE);
+		msg = MSG;
+	}
+	
+	/**
+	 * Uses an arbitrary provided message.
+	 */
+	public WelcomePacket(String m) {
+		if (Util.isBlank(m))
+			throw new IllegalArgumentException("Missing welcome message");
+		msg = m;
 	}
 
 	@Override

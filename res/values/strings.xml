@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <resources>
+
     <string name="app_name">Artemis Messenger</string>
     <string name="sourceHeader">Source</string>
     <string name="destHeader">Destination</string>
@@ -10,6 +11,10 @@
     <string name="showAllRoutingButton">showAllRoutingPrefButton</string>
     <string name="showNoneRoutingButton">showNoneRoutingPrefButton</string>
     <string name="addressLabel">Address</string>
+    <string name="missionsHint">Next stop highlighted in orange</string>
+    <string name="alliesHint">Touch row to request status update</string>
+    <string name="stationsHint">Touch row to request docking standby or build next ordnance type</string>
+    <string name="routingHint">Change routing options in Settings</string>
     <string name="showMissions">Missions</string>
     <string name="showAllies">Allies</string>
     <string name="shipHeader">Ship</string>
@@ -19,6 +24,7 @@
     <string name="stationHeader">Station</string>
     <string name="ordnanceHeader">Ordnance</string>
     <string name="vesselDataPrefCategory">Vessel Data</string>
+    <string name="networkPrefCategory">Network</string>
     <string name="settingsPrefCategory">Default Settings</string>
     <string name="restoreDefaultButton">restoreDefaultPrefButton</string>
     <string name="missionDispPrefCategory">Mission Display</string>
@@ -27,6 +33,7 @@
     <string name="nukePref">Nuclear Missiles</string>
     <string name="prodSpeedPref">Production Speed</string>
     <string name="shieldBoostPref">Shield Boost</string>
+
     <string-array name="vesselDataPrefList">
         <item>Default</item>
         <item>Internal storage</item>
@@ -37,6 +44,7 @@
         <item>1</item>
         <item>2</item>
     </string-array>
+
     <string name="vesselDataSummary">Select the location of the /dat folder where vesselData.xml is located. Warning: Changing the location while connected to a server will reset the connection.</string>
     <string name="batteryChargeKey">batteryChargeCheckBox</string>
     <string name="extraCoolantKey">extraCoolantCheckBox</string>
@@ -44,6 +52,7 @@
     <string name="speedKey">prodSpeedCheckBox</string>
     <string name="shieldKey">shieldBoostCheckBox</string>
     <string name="vesselDataKey">vesselDataList</string>
+
     <string-array name="vesselDataPrefNoCard">
         <item>Default</item>
         <item>Internal storage</item>
@@ -52,19 +61,35 @@
         <item>0</item>
         <item>1</item>
     </string-array>
+
     <string name="newMissionPrefKey">newMissionPrefKey</string>
     <string name="foundSrcPrefKey">foundSrcPrefKey</string>
     <string name="foundDestPrefKey">foundDestPrefKey</string>
     <string name="underAttackPrefKey">underAttackPrefKey</string>
     <string name="baseDestroyedPrefKey">baseDestroyedPrefKey</string>
     <string name="connect">Connect</string>
+    <string name="availableServers">Available servers</string>
+    <string name="scanServers">Find servers</string>
+    <string name="scanning">Scanning&#8230;</string>
     <string name="showRoute">Route</string>
     <string name="helpButton">Help</string>
     <string name="title_activity_help">HelpActivity</string>
     <string name="action_settings">Settings</string>
     <string name="helpTopicsKey">helpTopicsMenuItem</string>
-    <string name="helpStartupKey">helpStartupCheckBox</string>
-    <string name="helpStartupTitle">Show help on startup</string>
+    <string name="serverPortKey">serverPortText</string>
+    <string name="serverPortTitle">Server port</string>
+    <string name="serverTimeoutKey">packetTimeoutText</string>
+    <string name="serverTimeoutTitle">Server timeout</string>
+    <string name="udpTimeoutKey">udpTimeoutText</string>
+    <string name="udpTimeoutTitle">Broadcast timeout</string>
+    <string name="allowUDPKey">allowUDPCheckBox</string>
+    <string name="allowUDPTitle">Allow server detection</string>
+    <string name="allowUDPSummary">If checked, server connections may be detected via UDP broadcast.</string>
+    <string name="connectStartupKey">connectStartupCheckBox</string>
+    <string name="connectStartupTitle">Show Connect menu on startup</string>
+    <string name="showHintTextKey">hintTextCheckBox</string>
+    <string name="showHintTextTitle">Show hints at bottom of screen</string>
+
     <string-array name="helpTopicsList">
         <item>Basics</item>
         <item>Missions</item>
@@ -75,6 +100,7 @@
         <item>About</item>
         <item>Back</item>
     </string-array>
+
     <string name="title_activity_help_page">HelpPageActivity</string>
     <string name="basicsParagraph3">Before you can use Artemis Messenger, you must have an Artemis server running. Open Artemis on your computer and click "Start Server". After that, enter the server\'s address into the Address bar at the top of your screen, then touch the Connect button on the right to connect to the server.</string>
     <string name="basicsParagraph2">Artemis Messenger is a Comms client app designed to be used with Artemis Spaceship Bridge Simulator, developed by Thom Robertson. It will be your assistant in managing side missions, ally ships, stations and more.</string>
@@ -86,7 +112,7 @@
     <string name="basicsParagraph6">If you touch the Home button on your phone to return to your Home menu, Artemis Messenger will keep running in the background. It will continue to receive information about side missions, allies and stations via a Comms service. This information will be shown as notifications on your phone. If you click on one of those notifications, you will return to Artemis Messenger.</string>
     <string name="basicsParagraph5">When you want to leave Artemis Messenger, just hit the Back button on your phone. If your phone doesn\'t have a Back button, you can also press the Close button in the top-right corner of the screen. If the app is connected to a server, a dialog will appear asking if you want to close the connection; otherwise, no dialog will appear.</string>
     <string name="helpTitle">Help</string>
-    <string name="appVersionText">Artemis Messenger 4.4.3</string>
+    <string name="appVersionText">Artemis Messenger 5.0.1</string>
     <string name="specialThanks">Special thanks to Robert J. Walker for writing the IAN (Interface for Artemis Networking) library, without which this app could not exist. IAN is available on GitHub.</string>
     <string name="licenseText">\u00A9 Copyright 2017.</string>
     <string name="writtenBy">Written by Jordan Longstaff</string>
@@ -106,14 +132,18 @@
     <string name="missionsHeader">What are side missions?</string>
     <string name="alliesParagraph2">There are three columns in the Allies table. The Ship column shows the ship\'s name, the Shields column shows its front and rear shield strengths, and the Status column shows the status of the ship.</string>
     <string name="alliesParagraph1">While running the Artemis Messenger app, touch the Allies button to open the Allies view. This view shows the statuses of all of the ally ships in the currently running simulation.</string>
-    <string name="alliesParagraph13">Fighter trap: The ship is a disguised fleet of fighters. Do not approach the ship under any circumstances. Destroy it from a distance.</string>
-    <string name="alliesParagraph14">Mine trap: The ship is programmed to self-destruct when your ship approaches. Do not approach the ship under any circumstances. Destroy it from a distance.</string>
-    <string name="alliesParagraph11">Hostages: The ship has been taken over and the crew is being held hostage. To save them, fly near the ship with at least 900 units of energy, which will be given to the captors, and the ship will reward you by enhancing your shield generators. If you have less than 900 units of energy, the ship will self-destruct.</string>
-    <string name="alliesParagraph12">Commandeered: The ship has been taken over by a hostile force. To save the ship, you must approach the ship while it is in a nebula. If you approach while the ship is not in a nebula, it will self-destruct.</string>
+    <string name="alliesParagraph16">Fighter trap: The ship is a disguised fleet of fighters. Do not approach the ship under any circumstances. Destroy it from a distance.</string>
+    <string name="alliesParagraph17">Mine trap: The ship is programmed to self-destruct when your ship approaches. Do not approach the ship under any circumstances. Destroy it from a distance.</string>
+    <string name="alliesParagraph18">Destroyed: The ship has been destroyed. You can choose not to display these ships in Settings.</string>
+    <string name="alliesParagraph14">Hostages: The ship has been taken over and the crew is being held hostage. To save them, fly near the ship with at least 900 units of energy, which will be given to the captors, and the ship will reward you by enhancing your shield generators. If you have less than 900 units of energy, the ship will self-destruct.</string>
+    <string name="alliesParagraph15">Commandeered: The ship has been taken over by a hostile force. To save the ship, you must approach the ship while it is in a nebula. If you approach while the ship is not in a nebula, it will self-destruct.</string>
     <string name="alliesParagraph3">As with the Missions view, Artemis Messenger obtains information about the status of the ship via incoming Comms messages. Whenever it connects to a running simulation, it sends a hail message to all ally ships, and then they respond with their status. The status information includes whether or not they have energy to spare, which can be acquired by simply flying near them. In Deep Strike, the ship will also tell you if it has extra torpedoes on board. You can touch a row in the table to manually send a hail message to that ship.</string>
     <string name="alliesParagraph6">Delivering reward: The ship is headed to a station to drop off some extra torpedoes. Interact at your own discretion.</string>
     <string name="alliesParagraph7">Flying blind: The ship is stuck. You can fix this by sending it to a station.</string>
     <string name="alliesParagraph10">Malfunction: The ship\'s computers are down, leaving the ship stranded. You can fix this by firing a Type 9 EMP torpedo at the ship, which will reboot its computer system.</string>
+    <string name="alliesParagraph11">Ambassador: The ship is dead in space and is carrying an ambassador that needs rescue. The rescue must be carried out by flying a shuttle next to the ship.</string>
+    <string name="alliesParagraph12">Has Pirate contraband: The ship is carrying a suspicious cargo and will not listen to orders until it is delivered. Terran and Ximni ships should instruct the nearest allied warship to intercept the payload. Pirate ships should instruct allied warships to steer clear of the ship carrying the contraband.</string>
+    <string name="alliesParagraph13">Has secure data: The ship is carrying secure, top-secret data for the government and is attempting to leave the sector. Terran and Ximni ships should make sure of the ship\'s safety as it attempts to do its job. Pirate ships should stay away from the ship; if a Pirate ship comes within 10 km, the ship will self-destruct.</string>
     <string name="alliesParagraph4">In addition to energy and torpedoes, the Status column also displays the number of current side missions that involve the ship. Finally, the ally ships will report their current status, and Artemis Messenger will display this status and any recommendations for interaction. The statuses the ships may report are as follows.</string>
     <string name="alliesParagraph5">Normal: The ship is just fine. Interact at your own discretion.</string>
     <string name="alliesParagraph8">Need 100 energy: The ship is out of energy and cannot move. You can fix this by flying near the ship with at least 100 units of energy, which will be transferred to the ship.</string>
@@ -125,9 +155,12 @@
     <string name="settingsDataHeader">Vessel data</string>
     <string name="settingsParagraph1">While running the Artemis Messenger app, touch the wrench next to the ship selection box to open the Settings menu. This is where you can change your preferences about how the app behaves.</string>
     <string name="settingsParagraph2">Artemis Messenger requires a copy of the vesselData.xml file that Artemis uses. There is already a copy bundled with the app, so if you want to use it, change the location to Default. If you want to use your own, change the location to Internal storage or External storage, as appropriate. This is useful if you are running a mod. If vesselData.xml is missing at that location, Artemis Messenger will copy its own files there.</string>
-    <string name="settingsParagraph5">In addition to stops for side missions, the Routing table can also include ally ships that must be visited for other reasons. These ally ships might have spare energy for the player ship, or they might require assistance because they are low on energy, need a DamCon team, are experiencing a malfunction, or have been taken hostage.</string>
-    <string name="settingsParagraph4">There are also some options for sorting the entries in the Allies table in almost any order imaginable. Most of the sorting options available are based on an ally ship\'s name, vessel class and/or status. It is also possible to require that allies with energy are located higher in the table than ships without energy.</string>
-    <string name="settingsParagraph3">There may be some side missions that you would prefer to ignore, especially if they offer rewards that do not interest you. You can remove those missions from the Missions table using the reward filters. When a filter is activated, any side mission that offers the corresponding reward will be shown. For example, a mission offering Battery Charge and Extra Coolant will be shown if either filter is activated; if both are off, it will be hidden. Touch Show All to activate all filters.</string>
+    <string name="settingsParagraph3">An Artemis client can broadcast queries via UDP in order to find available servers if the option is enabled. Enabling the option to allow UDP broadcasts also enables the Connect menu; by default, broadcasts are enabled and the Connect menu opens automatically when the app is started. Either of these settings can be turned off; if UDP broadcasts are disabled, the Connect menu will not open. You can also specify a port on which to connect to a server as well as timeout values for server connections and UDP broadcasts.</string>
+    <string name="settingsParagraph4">There may be some side missions that you would prefer to ignore, especially if they offer rewards that do not interest you. You can remove those missions from the Missions table using the reward filters. When a filter is activated, any side mission that offers the corresponding reward will be shown. For example, a mission offering Battery Charge and Extra Coolant will be shown if either filter is activated; if both are off, it will be hidden. Touch Show All to activate all filters.</string>
+    <string name="settingsParagraph5">There are also some options for sorting the entries in the Allies table in almost any order imaginable. Most of the sorting options available are based on an ally ship\'s name, vessel class and/or status. It is also possible to require that allies with energy are located higher in the table than ships without energy.</string>
+    <string name="settingsParagraph6">In addition to stops for side missions, the Routing table can also include ally ships that must be visited for other reasons. These ally ships might have spare energy for the player ship, or they might require assistance because they are low on energy, need a DamCon team, are experiencing a malfunction, have been taken hostage, or are transporting an ambassador.</string>
+    <string name="settingsParagraph7">When Artemis Messenger is running in the background, the Comms service keeps you updated on game events using notifications. You can make Artemis Messenger play different ringtones whenever such a notification is made. There are six types of notifications: New side mission, Arrived at source, Arrived at destination, Station under attack, Station destroyed and New missile produced.</string>
+    <string name="settingsParagraph8">You can also access the Help menu from the Settings menu by touching Show help topics. If you access the Help menu in this way, you will return to the Settings menu when you leave. You can also disable the hints that are displayed at the bottom of the screen in the main activity.</string>
     <string name="settingsHelpHeader">Help</string>
     <string name="settingsFilterHeader">Reward filters</string>
     <string name="settingsRingtoneHeader">Notifications</string>
@@ -135,15 +168,17 @@
     <string name="routingParagraph2">There are two columns in the Route table. The Destination column shows the names of the locations to visit, in order from top to bottom, according to the routing algorithm, as well as each location\'s reason(s) for being included. The Direction column shows the direction and distance from the player ship to each stop. As each stop is visited, the appropriate entries in the Route table will disappear.</string>
     <string name="directionHeader">Direction</string>
     <string name="routingParagraph3">Note that the route you are given is the route of minimum distance, which is not necessarily the optimal route. For example, the algorithm does not know the locations of potential hazards such as black holes, mines or space monsters. Also, for efficiency, the optimal route is not necessarily calculated exactly; instead, it is randomized and may require several iterations to become optimal.</string>
-    <string name="stationsParagraph5">If you touch a station\'s entry row in the table, the app will send a message to that station to stand by for docking.</string>
+    <string name="stationsParagraph5">If you touch a station\'s Status column in the table, the app will send a message to that station to stand by for docking. If you touch the Ordnance column, that station will instead build the next type of ordnance in the list of types. You can continue to cycle the ordnance type that a station builds by touching the Ordnance text in its row.</string>
     <string name="stationsParagraph4">Underneath the list of ordnances at each station, the Ordnance column shows the type of ordnance that station is currently building, and the amount of time in which the ordnance is expected to be ready. This amount of time is calculated based on the ordnance\'s type and the station\'s current production speed, which varies based on the type of station. The production speed increases whenever a Production Speed side mission is completed; the number of times a station\'s production speed has increased is also indicated in this column. If the expected completion time for an ordnance differs from its actual completion time, the app will recalibrate the station\'s perceived speed based on the difference. This recalibration may be incorrect if the app is connected to a simulation in progress, but it will eventually correct itself.</string>
     <string name="needEnergyKey">needEnergyCheckBox</string>
     <string name="malfunctionKey">malfunctionCheckBox</string>
+    <string name="ambassadorKey">ambassadorCheckBox</string>
     <string name="needDamConKey">needDamConCheckBox</string>
     <string name="energyKey">energyCheckBox</string>
     <string name="hostageKey">hostageCheckBox</string>
-    <string name="settingsParagraph6">When Artemis Messenger is running in the background, the Comms service keeps you updated on side missions using notifications. You can make Artemis Messenger play different ringtones whenever such a notification is made. There are three types of notifications: New side mission, Arrived at source and Arrived at destination.</string>
+    <string name="threeDigitsPrefKey">threeDigitsCheckBox</string>
     <string name="settingsRouteHeader">Routing</string>
+    <string name="settingsNetworkHeader">Network</string>
     <string name="commandeeredKey">commandeeredCheckBox</string>
     <string name="hasTorpsKey">hasTorpsCheckBox</string>
     <string name="includeAlliesKey">includeAllyShips</string>
@@ -151,6 +186,8 @@
     <string name="routingPrefCategory">Routing</string>
     <string name="sortMethodKey">sortMethodList</string>
     <string name="energyFirstKey">energyFirstCheckBox</string>
+    <string name="showDestroyedKey">showDestroyedCheckBox</string>
+
     <string-array name="allySortMethodPrefList">
         <item>No sort</item>
         <item>Name</item>
@@ -175,9 +212,13 @@
         <item>8</item>
         <item>9</item>
     </string-array>
+
     <string name="allySortKey">allySortList</string>
     <string name="allySortSummary">Choose the method of sorting entries in the Allies table.</string>
-    <string name="settingsParagraph7">You can also access the Help menu from the Settings menu by touching Show help topics. If you access the Help menu in this way, you will return to the Settings menu when you leave. By default, the Help menu is set to display whenever you start up Artemis Messenger; you can turn off this function by touching Show help at startup.</string>
     <string name="settingsSortHeader">Ally sorting</string>
     <string name="routingParagraph4">You can gain additional information about a waypoint from the colour of its entry row in the Routing table. Commandeered allies will appear red, damaged allies and stations will appear yellow, malfunctioning allies that are also in the route for another reason appear green, allies that are only malfunctioning appear orange, and all other waypoints appear blue.</string>
+    <string name="title_activity_connect">ConnectActivity</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="productionPrefKey">productionPrefKey</string>
+
 </resources>

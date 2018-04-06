@@ -3,8 +3,6 @@ package com.walkertribe.ian.util;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.Charset;
-import java.util.Arrays;
 
 /**
  * Handles reading various data types from a byte array and tracking the offset
@@ -18,10 +16,7 @@ public class ByteArrayReader {
 	 */
 	public static void readBytes(InputStream in, int byteCount, byte[] buffer)
 			throws InterruptedException, IOException {
-		if (byteCount > buffer.length) {
-			throw new IllegalArgumentException("Requested " + byteCount +
-					" byte(s) but buffer is only " + buffer.length + " byte(s)");
-		}
+		if (byteCount == 0) return;
 
 		int totalBytesRead = 0;
 
@@ -47,17 +42,18 @@ public class ByteArrayReader {
 	 * given byte array.
 	 */
 	public static int readShort(byte[] bytes, int offset) {
-		return (0xff & (bytes[offset + 1] << 8)) | (0xff & bytes[offset]);
+		return ((0xff & bytes[offset + 1]) << 8) | (0xff & bytes[offset]);
 	}
 
 	/**
 	 * Reads an int from the indicated location in the given byte array.
 	 */
 	public static int readInt(byte[] bytes, int offset) {
-		return	((0xff & bytes[offset + 3]) << 24) |
-				((0xff & bytes[offset + 2]) << 16) |
-				((0xff & bytes[offset + 1]) << 8) |
-				(0xff & bytes[offset]);
+		int read = 0;
+		for (int i = 0; i < 4; i++) {
+			read |= (0xff & bytes[offset + i]) << (i * 8);
+		}
+		return read;
 	}
 
 	/**
@@ -75,6 +71,9 @@ public class ByteArrayReader {
 	 * array.
 	 */
 	public ByteArrayReader(byte[] bytes) {
+		if (bytes == null)
+			throw new IllegalArgumentException("Null byte array not allowed");
+		
 		this.bytes = bytes;
 	}
 
@@ -97,6 +96,10 @@ public class ByteArrayReader {
 	 * Skips the indicated number of bytes.
 	 */
 	public void skip(int byteCount) {
+		if (byteCount < 0)
+			throw new IllegalArgumentException("Cannot skip backward");
+		
+		checkOverflow(byteCount);
 		offset += byteCount;
 	}
 
@@ -111,25 +114,19 @@ public class ByteArrayReader {
 	 * Returns the next given number of bytes.
 	 */
 	public byte[] readBytes(int byteCount) {
-		byte[] readBytes = Arrays.copyOfRange(bytes, offset, offset + byteCount);
+		checkOverflow(byteCount);
+		byte[] readBytes = new byte[byteCount];
+		System.arraycopy(bytes, offset, readBytes, 0, Math.min(byteCount, bytes.length - offset));
 		offset += byteCount;
 		return readBytes;
 	}
 
 	/**
-	 * Reads the given number of bytes, then returns true if the first byte was
-	 * 1 and false otherwise.
-	 */
-	public boolean readBoolean(int byteCount) {
-		return readBytes(byteCount)[0] == 1;
-	}
-
-	/**
-	 * Reads the given number of bytes, then returns BoolState.TRUE if the first
-	 * byte was 1 and BoolState.FALSE otherwise.
+	 * Reads a BoolState from this ByteArrayReader, consuming the indicated
+	 * number of bytes.
 	 */
 	public BoolState readBoolState(int byteCount) {
-		return BoolState.from(readBoolean(byteCount));
+		return new BoolState(readBytes(byteCount));
 	}
 
 	/**
@@ -161,8 +158,9 @@ public class ByteArrayReader {
 	 * Reads and returns a BitField, presuming that the given enum values
 	 * represent the bits it stores.
 	 */
-	public BitField readBitField(Enum<?>[] bits) {
-		BitField bitField = new BitField(bits, bytes, offset);
+	public BitField readBitField(int bitCount) {
+		checkOverflow(BitField.countBytes(bitCount));
+		BitField bitField = new BitField(bitCount, bytes, offset);
 		offset += bitField.getByteCount();
 		return bitField;
 	}
@@ -171,46 +169,24 @@ public class ByteArrayReader {
 	 * Reads and returns a US ASCII encoded String().
 	 */
 	public String readUsAsciiString() {
-		return readString(Util.US_ASCII, 1, false);
+		int byteCount = readInt();
+		checkOverflow(byteCount);
+		return Util.decode(readBytes(byteCount), Util.US_ASCII);
 	}
 
 	/**
 	 * Reads and returns a UTF-16LE encoded String().
 	 */
-	public String readUtf16LeString() {
-		return readString(Util.UTF16LE, 2, true);
+	public CharSequence readUtf16LeString() {
+		int charCount = readInt();
+		int byteCount = charCount + charCount;
+		byte[] readBytes = readBytes(byteCount);
+		return new NullTerminatedString(readBytes);
 	}
 
-	/**
-	 * Reads a String in the given Charset, assuming the indicated number of
-	 * bytes per character.
-	 */
-	private String readString(Charset charset, int bytesPerChar, boolean nullTerminated) {
-		int charCount = readInt();
-		int byteCount = charCount * bytesPerChar;
-		int nullLength = nullTerminated ? bytesPerChar : 0;
-		int endOffset = offset + byteCount - nullLength;
-		byte[] readBytes = Arrays.copyOfRange(bytes, offset, endOffset);
-		offset += byteCount;
-		int i = 0;
-
-		// check for "early" null
-		for ( ; i < readBytes.length; i += bytesPerChar) {
-			boolean isNull = true;
-
-			for (int j = 0; isNull && j < bytesPerChar; j++) {
-				isNull = readBytes[i + j] == 0;
-			}
-
-			if (isNull) {
-				break;
-			}
+	private void checkOverflow(int byteCount) {
+		if (offset + byteCount > bytes.length) {
+			throw new IndexOutOfBoundsException("Cannot move past end of byte stream");
 		}
-
-		if (i != readBytes.length) {
-			readBytes = Arrays.copyOfRange(readBytes, 0, i);
-		}
-
-		return new String(readBytes, charset);
 	}
 }

@@ -1,8 +1,7 @@
 package com.walkertribe.ian.vesseldata;
 
 /**
- * Thrown when IAN fails to parse the vesselData.xml file, or any of the
- * supporting files (.snt, .dxs).
+ * Thrown when IAN fails to parse the vesselData.xml file.
  * @author rjwut
  */
 public class VesselDataException extends RuntimeException {

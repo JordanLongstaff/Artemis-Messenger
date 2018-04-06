@@ -1,13 +1,11 @@
 package com.walkertribe.ian.protocol.core.setup;
 
-import com.walkertribe.ian.enums.ConnectionType;
-import com.walkertribe.ian.iface.PacketFactory;
-import com.walkertribe.ian.iface.PacketFactoryRegistry;
+import com.walkertribe.ian.enums.Origin;
 import com.walkertribe.ian.iface.PacketReader;
 import com.walkertribe.ian.iface.PacketWriter;
-import com.walkertribe.ian.protocol.ArtemisPacket;
-import com.walkertribe.ian.protocol.ArtemisPacketException;
 import com.walkertribe.ian.protocol.BaseArtemisPacket;
+import com.walkertribe.ian.protocol.Packet;
+import com.walkertribe.ian.protocol.core.CorePacketType;
 import com.walkertribe.ian.util.Version;
 
 /**
@@ -15,29 +13,12 @@ import com.walkertribe.ian.util.Version;
  * WelcomePacket.
  * @author rjwut
  */
+@Packet(origin = Origin.SERVER, type = CorePacketType.CONNECTED)
 public class VersionPacket extends BaseArtemisPacket {
-	public static final int TYPE = 0xe548e74a;
-
-	public static void register(PacketFactoryRegistry registry) {
-		registry.register(ConnectionType.SERVER, TYPE, new PacketFactory() {
-			@Override
-			public Class<? extends ArtemisPacket> getFactoryClass() {
-				return VersionPacket.class;
-			}
-
-			@Override
-			public ArtemisPacket build(PacketReader reader)
-					throws ArtemisPacketException {
-				return new VersionPacket(reader);
-			}
-		});
-	}
-
 	private int mUnknown;
 	private Version mVersion;
 
-	private VersionPacket(PacketReader reader) {
-		super(ConnectionType.SERVER, TYPE);
+	public VersionPacket(PacketReader reader) {
 		mUnknown = reader.readInt();
 		float fVersion = reader.readFloat();
 
@@ -53,7 +34,6 @@ public class VersionPacket extends BaseArtemisPacket {
 	}
 
 	public VersionPacket(Version version) {
-		super(ConnectionType.SERVER, TYPE);
 		mVersion = version;
 	}
 

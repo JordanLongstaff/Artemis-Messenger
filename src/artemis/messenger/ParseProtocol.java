@@ -1,0 +1,38 @@
+package artemis.messenger;
+
+/**
+ * An enumeration of Comms message parsing protocol labels.
+ * @author Jordan Longstaff
+ */
+public enum ParseProtocol {
+	MALFUNCTION,
+	STANDBY,
+	PRODUCTION,
+	FIGHTER,
+	ORDNANCE,
+	HOSTAGE,
+	COMMANDEERED,
+	FLYING_BLIND,
+	AMBASSADOR,
+	CARRYING_SUPPLIES,
+	CONTRABAND,
+	SECURE_DATA,
+	NEED_DAMCON,
+	NEED_ENERGY,
+	TORPEDO_TRANSFER,
+	ENERGY_TRANSFER,
+	DELIVERING_REWARD,
+	TRAP,
+	NEW_MISSION,
+	VISITED_SOURCE,
+	MISSION_COMPLETED,
+	ATTACK,
+	DESTROYED,
+	REWARD_DELIVERED,
+	RESCUED,
+	DIRECTIONS,
+	TO_STATION,
+	OTHER;
+	
+	public static final int NUM_PROTOCOLS = values().length;
+}

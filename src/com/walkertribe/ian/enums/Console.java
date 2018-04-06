@@ -11,7 +11,7 @@ public enum Console {
 	ENGINEERING("Engineering"),
 	SCIENCE("Science"),
 	COMMUNICATIONS("Communications"),
-	FIGHTER("Fighter"),
+	SINGLESEAT("Single-seat craft"),
 	DATA("Data"),
 	OBSERVER("Observer"),
 	CAPTAINS_MAP("Captain's map"),
