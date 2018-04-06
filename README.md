@@ -1,4 +1,4 @@
-# Artemis Messenger 4.4.4
+# Artemis Messenger 5.0.1
 
 ## What is Artemis Messenger?
 
@@ -18,11 +18,18 @@ Side missions are simply tasks requiring you to travel from one point to another
 
 This app also has the ability to monitor the statuses of ally ships and stations! At the start of a simulation, and at regular intervals throughout, the app will send messages to ally ships requesting a hail from them. The message received in response is then parsed and used to populate the Allies table with information on the ally ships. The information is written in three columns: Ship (the ID and name of the ship), Shields (front and rear shield strength) and Status (all other information). The information reported in Status is as follows: ships can be normal, flying blind, malfunctioning, commandeered, or traps. They may have some side missions for you, and they may also have some spare energy, or in a Deep Strike mission, spare torpedoes. This information is obtained through messages, but the Shields information is not; it is updated live by a system manager.
 
-The stations are managed using a similar system. Instead of interval updates, the stations give status updates when various events occur, such as docking, undocking, and the completion of missile production. There are two columns in this table: Station and Ordnance. The Station column includes the name and type of the station, its shield strength and any side missions or replacement fighters it has. Like ally ships, stations' shield strengths are updated in real time. The Ordnance column includes stock information on a station's Homing, Nuke, Mine, EMP and Plasma shock torpedoes, as well as a listing of what ordnance is currently being built, how much longer it is expected to take to finish, and how much faster than normal it is being built. At any time, a station's row in the table can be touched in order to send a request to stand by for docking; the Station column indicates when the crew is standing by or when you are docked there.
+The stations are managed using a similar system. Instead of interval updates, the stations give status updates when various events occur, such as docking, undocking, and the completion of missile production. There are two columns in this table: Station and Ordnance. The Station column includes the name and type of the station, its shield strength and any side missions or replacement fighters it has. Like ally ships, stations' shield strengths are updated in real time. The Ordnance column includes stock information on a station's Homing, Nuke, Mine, EMP and Plasma shock torpedoes, as well as a listing of what ordnance is currently being built, how much longer it is expected to take to finish, and how much faster than normal it is being built. At any time, the left side of a station's row in the table can be touched in order to send a request to stand by for docking; the Station column indicates when the crew is standing by or when you are docked there. If the right side is touched, the station will start building a different type of ordnance; this type cycles through the list of all available ordnances in response to multiple touches.
 
 ## How do I know where to go to make all the stops?
 
 The app can calculate the most efficient route to take between stops in a reasonable amount of time. The stops are listed in the order that they should be visited according to the calculated route. The app also shows the direction and distance to travel in order to reach each point from where the player is currently located. Originally, the routing algorithm was only intended for side missions, but now it is possible to include ally ships with various needs that require a visit in order to fill them.
+
+## How does the app do all of this?
+
+The app communicates with a running Artemis server and receives packets from that server, which
+it then parses to obtain all of the information it uses. You can connect to a server if you
+know its address, but if the server is running Artemis version 2.7.0 or later, the app can
+broadcast a server discovery request and find a server address that way.
 
 ## Can I contribute to this project?
 
@@ -30,4 +37,4 @@ Absolutely! This project is open-source, so you can fork it and make your own ch
 
 ## Credits
 
-This app uses [IAN](http://github.com/rjwut/ian) (Interface for Artemis Networking), a Java library written by Robert J. Walker. It has been adapted for various purposes, including backwards compatibility with Artemis 2.3.0 and later. The 3D modeling features have been removed as they are not needed and are not compatible with Android.
+This app uses [IAN](http://github.com/rjwut/ian) (Interface for Artemis Networking), a Java library written by Robert J. Walker. It has been adapted for various purposes, including backwards compatibility with Artemis 2.2.0 and later. The 3D modeling features have been removed as they are not needed and are not compatible with Android.
