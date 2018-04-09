@@ -884,6 +884,8 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 		missionFlash = false;
 		allyFlash = false;
 		stationFlash = false;
+		destroyFlash = false;
+		productionFlash = false;
 		
 		// Clean up Routing graph
 		graph = null;
@@ -914,6 +916,7 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 		shipSpinner.post(clearSpinner);
 		addressRow.post(topRowRed);
 		hintText.post(updateHintText);
+		routeView.post(clearRoutingTable);
 	}
 	
 	/**
@@ -933,6 +936,8 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 		missionFlash = false;
 		allyFlash = false;
 		stationFlash = false;
+		destroyFlash = false;
+		productionFlash = false;
 		
 		// Clean up Routing graph
 		graph = null;
@@ -1364,6 +1369,9 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 			}
 		}
 		missionFlash &= !stopFlash;
+		
+		// Remove point/missions from route
+		updateRouteGraph(false);
 	}
 	
 	/**
@@ -2575,10 +2583,6 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 				destCall = null;
 			}
 			
-			// Make sure both call signs belong to an ally or station
-			if (!bases.containsKey(srcCall) && !allies.containsKey(srcCall)) continue;
-			if (destCall != null && !bases.containsKey(destCall) && !allies.containsKey(destCall)) continue;
-			
 			// Get list of stations and allies
 			ArrayList<ArtemisObject> points = new ArrayList<ArtemisObject>(manager.getObjects(ObjectType.BASE));
 			points.addAll(manager.getObjects(ObjectType.NPC_SHIP));
@@ -2586,9 +2590,15 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 			// Find source among stations and allies
 			ArtemisObject srcObject = findObject(points, srcCall);
 			
+			// If source could not be found, mission is probably invalid
+			if (srcObject == null) continue;
+			
 			// Do the same for destination
 			ArtemisObject destObject = null;
-			if (destCall != null) destObject = findObject(points, destCall);
+			if (destCall != null) {
+				destObject = findObject(points, destCall);
+				if (destObject == null) continue;
+			}
 			
 			// Add path to routing graph
 			if (destObject == null) graph.addPath(srcObject);
