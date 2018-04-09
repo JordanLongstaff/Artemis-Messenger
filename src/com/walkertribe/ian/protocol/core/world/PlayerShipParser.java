@@ -94,10 +94,7 @@ public class PlayerShipParser extends AbstractObjectParser {
         reader.readFloat(Bit.ENERGY);
         reader.readBool(Bit.SHIELD_STATE, 2);
 
-        boolean zeroBasedIndex = BITS.contains(Bit.SHIP_INDEX);
-        if (zeroBasedIndex) reader.readObjectUnknown(Bit.SHIP_NUMBER, 4);
-        else player.setShipIndex((byte) (reader.readInt(Bit.SHIP_NUMBER, 0) - 1));
-        
+        player.setShipIndex((byte) (reader.readInt(Bit.SHIP_NUMBER, 0) - 1));
         player.setHullId(reader.readInt(Bit.SHIP_TYPE, -1));
         player.setX(reader.readFloat(Bit.X));
         player.setY(reader.readFloat(Bit.Y));
@@ -135,8 +132,11 @@ public class PlayerShipParser extends AbstractObjectParser {
         player.setSide(reader.readByte(Bit.SIDE, (byte) -1));
         reader.readObjectUnknown(Bit.UNK_5_7, 4);
         
-        if (zeroBasedIndex) {
+        if (BITS.contains(Bit.SHIP_INDEX)) {
+        	byte shipIndex = player.getShipIndex();
 	        player.setShipIndex(reader.readByte(Bit.SHIP_INDEX, (byte) -1));
+	        if (player.getShipIndex() < 0) player.setShipIndex(shipIndex);
+	        
 	        reader.readInt(Bit.CAPITAL_SHIP_ID, -1);
 
 	        if (BITS.contains(Bit.ACCENT_COLOR)) {

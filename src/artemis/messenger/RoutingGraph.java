@@ -226,7 +226,7 @@ public class RoutingGraph {
 		if (minCost <= 0) return null;
 		
 		// If we have to visit too many points, snap it off
-		if (minCost < Double.POSITIVE_INFINITY && paths.size() > pointsList.size()) return null;
+		if (minCost < Float.POSITIVE_INFINITY && paths.size() > pointsList.size()) return null;
 		
 		// If route is finished, accept it
 		if (paths.size() == 0) {

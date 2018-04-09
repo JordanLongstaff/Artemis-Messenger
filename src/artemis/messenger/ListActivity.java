@@ -242,15 +242,15 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 	final Runnable updateRoute = new Runnable() {
 		@Override
 		public void run() {
+			// If we've destroyed our graph, Route table should be empty
+			if (graph == null) {
+				routeView.post(clearRoutingTable);
+			}
+			
 			// If we're not calculating routes, do nothing
 			if (!routeRunning) {
 				routing = false;
 				return;
-			}
-			
-			// If we've destroyed our graph, Route table should be empty
-			if (graph == null) {
-				routeView.post(clearRoutingTable);
 			}
 			
 			ArrayList<Integer> route = null;
@@ -916,7 +916,6 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 		shipSpinner.post(clearSpinner);
 		addressRow.post(topRowRed);
 		hintText.post(updateHintText);
-		routeView.post(clearRoutingTable);
 	}
 	
 	/**
@@ -931,6 +930,7 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 		
 		// Signal end of game
 		gameRunning = false;
+		routeRunning = false;
 		
 		// Stop buttons flashing
 		missionFlash = false;
