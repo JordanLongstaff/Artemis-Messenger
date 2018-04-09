@@ -1,2 +1,4 @@
 /android/
 /artemis/
+/.gitignore
+/com/
