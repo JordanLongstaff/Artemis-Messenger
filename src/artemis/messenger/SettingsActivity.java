@@ -1,5 +1,7 @@
 package artemis.messenger;
 
+import java.io.File;
+
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.Ringtone;
@@ -17,6 +19,7 @@ import android.preference.PreferenceManager;
 import android.preference.RingtonePreference;
 import android.view.MenuItem;
 import android.support.v4.app.NavUtils;
+import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 
 /**
@@ -72,7 +75,8 @@ public class SettingsActivity extends PreferenceActivity {
 		addPreferencesFromResource(R.xml.preference);
 		
 		ListPreference vesselDataPref = (ListPreference) findPreference(getString(R.string.vesselDataKey));
-		if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+		File[] storage = ContextCompat.getExternalFilesDirs(getApplicationContext(), null);
+		if (storage.length == 1) {
 			vesselDataPref.setEntries(getResources().getStringArray(R.array.vesselDataPrefNoCard));
 			vesselDataPref.setEntryValues(getResources().getStringArray(R.array.vesselDataValueNoCard));
 		} else {

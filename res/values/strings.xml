@@ -112,7 +112,7 @@
     <string name="basicsParagraph6">If you touch the Home button on your phone to return to your Home menu, Artemis Messenger will keep running in the background. It will continue to receive information about side missions, allies and stations via a Comms service. This information will be shown as notifications on your phone. If you click on one of those notifications, you will return to Artemis Messenger.</string>
     <string name="basicsParagraph5">When you want to leave Artemis Messenger, just hit the Back button on your phone. If your phone doesn\'t have a Back button, you can also press the Close button in the top-right corner of the screen. If the app is connected to a server, a dialog will appear asking if you want to close the connection; otherwise, no dialog will appear.</string>
     <string name="helpTitle">Help</string>
-    <string name="appVersionText">Artemis Messenger 5.0.3</string>
+    <string name="appVersionText">Artemis Messenger 5.1.0</string>
     <string name="specialThanks">Special thanks to Robert J. Walker for writing the IAN (Interface for Artemis Networking) library, without which this app could not exist. IAN is available on GitHub.</string>
     <string name="licenseText">\u00A9 Copyright 2017.</string>
     <string name="writtenBy">Written by Jordan Longstaff</string>

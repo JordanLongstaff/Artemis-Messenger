@@ -65,10 +65,10 @@ import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.ContextCompat;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -726,11 +726,11 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 		} else {
 			// Otherwise, point to location and unpack from assets if necessary
 			showToast("Unpacking assets\u2026", Toast.LENGTH_SHORT);
-			String filesDir;
 			
-			// Point to either internal or external storage
-			if (resolverIndex == 2) filesDir = Environment.getExternalStorageDirectory() + "/artemis/dat";
-			else filesDir = getFilesDir() + "/artemis/dat";
+			// Get storage directory
+			File[] storage = ContextCompat.getExternalFilesDirs(getApplicationContext(), null);
+			File storageLoc = storage[resolverIndex - 1];
+			String filesDir = storageLoc.getAbsolutePath() + "/dat";
 			
 			// Create path if it doesn't already exist
 			File datDir = new File(filesDir);
@@ -751,7 +751,7 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 					inStream.close();
 					outStream.close();
 				}
-				return new FilePathResolver(filesDir.split("/dat")[0]);
+				return new FilePathResolver(storageLoc.getAbsolutePath());
 			} catch (IOException e) {
 				// If something went wrong, fall back on assets
 				assetsFail = true;

@@ -20,6 +20,9 @@ public class PrivateNetworkAddress implements Comparable<PrivateNetworkAddress> 
 	 */
 	public static PrivateNetworkAddress findOne() throws SocketException {
 		List<PrivateNetworkAddress> all = findAll();
+		for (PrivateNetworkAddress addr: all) {
+			if (addr.getInetAddress() != null && addr.getBroadcastAddress() != null) return addr;
+		}
 		return all.isEmpty() ? null : all.get(0);
 	}
 
