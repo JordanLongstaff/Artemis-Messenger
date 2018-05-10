@@ -136,7 +136,7 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 	
 	// Miscellaneous view-related variables
 	private boolean missionFlash, allyFlash, stationFlash;
-	private boolean destroyFlash, productionFlash;
+	private boolean destroyFlash;
 	private long startTime;
 
 	// Notification fields
@@ -313,7 +313,7 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 			else allyViewButton.setBackgroundColor(clr_orange);
 			
 			if (stationsView.getVisibility() == View.VISIBLE) stationViewButton.setBackgroundColor(clr_yellow);
-			else if ((stationFlash || productionFlash) && flashOn) stationViewButton.setBackgroundColor(clr_flash);
+			else if ((stationFlash) && flashOn) stationViewButton.setBackgroundColor(clr_flash);
 			else stationViewButton.setBackgroundColor(clr_orange);
 			
 			if (routeView.getVisibility() == View.VISIBLE) routeViewButton.setBackgroundColor(clr_yellow);
@@ -502,7 +502,6 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 				missionsView.setVisibility(View.GONE);
 				stationsView.setVisibility(View.VISIBLE);
 				routeView.setVisibility(View.GONE);
-				productionFlash = false;
 				
 				updateHintText.run();
 			}
@@ -885,7 +884,6 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 		allyFlash = false;
 		stationFlash = false;
 		destroyFlash = false;
-		productionFlash = false;
 		
 		// Clean up Routing graph
 		graph = null;
@@ -937,7 +935,6 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 		allyFlash = false;
 		stationFlash = false;
 		destroyFlash = false;
-		productionFlash = false;
 		
 		// Clean up Routing graph
 		graph = null;
@@ -1452,9 +1449,6 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 				if (message.startsWith("We've")) {
 					// Recalibrate production speed
 					row.recalibrateSpeed();
-					
-					// Make the Stations button flash until pressed
-					productionFlash = stationsView.getVisibility() != View.VISIBLE;
 
 					if (serviceRunning) {
 						// Play "new mission" ringtone
@@ -1625,7 +1619,7 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 	
 	@Message(ParseProtocol.CARRYING_SUPPLIES)
 	public boolean parseContraband(String sender, String message) {
-		if (!message.contains("\nWe are carrying su") && !message.contains("\nHail, Bold")) return false;
+		if (!message.contains("clear our way.") && !message.contains("\nHail, Bold")) return false;
 		
 		// Ally ship has Pirate contraband
 		final String id = sender.substring(sender.lastIndexOf(" ") + 1);
@@ -1666,7 +1660,7 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 	
 	@Message(ParseProtocol.SECURE_DATA)
 	public boolean parseSecureData(String sender, String message) {
-		if (!message.contains("\nWe are carrying sec") && !message.contains("\nPirate scum")) return false;
+		if (!message.contains("secure") && !message.contains("\nPirate scum")) return false;
 		
 		// Ally ship has secret data
 		final String id = sender.substring(sender.lastIndexOf(" ") + 1);
@@ -2892,11 +2886,12 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 	protected void onActivityResult(int reqCode, int resCode, Intent intent) {
 		if (reqCode != connectReqCode || resCode != Activity.RESULT_OK) return;
 		
-		addressField.setText(intent.getStringExtra("Address"));
+		String addr = intent.getStringExtra("Address");
+		addressField.setText(addr);
 		if (intent.hasExtra("Error"))
 			showToast("Failed to find broadcast address", Toast.LENGTH_SHORT);
 		
-		createConnection();
+		if (!addr.equals("")) createConnection();
 	}
 	
 	/*

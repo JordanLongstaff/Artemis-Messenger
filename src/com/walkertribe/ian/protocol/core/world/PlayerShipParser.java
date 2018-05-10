@@ -133,10 +133,7 @@ public class PlayerShipParser extends AbstractObjectParser {
         reader.readObjectUnknown(Bit.UNK_5_7, 4);
         
         if (BITS.contains(Bit.SHIP_INDEX)) {
-        	byte shipIndex = player.getShipIndex();
-	        player.setShipIndex(reader.readByte(Bit.SHIP_INDEX, (byte) -1));
-	        if (player.getShipIndex() < 0) player.setShipIndex(shipIndex);
-	        
+	        player.setShipIndex(reader.readByte(Bit.SHIP_INDEX, Byte.MIN_VALUE));
 	        reader.readInt(Bit.CAPITAL_SHIP_ID, -1);
 
 	        if (BITS.contains(Bit.ACCENT_COLOR)) {

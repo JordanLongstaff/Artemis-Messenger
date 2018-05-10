@@ -440,7 +440,7 @@ public class PacketWriter {
 		writeInt(0, out);                    // padding
 		writeInt(payload.length + 4, out);   // remaining bytes
 		writeInt(mPacketType, out);          // packet type
-		out.write(payload); // payload
+		out.write(payload);                  // payload
 		out.flush();
 		debugger.onSendPacketBytes(mOrigin, mPacketType, payload);
 	}

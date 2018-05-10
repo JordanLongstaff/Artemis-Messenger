@@ -52,7 +52,8 @@ public class ArtemisPlayer extends BaseArtemisShip {
     }
 
     public void setShipIndex(byte shipIndex) {
-    	mShipIndex = shipIndex;
+    	if (shipIndex != Byte.MIN_VALUE)
+    		mShipIndex = shipIndex;
     }
 
     /**

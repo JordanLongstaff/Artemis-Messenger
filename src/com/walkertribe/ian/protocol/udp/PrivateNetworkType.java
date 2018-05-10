@@ -6,19 +6,19 @@ package com.walkertribe.ian.protocol.udp;
  * @author rjwut
  */
 public enum PrivateNetworkType {
-	CLASS_A {
+	TWENTY_FOUR_BIT_BLOCK {
 		@Override
 		protected boolean match(byte[] addr) {
 			return addr.length == 4 && addr[0] == 10;
 		}
 	},
-	CLASS_B {
+	TWENTY_BIT_BLOCK {
 		@Override
 		protected boolean match(byte[] addr) {
 			return addr.length == 4 && addr[0] == -84 && addr[1] > 15 && addr[1] < 32;
 		}
 	},
-	CLASS_C {
+	SIXTEEN_BIT_BLOCK {
 		@Override
 		protected boolean match(byte[] addr) {
 			return addr.length == 4 && addr[0] == -64 && addr[1] == -88;

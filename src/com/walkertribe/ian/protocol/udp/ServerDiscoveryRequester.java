@@ -44,20 +44,20 @@ public class ServerDiscoveryRequester implements Runnable {
 	 */
 	public ServerDiscoveryRequester(Listener listener, int timeout) throws IOException {
 		PrivateNetworkAddress addr = PrivateNetworkAddress.findOne();
-		init(addr != null ? addr.getBroadcastAddress() : InetAddress.getByName("255.255.255.255"), listener, timeout);
+		init(addr != null ? addr.getBroadcastAddress() : null, listener, timeout);
 	}
 	
 	/**
 	 * Broadcasts using the given InetAddress.
 	 */
-	public ServerDiscoveryRequester(InetAddress broadcast, Listener listener, int timeout) {
+	public ServerDiscoveryRequester(InetAddress broadcast, Listener listener, int timeout) throws IOException {
 		init(broadcast, listener, timeout);
 	}
 	
 	/**
 	 * Common initialization for both constructors.
 	 */
-	private void init(InetAddress broadcastAddress, Listener listener, int timeoutMs) {
+	private void init(InetAddress broadcastAddress, Listener listener, int timeoutMs) throws IOException {
 		if (listener == null) {
 			throw new IllegalArgumentException("You must provide a listener");
 		}
@@ -69,6 +69,8 @@ public class ServerDiscoveryRequester implements Runnable {
 		this.listener = listener;
 		this.timeoutMs = timeoutMs;
 		this.broadcastAddr = broadcastAddress;
+		if (this.broadcastAddr == null)
+			this.broadcastAddr = InetAddress.getByName("255.255.255.255");
 	}
 
 	@Override
