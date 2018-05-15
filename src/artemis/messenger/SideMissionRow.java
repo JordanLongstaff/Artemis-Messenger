@@ -10,6 +10,7 @@ import android.widget.TextView;
 public class SideMissionRow extends TableRow {
 	// Side mission information
 	private final String source, destination;
+	private String ship;
 	private boolean started = false, completed = false;
 	private final HashMap<String, Integer> rewards;
 	
@@ -28,6 +29,7 @@ public class SideMissionRow extends TableRow {
 		super(context);
 		source = src;
 		destination = dest;
+		ship = "";
 		rewards = new HashMap<String, Integer>();
 		rewards.put(payout, 1);
 		
@@ -51,6 +53,7 @@ public class SideMissionRow extends TableRow {
 		sourceText.setText(source);
 		sourceText.setLayoutParams(cellLayout);
 		sourceText.setPadding(3, 3, 3, 3);
+		sourceText.setTextColor(Color.LTGRAY);
 		addView(sourceText);
 		
 		TextView destText = new TextView(context);
@@ -58,6 +61,7 @@ public class SideMissionRow extends TableRow {
 		destText.setText(destination);
 		destText.setLayoutParams(cellLayout);
 		destText.setPadding(3, 3, 3, 3);
+		destText.setTextColor(Color.LTGRAY);
 		addView(destText);
 		
 		TextView rewardText = new TextView(context);
@@ -65,6 +69,7 @@ public class SideMissionRow extends TableRow {
 		rewardText.setText(rewardMap.get(payout));
 		rewardText.setLayoutParams(cellLayout);
 		rewardText.setPadding(3, 3, 3, 3);
+		rewardText.setTextColor(Color.LTGRAY);
 		addView(rewardText);
 		
 		// Set background colours
@@ -109,6 +114,8 @@ public class SideMissionRow extends TableRow {
 			}
 		});
 	}
+	public String getPlayerShip() { return ship; }
+	public void setPlayerShip(String s) { ship = s; }
 	
 	// String formatter
 	@Override

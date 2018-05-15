@@ -50,7 +50,7 @@
             android:key="@string/connectStartupKey"
             android:selectable="true"
             android:enabled="true"
-            android:defaultValue="true"
+            android:defaultValue="false"
             android:dependency="@string/allowUDPKey" />
     
     <EditTextPreference

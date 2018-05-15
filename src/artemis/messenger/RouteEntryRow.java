@@ -41,12 +41,14 @@ public class RouteEntryRow extends TableRow {
 		pointText.setText(object);
 		pointText.setLayoutParams(leftLayout);
 		pointText.setPadding(3, 3, 3, 3);
+		pointText.setTextColor(Color.LTGRAY);
 		addView(pointText);
 		
 		distanceText = new TextView(context);
 		distanceText.setTypeface(ListActivity.APP_FONT);
 		distanceText.setLayoutParams(rightLayout);
 		distanceText.setPadding(3, 3, 3, 3);
+		distanceText.setTextColor(Color.LTGRAY);
 		addView(distanceText);
 		
 		// Paint row in blue

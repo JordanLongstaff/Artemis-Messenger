@@ -59,12 +59,14 @@ public class StationStatusRow extends ObjectStatusRow {
 		nameText.setText(name);
 		nameText.setLayoutParams(cellLayout);
 		nameText.setPadding(3, 3, 3, 3);
+		nameText.setTextColor(Color.LTGRAY);
 		addView(nameText);
 		
 		TextView ordnanceText = new TextView(base);
 		ordnanceText.setTypeface(ListActivity.APP_FONT);
 		ordnanceText.setLayoutParams(cellLayout);
 		ordnanceText.setPadding(3, 3, 3, 3);
+		ordnanceText.setTextColor(Color.LTGRAY);
 		addView(ordnanceText);
 		
 		// Set up initial fields
@@ -128,6 +130,23 @@ public class StationStatusRow extends ObjectStatusRow {
 		long recalibrateTime = new Date().getTime() - startTime;
 		long buildTime = endTime - startTime;
 		speed = (int)Math.round((double)speed * buildTime / recalibrateTime); 
+	}
+	
+	// Recalibrate speed if an incoming message says it's incorrect
+	public void reconcileSpeed(int minutes) {
+		int normalBuildTime = building.getBuildTime() << 1;
+		normalBuildTime /= productionCoeff;
+		int buildTime = normalBuildTime / speed;
+		int predictedMinutes = (buildTime - 1) / ONE_MINUTE + 1;
+		if (predictedMinutes == minutes) return;
+		
+		for (speed = 1;; speed++) {
+			buildTime = normalBuildTime / speed;
+			predictedMinutes = (buildTime - 1) / ONE_MINUTE + 1;
+			if (predictedMinutes == minutes) break;
+		}
+		
+		endTime = buildTime + startTime;
 	}
 	
 	// Set build time for ordnance
@@ -215,13 +234,12 @@ public class StationStatusRow extends ObjectStatusRow {
 			int eta = (int)(endTime - new Date().getTime());
 			int millis = eta % 1000;
 			int seconds = (eta / 1000) % 60;
-			int minutes = eta / 60000;
+			int minutes = eta / ONE_MINUTE;
 			if (eta < 0) {
 				millis = 0;
 				seconds = 0;
 				minutes = 0;
-			}
-			if (millis > 0) {
+			} else if (millis > 0) {
 				seconds++;
 				if (seconds == 60) {
 					seconds = 0;

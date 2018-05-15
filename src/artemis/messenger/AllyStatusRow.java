@@ -54,18 +54,21 @@ public class AllyStatusRow extends ObjectStatusRow {
 		nameText.setText(n);
 		nameText.setLayoutParams(nameLayout);
 		nameText.setPadding(3, 3, 3, 3);
+		nameText.setTextColor(Color.LTGRAY);
 		addView(nameText);
 		
 		TextView shieldsText = new TextView(context);
 		shieldsText.setTypeface(ListActivity.APP_FONT);
 		shieldsText.setLayoutParams(shieldLayout);
 		shieldsText.setPadding(3, 3, 3, 3);
+		shieldsText.setTextColor(Color.LTGRAY);
 		addView(shieldsText);
 		
 		TextView statusText = new TextView(context);
 		statusText.setTypeface(ListActivity.APP_FONT);
 		statusText.setLayoutParams(statusLayout);
 		statusText.setPadding(3, 3, 3, 3);
+		statusText.setTextColor(Color.LTGRAY);
 		addView(statusText);
 		
 		// Update text

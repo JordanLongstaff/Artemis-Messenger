@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
@@ -35,10 +36,12 @@ import com.walkertribe.ian.protocol.core.setup.AllShipSettingsPacket;
 import com.walkertribe.ian.protocol.core.setup.ReadyPacket;
 import com.walkertribe.ian.protocol.core.setup.SetConsolePacket;
 import com.walkertribe.ian.protocol.core.setup.SetShipPacket;
+import com.walkertribe.ian.protocol.core.setup.VersionPacket;
 import com.walkertribe.ian.protocol.core.world.DestroyObjectPacket;
 import com.walkertribe.ian.protocol.core.world.DockedPacket;
 import com.walkertribe.ian.protocol.core.world.ObjectUpdatePacket;
 import com.walkertribe.ian.util.BoolState;
+import com.walkertribe.ian.util.Version;
 import com.walkertribe.ian.vesseldata.Vessel;
 import com.walkertribe.ian.vesseldata.VesselAttribute;
 import com.walkertribe.ian.world.Artemis;
@@ -98,10 +101,11 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 	private ArtemisContext context;
 	private ArtemisNetworkInterface server;
 	private SystemManager manager;
-	private String host;
+	private String host, missionShip;
 	private int heartbeatTimeout;
 	private int dockingStation;
 	private RoutingGraph graph;
+	private Version version;
 	
 	// Multithreading variables
 	private Thread packetThread;
@@ -420,6 +424,8 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 	public static final String BROADCAST = "artemis.messenger.BROADCAST";
 	public static final String TITLE = "Artemis Messenger";
 	
+	public static final Version VERSION27 = new Version("2.7.0");
+	
 	// Colors
 	private static final int clr_red = Color.parseColor("#c00000");
 	private static final int clr_orange = Color.parseColor("#c55a11");
@@ -617,6 +623,9 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 						break;
 					}
 				}
+				
+				// Update Missions table with missions exclusive to this ship
+				updateMissionsTable();
 			}
 
 			@Override
@@ -1141,6 +1150,29 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 			routeRunning = true;
 			routeHandler.postDelayed(updateRoute, updateInterval);
 		}
+		
+		if (manager.getPlayerShip() != null) {
+			String newShip = manager.getPlayerShip().getName().toString();
+			String oldShip = ObjectStatusRow.setCurrentShip(newShip);
+			
+			// Update object status rows based on their missions
+			HashSet<String> updated = new HashSet<String>();
+			for (SideMissionRow row: missions) {
+				if (row.isCompleted()) continue;
+				if (!row.getPlayerShip().equals(oldShip) && !row.getPlayerShip().equals(newShip)) continue;
+				String destination = row.getDestination();
+				if (updated.contains(destination)) continue;
+				String[] destParts = destination.split(" ", 2);
+				String name = destParts[0];
+				String title = destParts[1];
+				ObjectStatusRow objRow = null;
+				if (allies.containsKey(name)) objRow = allies.get(name).get(title);
+				else if (bases.containsKey(name)) objRow = bases.get(name).get(title);
+				if (objRow == null) continue;
+				updated.add(destination);
+				postStatusUpdate(objRow);
+			}
+		}
 	}
 	
 	/**
@@ -1334,7 +1366,7 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 									} else if (bases.containsKey(other[0])) {
 										otherRow = bases.get(other[0]).get(other[1]);
 									}
-									otherRow.removeMission();
+									otherRow.removeMission(row);
 									postStatusUpdate(otherRow);
 								} catch (NullPointerException e) { }
 							}
@@ -1391,6 +1423,14 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 				row.setPaused(pkt.getPaused().getBooleanValue());
 			}
 		}
+	}
+	
+	/**
+	 * Called when a VersionPacket is received from the client. Some functions change depend on the server version.
+	 */
+	@Listener
+	public void onPacket(VersionPacket pkt) {
+		version = pkt.getVersion();
 	}
 	
 	@Message(ParseProtocol.MALFUNCTION)
@@ -1512,6 +1552,11 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 				int minutes = Integer.parseInt(lastWords[lastWords.length - 2]);
 				row.setBuildTime(minutes);
 				row.setOrdnanceType(type);
+				if (version.ge(VERSION27)) {
+					row.resetMissile();
+					row.setOrdnanceType(type);
+					row.reconcileSpeed(minutes);
+				}
 			}
 		}
 		int ordnances = OrdnanceType.ordnances().size();
@@ -1827,6 +1872,7 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 		// Get source
 		final String srcShip = message.split("with ")[1].split(" ")[0];
 		final String source;
+		ObjectStatusRow srcRow = null, destRow = null;
 		
 		if (bases.containsKey(srcShip)) {
 			// Source location is a station
@@ -1834,20 +1880,16 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 			for (String key: bases.get(srcShip).keySet()) srcStation = key;
 			source = srcShip + " " + srcStation;
 			try {
+				ObjectStatusRow row = null;
 				if (allies.containsKey(senderParts[0])) {
-					AllyStatusRow row = allies.get(senderParts[0]).get(senderParts[1]);
-					row.addMission();
-					postStatusUpdate(row);
+					row = allies.get(senderParts[0]).get(senderParts[1]);
 				} else if (bases.containsKey(senderParts[0])) {
-					StationStatusRow row = bases.get(senderParts[0]).get(senderParts[1]);
-					row.addMission();
-					postStatusUpdate(row);
+					row = bases.get(senderParts[0]).get(senderParts[1]);
 				}
+				destRow = row;
 			} catch (NullPointerException e) { }
 			if (bases.containsKey(srcShip)) {
-				StationStatusRow row = bases.get(srcShip).get(srcStation);
-				row.addMission();
-				postStatusUpdate(row);
+				srcRow = bases.get(srcShip).get(srcStation);
 			}
 		} else {
 			// Source location is an ally ship - skip if it's a rogue
@@ -1864,20 +1906,16 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 			if (allies.get(srcShip).size() > 1 && !closed.containsKey(srcShip))
 				closed.put(srcShip, new CopyOnWriteArrayList<SideMissionRow>());
 			try {
+				ObjectStatusRow row = null;
 				if (allies.containsKey(senderParts[0])) {
-					AllyStatusRow row = allies.get(senderParts[0]).get(senderParts[1]);
-					row.addMission();
-					postStatusUpdate(row);
+					row = allies.get(senderParts[0]).get(senderParts[1]);
 				} else if (bases.containsKey(senderParts[0])) {
-					StationStatusRow row = bases.get(senderParts[0]).get(senderParts[1]);
-					row.addMission();
-					postStatusUpdate(row);
+					row = bases.get(senderParts[0]).get(senderParts[1]);
 				}
+				destRow = row;
 			} catch (NullPointerException e) { }
 			if (allies.containsKey(srcShip)) {
-				AllyStatusRow row = allies.get(srcShip).get(source.substring(srcShip.length() + 1));
-				row.addMission();
-				postStatusUpdate(row);
+				srcRow = allies.get(srcShip).get(source.substring(srcShip.length() + 1));
 			}
 		}
 		
@@ -1912,6 +1950,12 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 			exists = true;
 			updateMissionsTable();
 			show = isShown(row);
+			if (srcRow != null && destRow != null) {
+				srcRow.addMission(row);
+				postStatusUpdate(srcRow);
+				destRow.addMission(row);
+				postStatusUpdate(destRow);
+			}
 			break;
 		}
 		
@@ -1930,6 +1974,12 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 					}
 				});
 			}
+			if (srcRow != null && destRow != null) {
+				srcRow.addMission(newRow);
+				postStatusUpdate(srcRow);
+				destRow.addMission(newRow);
+				postStatusUpdate(destRow);
+			}
 		}
 		
 		// Update the Routing graph
@@ -1940,10 +1990,19 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 	
 	@Message(ParseProtocol.VISITED_SOURCE)
 	public boolean parseToDestination(String sender, String message) {
-		if (!message.contains("to deliver the")) return false;
+		if (!message.startsWith("Transfer")) return false;
+		
+		// Update last mission to make progress on a mission
+		missionShip = message.split(", ", 2)[1].split(". ", 2)[0];
+		
+		// If progress was completion, do nothing (no other parsers)
+		if (message.endsWith("!")) return true;
 		
 		// Visited source of side mission
 		String destination = message.split(" to ")[1];
+		boolean thisShip = true;
+		final String[] senderParts = sender.split(" ", 2);
+		String id = senderParts[0];
 		for (int i = 0; i < missions.size(); i++) {
 			final SideMissionRow row = missions.get(i);
 			if (row.isStarted() ||
@@ -1953,12 +2012,44 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 			missionFlash = missionsView.getVisibility() == View.GONE;
 			row.updateSource(sender);
 			row.updateProgress();
+
+			// Remove source from mission
+			ObjectStatusRow srcRow = null;
+			if (allies.containsKey(senderParts[0])) {
+				srcRow = allies.get(senderParts[0]).get(senderParts[1]);
+			} else if (bases.containsKey(senderParts[0])) {
+				srcRow = bases.get(senderParts[0]).get(senderParts[1]);
+			}
+			if (srcRow != null) {
+				srcRow.removeMission(row);
+				postStatusUpdate(srcRow);
+			}
+
+			// Update destination's record of the mission
+			if (version.ge(VERSION27)) {
+				ObjectStatusRow destRow = null;
+				if (allies.containsKey(destination))
+					destRow = allies.get(destination).get(row.getDestination().substring(destination.length() + 1));
+				else if (bases.containsKey(destination))
+					destRow = bases.get(destination).get(row.getDestination().substring(destination.length() + 1));
+				if (destRow != null) {
+					destRow.removeMission(row);
+				}				
+				row.setPlayerShip(missionShip);
+				thisShip = missionShip.contentEquals(manager.getPlayerShip().getName());
+				if (destRow != null) {
+					destRow.addMission(row);
+					postStatusUpdate(destRow);
+				}
+			}
 			
+			// Merge rows with same statuses and parameters
 			for (int j = 0; j < missions.size(); j++) {
 				final SideMissionRow other = missions.get(j);
 				if (j == i ||
 						!other.isStarted() ||
 						other.isCompleted() ||
+						!other.getPlayerShip().equals(missionShip) ||
 						!other.getSource().equals(sender) ||
 						!other.getDestination().equals(row.getDestination())) continue;
 				String[] rewards = row.getRewardList().split(", ");
@@ -1984,21 +2075,6 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 			updateMissionsTable();
 		}
 		
-		// Remove sender from the mission, their part of it is done
-		final String[] senderParts = sender.split(" ", 2);
-		String id = senderParts[0];
-		try {
-			if (allies.containsKey(senderParts[0])) {
-				AllyStatusRow row = allies.get(senderParts[0]).get(senderParts[1]);
-				row.removeMission();
-				postStatusUpdate(row);
-			} else if (bases.containsKey(senderParts[0])) {
-				StationStatusRow row = bases.get(senderParts[0]).get(senderParts[1]);
-				row.removeMission();
-				postStatusUpdate(row);
-			}
-		} catch (NullPointerException e) { }
-		
 		// Salvage missions that were designated uncompletable
 		if (closed.containsKey(id)) { 
 			for (int i = 0; i < closed.get(id).size(); i++) {
@@ -2010,7 +2086,22 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 				row.markAsStarted();
 				closed.get(id).remove(row);
 				row.updateSource(sender);
+				if (version.ge(VERSION27)) {
+					row.setPlayerShip(missionShip);
+					thisShip = missionShip.contentEquals(manager.getPlayerShip().getName());
+				}
 				row.updateProgress();
+				
+				ObjectStatusRow destRow = null;
+				if (allies.containsKey(destination))
+					destRow = allies.get(destination).get(row.getDestination().substring(destination.length() + 1));
+				else if (bases.containsKey(destination))
+					destRow = bases.get(destination).get(row.getDestination().substring(destination.length() + 1));
+				if (destRow != null) {
+					destRow.addMission(row);
+					postStatusUpdate(destRow);
+				}
+				
 				missionsView.post(new Runnable() {
 					@Override
 					public void run() {
@@ -2021,7 +2112,7 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 			}
 		}
 		
-		if (serviceRunning) {
+		if (serviceRunning && thisShip) {
 			// Play "arrived at source" ringtone
 			Uri ringtoneUri = Uri.parse(preferences.getString(getString(R.string.foundSrcPrefKey), "Default"));
 			Ringtone ringtone = RingtoneManager.getRingtone(getApplicationContext(), ringtoneUri);
@@ -2062,6 +2153,8 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 		// End of side mission
 		String[] words = message.split(" ");
 		String reward = words[words.length - 1];
+		final String[] senderParts = sender.split(" ", 2);
+		String id = senderParts[0];
 		
 		if (reward.equals(SideMissionRow.PRODUCTION_KEY)) {
 			String baseName = sender.split(" ")[0];
@@ -2080,9 +2173,22 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 					!row.isStarted() ||
 					!row.getDestination().equals(sender) ||
 					!row.hasReward(reward)) continue;
+			if (!row.getPlayerShip().isEmpty() && !missionShip.equals(row.getPlayerShip())) continue;
 			row.markAsCompleted();
 			missionFlash = missionsView.getVisibility() == View.GONE;
 			row.updateProgress();
+			
+			// Remove sender from mission as it is now completed
+			try {
+				ObjectStatusRow objRow = null;
+				if (allies.containsKey(senderParts[0])) {
+					objRow = allies.get(senderParts[0]).get(senderParts[1]);
+				} else if (bases.containsKey(senderParts[0])) {
+					objRow = bases.get(senderParts[0]).get(senderParts[1]);
+				}
+				objRow.removeMission(row);
+				postStatusUpdate(objRow);
+			} catch (NullPointerException e) { }
 			
 			// Set up touch-to-remove function
 			row.setOnClickListener(new OnClickListener() {
@@ -2093,21 +2199,6 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 				}
 			});
 		}
-		
-		// Remove sender from mission as it is now completed
-		final String[] senderParts = sender.split(" ", 2);
-		String id = senderParts[0];
-		try {
-			if (allies.containsKey(senderParts[0])) {
-				AllyStatusRow row = allies.get(senderParts[0]).get(senderParts[1]);
-				row.removeMission();
-				postStatusUpdate(row);
-			} else if (bases.containsKey(senderParts[0])) {
-				StationStatusRow row = bases.get(senderParts[0]).get(senderParts[1]);
-				row.removeMission();
-				postStatusUpdate(row);
-			}
-		} catch (NullPointerException e) { }
 		
 		// Salvage missions that were designated uncompletable
 		if (closed.containsKey(id)) {
@@ -2795,6 +2886,9 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 	}
 	
 	private boolean isShown(SideMissionRow row) {
+		if (!row.getPlayerShip().isEmpty() && !row.getPlayerShip().contentEquals(manager.getPlayerShip().getName()))
+			return false;
+		
 		boolean show = false;
 		show |= row.hasReward(SideMissionRow.BATTERY_KEY) &&
 				preferences.getBoolean(getString(R.string.batteryChargeKey), true);
