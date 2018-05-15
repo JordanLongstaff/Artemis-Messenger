@@ -1154,6 +1154,7 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 		if (manager.getPlayerShip() != null) {
 			String newShip = manager.getPlayerShip().getName().toString();
 			String oldShip = ObjectStatusRow.setCurrentShip(newShip);
+			if (newShip.equals(oldShip)) return;
 			
 			// Update object status rows based on their missions
 			HashSet<String> updated = new HashSet<String>();
