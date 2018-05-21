@@ -15,6 +15,8 @@ public abstract class ObjectStatusRow extends TableRow {
 	private final int statusColumn;
 	private final HashMap<String, ArrayList<SideMissionRow>> missions;
 	private String statusString;
+	private int numMissions;
+	private boolean missionUpdate;
 	
 	private static String currentShip = "";
 	
@@ -49,6 +51,7 @@ public abstract class ObjectStatusRow extends TableRow {
 		String ship = row.getPlayerShip();
 		if (!missions.containsKey(ship)) missions.put(ship, new ArrayList<SideMissionRow>());
 		missions.get(ship).add(row);
+		missionUpdate = true;
 	}
 	
 	// Remove mission, if it is in the list
@@ -56,14 +59,20 @@ public abstract class ObjectStatusRow extends TableRow {
 		String ship = row.getPlayerShip();
 		if (!missions.get(ship).contains(row)) return false;
 		missions.get(ship).remove(row);
+		missionUpdate = true;
 		return true;
 	}
 	
 	// Number of missions ship is involved with
 	public final int getMissions() {
-		int numMissions = missions.get("").size();
-		if (!currentShip.isEmpty() && missions.containsKey(currentShip))
-			numMissions += missions.get(currentShip).size();
+		if (missionUpdate) {
+			numMissions = 0;
+			for (SideMissionRow row: missions.get("")) numMissions += row.getNumRewards();
+			if (!currentShip.isEmpty() && missions.containsKey(currentShip)) {
+				for (SideMissionRow row: missions.get(currentShip))
+					numMissions += row.getNumRewards();
+			}
+		}
 		return numMissions;
 	}
 	

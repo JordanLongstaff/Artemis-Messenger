@@ -106,6 +106,7 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 	private int dockingStation;
 	private RoutingGraph graph;
 	private Version version;
+	private byte destroyedShips;
 	
 	// Multithreading variables
 	private Thread packetThread;
@@ -120,6 +121,7 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 	private ConcurrentHashMap<String, ConcurrentHashMap<String, StationStatusRow>> bases;
 	private ConcurrentHashMap<String, ConcurrentHashMap<String, AllyStatusRow>> allies;
 	private ConcurrentHashMap<String, CopyOnWriteArrayList<String>> rogues;
+	private CopyOnWriteArrayList<String> baseKeys;
 	private LinkedList<CommsIncomingPacket> inPackets;
 	private LinkedList<CommsOutgoingPacket> outPackets;
 	
@@ -246,6 +248,12 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 	final Runnable updateRoute = new Runnable() {
 		@Override
 		public void run() {
+			// If current ship does not exist, do nothing except empty table
+			if (playerDestroyed()) {
+				routeView.post(clearRoutingTable);
+				return;
+			}
+			
 			// If we've destroyed our graph, Route table should be empty
 			if (graph == null) {
 				routeView.post(clearRoutingTable);
@@ -307,6 +315,7 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 			
 			long flashTimer = new Date().getTime();
 			boolean flashOn = (flashTimer - startTime) % (flashTime << 1) < flashTime;
+			flashOn &= !playerDestroyed();
 			
 			if (missionsView.getVisibility() == View.VISIBLE) missionViewButton.setBackgroundColor(clr_yellow);
 			else if (missionFlash && flashOn) missionViewButton.setBackgroundColor(clr_flash);
@@ -442,6 +451,7 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 		closed = new ConcurrentHashMap<String, CopyOnWriteArrayList<SideMissionRow>>();
 		allies = new ConcurrentHashMap<String, ConcurrentHashMap<String, AllyStatusRow>>();
 		bases = new ConcurrentHashMap<String, ConcurrentHashMap<String, StationStatusRow>>();
+		baseKeys = new CopyOnWriteArrayList<String>();
 		rogues = new ConcurrentHashMap<String, CopyOnWriteArrayList<String>>();
 		inPackets = new LinkedList<CommsIncomingPacket>();
 		outPackets = new LinkedList<CommsOutgoingPacket>();
@@ -624,8 +634,11 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 					}
 				}
 				
-				// Update Missions table with missions exclusive to this ship
+				// Update table views
+				clearTableViews();
 				updateMissionsTable();
+				updateAlliesTable();
+				updateStationsTable();
 			}
 
 			@Override
@@ -714,6 +727,7 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 	
 	// Method to empty out all data in server data tables
 	private void clearDataTables() {
+		destroyedShips = 0;
 		missions.clear();
 		for (CopyOnWriteArrayList<SideMissionRow> list: closed.values()) list.clear();
 		for (ConcurrentHashMap<String, StationStatusRow> map: bases.values()) map.clear();
@@ -723,6 +737,13 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 		bases.clear();
 		allies.clear();
 		rogues.clear();
+		baseKeys.clear();
+	}
+	
+	// Returns whether or not the current player ship, if it exists, is destroyed
+	private boolean playerDestroyed() {
+		return manager != null && manager.getPlayerShip() != null &&
+				(destroyedShips & (1 << manager.getPlayerShip().getShipIndex())) != 0;
 	}
 	
 	// Create a path resolver for vesselData.xml, location is according to preferences
@@ -1023,7 +1044,7 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 
 		// Add table row to Stations view
 		final StationStatusRow row = bases.get(baseName).get(vesselName);
-		final int rowIndex = getStationSortIndex(row, baseName);
+		final int rowIndex = insertBaseKey(baseName);
 		stationsView.post(new Runnable() {
 			@Override
 			public void run() {
@@ -1034,15 +1055,13 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 	}
 	
 	// Calculate index of where to insert a StationStatusRow using binary search
-	private int getStationSortIndex(StationStatusRow row, String name) {
-		int index = -1;
-		int minIndex = 0, maxIndex = stationsTable.getChildCount();
+	private int insertBaseKey(String name) {
+		int index = 0;
+		int minIndex = 0, maxIndex = baseKeys.size();
 		while (minIndex < maxIndex) {
 			index = (maxIndex + minIndex) / 2;
 			String rowName = name;
-			StationStatusRow otherRow = (StationStatusRow) stationsTable.getChildAt(index);
-			TextView statusText = (TextView) otherRow.getChildAt(0);
-			String otherName = statusText.getText().toString().split(" ")[0];
+			String otherName = baseKeys.get(index);
 			
 			// If station names both start with DS, sort by number
 			if (otherName.startsWith("DS") && rowName.startsWith("DS")) {
@@ -1057,6 +1076,7 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 				minIndex = ++index;
 			} else break;
 		}
+		baseKeys.add(index, name);
 		return index;
 	}
 	
@@ -1267,6 +1287,7 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 			}
 			bases.get(baseName).clear();
 			bases.remove(baseName);
+			baseKeys.remove(baseName);
 		}
 	}
 	
@@ -1316,6 +1337,47 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 	}
 	
 	/**
+	 * Called whenever a player ship is destroyed.
+	 */
+	private void onObjectDestroyed(ArtemisPlayer plr) {
+		// If the game's over, nothing to do
+		if (!gameRunning) return;
+
+		// Mark player ship destruction
+		destroyedShips |= 1 << plr.getShipIndex();
+		
+		// If it was the player ship we were on, we'll get kicked out of the game
+		if (plr.getId() == manager.getPlayerShip().getId()) {
+			// Clear current data
+			dockingStation = -1;
+			clearTableViews();
+		}
+		
+		if (version.ge(VERSION27)) {
+			// Cancel their exclusive side missions
+			String name = plr.getName().toString();
+			for (int i = 0; i < missions.size(); i++) {
+				final SideMissionRow row = missions.get(i);
+				if (row.getPlayerShip().equals(name)) {
+					missions.remove(i--);
+					if (!row.isCompleted()) {
+						ObjectStatusRow destRow = null;
+						String[] destParts = row.getDestination().split(" ", 2);
+						if (allies.containsKey(destParts[0]))
+							destRow = allies.get(destParts[0]).get(destParts[1]);
+						else if (bases.containsKey(destParts[0]))
+							destRow = bases.get(destParts[0]).get(destParts[1]);
+						if (destRow != null) {
+							destRow.removeMission(row);
+							postStatusUpdate(destRow);
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	/**
 	 * Called when a destroyed object packet is received by the client.
 	 * @param pkt the destroyed object packet
 	 */
@@ -1332,6 +1394,9 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 			break;
 		case NPC_SHIP:
 			onObjectDestroyed((ArtemisNpc) object);
+			break;
+		case PLAYER_SHIP:
+			onObjectDestroyed((ArtemisPlayer) object);
 			break;
 		default:
 			// If neither a base nor an ally ship, exit
@@ -1378,7 +1443,8 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 					missionsView.post(new Runnable() {
 						@Override
 						public void run() {
-							missionsTable.removeView(row);
+							try { missionsTable.removeView(row); }
+							catch (IllegalStateException e) { }
 						}
 					});
 				} catch (Exception e) { }
@@ -2027,12 +2093,12 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 			}
 
 			// Update destination's record of the mission
+			ObjectStatusRow destRow = null;
+			if (allies.containsKey(destination))
+				destRow = allies.get(destination).get(row.getDestination().substring(destination.length() + 1));
+			else if (bases.containsKey(destination))
+				destRow = bases.get(destination).get(row.getDestination().substring(destination.length() + 1));
 			if (version.ge(VERSION27)) {
-				ObjectStatusRow destRow = null;
-				if (allies.containsKey(destination))
-					destRow = allies.get(destination).get(row.getDestination().substring(destination.length() + 1));
-				else if (bases.containsKey(destination))
-					destRow = bases.get(destination).get(row.getDestination().substring(destination.length() + 1));
 				if (destRow != null) {
 					destRow.removeMission(row);
 				}				
@@ -2063,14 +2129,11 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 					final String rewardStr = s;
 					for (int t = 0; t < quantity; t++) other.addReward(rewardStr);
 				}
-				missionsView.post(new Runnable() {
-					@Override
-					public void run() {
-						try { missionsTable.removeView(row); }
-						catch (IllegalStateException e) { }
-					}
-				});
 				missions.remove(row);
+				if (destRow != null) {
+					destRow.removeMission(row);
+					postStatusUpdate(destRow);
+				}
 				break;
 			}
 			updateMissionsTable();
@@ -2435,6 +2498,7 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 	
 	// Update Missions table
 	public void updateMissionsTable() {
+		if (playerDestroyed()) return;
 		missionsView.post(clearMissionsTable);
 		for (int i = 0; i < missions.size(); i++) {
 			final SideMissionRow row = missions.get(i);
@@ -2449,7 +2513,8 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 	
 	// Update Stations table
 	public void updateStationsTable() {
-		for (final CharSequence n: bases.keySet()) {
+		if (playerDestroyed()) return;
+		for (final String n: baseKeys) {
 			for (final String s: bases.get(n).keySet()) {
 				stationsView.post(new Runnable() {
 					@Override
@@ -2466,7 +2531,13 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 	public void updateAlliesTable() {
 		// Start by emptying the table
 		alliesView.post(clearAlliesTable);
+		
+		// If current player destroyed, do nothing else
+		if (playerDestroyed()) return;
+		
 		int rowCount = 0;
+		for (CharSequence n: allies.keySet()) rowCount += allies.get(n).size();
+		final ArrayList<AllyStatusRow> rows = new ArrayList<AllyStatusRow>(rowCount);
 		boolean showDestroyed = preferences.getBoolean(getString(R.string.showDestroyedKey), true);
 		
 		for (CharSequence n: allies.keySet()) {
@@ -2475,11 +2546,11 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 				if (!showDestroyed && r.getStatus() == AllyStatus.DESTROYED) continue;
 				
 				// Find index to insert row at using binary search
-				int index = -1;
-				int minIndex = 0, maxIndex = rowCount;
+				int index = 0;
+				int minIndex = 0, maxIndex = rows.size();
 				while (minIndex < maxIndex) {
 					index = (maxIndex + minIndex) / 2;
-					AllyStatusRow otherRow = (AllyStatusRow) alliesTable.getChildAt(index);
+					AllyStatusRow otherRow = rows.get(index);
 					if (otherRow == null) continue;
 					int compare = compare(r, otherRow);
 					if (compare < 0) {
@@ -2488,19 +2559,20 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 						minIndex = ++index;
 					} else break;
 				}
-				
-				// Add row to Allies table
-				final int rowIndex = index;
-				alliesView.post(new Runnable() {
-					@Override
-					public void run() {
-						try { alliesTable.addView(r, rowIndex); }
-						catch (IllegalStateException e) { }
-					}
-				});
-				rowCount++;
+				rows.add(index, r);
 			}
 		}
+		
+		// Add all rows to Allies table
+		alliesView.post(new Runnable() {
+			@Override
+			public void run() {
+				for (AllyStatusRow r: rows) {
+					try { alliesTable.addView(r); }
+					catch (IllegalStateException e) { }
+				}
+			}
+		});
 	}
 	
 	// Binary search comparison method for ally status rows
@@ -2509,7 +2581,6 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 		if (row1.getStatus() == AllyStatus.DESTROYED || row2.getStatus() == AllyStatus.DESTROYED) {
 			if (row1.getStatus() != AllyStatus.DESTROYED) return -1;
 			if (row2.getStatus() != AllyStatus.DESTROYED) return 1;
-			return 0;
 		}
 		
 		// Find variables including sort method
@@ -3077,6 +3148,25 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 		
 		// Set up notification builder
 		initNotifications();
+	}
+	
+	@Override
+	public void onDestroy() {
+		// Shut down packet handler
+		inPackets.clear();
+		outPackets.clear();
+		
+		// Shut down connection
+		if (serviceRunning) {
+			// Destroy all notifications
+			removeAllNotifications();
+		}
+		
+		// Clear server data
+		endServer();
+		clearDataTables();
+		
+		super.onDestroy();
 	}
 	
 	@Override

@@ -144,6 +144,11 @@ public class StationStatusRow extends ObjectStatusRow {
 			buildTime = normalBuildTime / speed;
 			predictedMinutes = (buildTime - 1) / ONE_MINUTE + 1;
 			if (predictedMinutes == minutes) break;
+			else if (predictedMinutes < minutes) {
+				if (speed > 1) speed--;
+				buildTime = minutes * ONE_MINUTE;
+				break;
+			}
 		}
 		
 		endTime = buildTime + startTime;
