@@ -102,6 +102,7 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 	private ArtemisNetworkInterface server;
 	private SystemManager manager;
 	private String host, missionShip;
+	private String recentHosts;
 	private int heartbeatTimeout;
 	private int dockingStation;
 	private RoutingGraph graph;
@@ -158,8 +159,8 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 		@Override
 		public void run() {
 			// Check if hint text should be shown - if not, hide it
-			boolean showHint = server != null && server.isConnected()
-					&& preferences.getBoolean(getString(R.string.showHintTextKey), true);
+			boolean connectHint = server == null || !server.isConnected();
+			boolean showHint = preferences.getBoolean(getString(R.string.showHintTextKey), true);
 			
 			if (showHint) {
 				hintText.setVisibility(View.VISIBLE);
@@ -169,7 +170,9 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 			}
 			
 			// Update hint text at bottom of screen based on current view
-			if (alliesView.getVisibility() == View.VISIBLE) {
+			if (connectHint) {
+				hintText.setText(getString(R.string.connectHint));
+			} else if (alliesView.getVisibility() == View.VISIBLE) {
 				hintText.setText(getString(R.string.alliesHint));
 			} else if (missionsView.getVisibility() == View.VISIBLE) {
 				hintText.setText(getString(R.string.missionsHint));
@@ -591,7 +594,9 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 				if (read < 0) break;
 				ip += (char) read;
 			}
-			addressField.setText(ip);
+			recentHosts = ip;
+			if (recentHosts.isEmpty()) addressField.setText("");
+			else addressField.setText(ip.split("\\*")[0]);
 			fis.close();
 		} catch (IOException e) { }
 		
@@ -663,7 +668,8 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 		Intent connectIntent = new Intent(getApplicationContext(), ConnectActivity.class);
 		connectIntent
 		.putExtra("URL", addressField.getText().toString())
-		.putExtra("Timeout", preferences.getString(getString(R.string.udpTimeoutKey), "10"));
+		.putExtra("Timeout", preferences.getString(getString(R.string.udpTimeoutKey), "10"))
+		.putExtra("Recent", recentHosts);
 		startActivityForResult(connectIntent, connectReqCode);
 	}
 	
@@ -792,6 +798,15 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 		}
 	}
 	
+	private void writeRecentHostsToFile() {
+		try {
+			// Write URL to data
+			FileOutputStream fos = openFileOutput(dataFile, Context.MODE_PRIVATE);
+			fos.write(recentHosts.getBytes());
+			fos.close();
+		} catch (IOException ex) { }
+	}
+	
 	/**
 	 * Sets up a connection to a running Artemis server.
 	 */
@@ -859,14 +874,29 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 		// Also need to connect to Main Screen to receive proper game over signal
 		server.send(new SetConsolePacket(Console.MAIN_SCREEN, true));
 		server.send(new ReadyPacket());
-		
-		try {
-			// Write URL to data
-			FileOutputStream fos = openFileOutput(dataFile, Context.MODE_PRIVATE);
-			host = addressField.getText().toString();
-			fos.write(host.toString().getBytes());
-			fos.close();
-		} catch (IOException ex) { }
+
+		// Update current host and recent hosts
+		host = addressField.getText().toString();
+
+		// Update recent hosts
+		if (recentHosts.isEmpty()) {
+			recentHosts = host;
+		} else {
+			String[] split = recentHosts.split("\\*");
+			ArrayList<String> hostList = new ArrayList<String>(split.length);
+			for (String h: split) hostList.add(h);
+			if (hostList.contains(host)) {
+				hostList.remove(host);
+			}
+			recentHosts = host;
+			int recentLimit = Integer.parseInt(preferences.getString(getString(R.string.recentHostsKey), "10"));
+			for (String h: hostList) {
+				if (--recentLimit <= 0) break;
+				if (!recentHosts.isEmpty()) recentHosts += "*";
+				recentHosts += h;
+			}
+		}
+		writeRecentHostsToFile();
 
 		addressRow.post(topRowGreen);
 		updateMissionsTable();
@@ -1572,6 +1602,7 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 						messages.add(message);
 					}
 				}
+				row.resetBuildProgress();
 				row.resetMissile();
 			}
 		}
@@ -2017,19 +2048,13 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 			exists = true;
 			updateMissionsTable();
 			show = isShown(row);
-			if (srcRow != null && destRow != null) {
-				srcRow.addMission(row);
-				postStatusUpdate(srcRow);
-				destRow.addMission(row);
-				postStatusUpdate(destRow);
-			}
 			break;
 		}
 		
 		// If not, add to Missions view if filters allow
 		if (!exists) {
 			final SideMissionRow newRow =
-					new SideMissionRow(getApplicationContext(), source, sender, reward);
+					new SideMissionRow(getApplicationContext(), source, sender, RewardType.from(reward));
 			missions.add(newRow);
 			show = isShown(newRow);
 			if (show) {
@@ -2220,7 +2245,7 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 		final String[] senderParts = sender.split(" ", 2);
 		String id = senderParts[0];
 		
-		if (reward.equals(SideMissionRow.PRODUCTION_KEY)) {
+		if (RewardType.PRODUCTION.matches(reward)) {
 			String baseName = sender.split(" ")[0];
 			if (bases.containsKey(baseName)) {
 				for (StationStatusRow baseRow: bases.get(baseName).values()) {
@@ -2508,6 +2533,8 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 					if (isShown(row)) missionsTable.addView(row);
 				}
 			});
+			row.updateRewardText();
+			row.updateProgress();
 		}
 	}
 	
@@ -2545,6 +2572,9 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 				// Don't show allies that have been destroyed if preferences say not to 
 				if (!showDestroyed && r.getStatus() == AllyStatus.DESTROYED) continue;
 				
+				// Make sure statuses are up to date
+				r.updateStatusText();
+				
 				// Find index to insert row at using binary search
 				int index = 0;
 				int minIndex = 0, maxIndex = rows.size();
@@ -2568,6 +2598,7 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 			@Override
 			public void run() {
 				for (AllyStatusRow r: rows) {
+					r.updateStatusUI();
 					try { alliesTable.addView(r); }
 					catch (IllegalStateException e) { }
 				}
@@ -2961,18 +2992,11 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 		if (!row.getPlayerShip().isEmpty() && !row.getPlayerShip().contentEquals(manager.getPlayerShip().getName()))
 			return false;
 		
-		boolean show = false;
-		show |= row.hasReward(SideMissionRow.BATTERY_KEY) &&
-				preferences.getBoolean(getString(R.string.batteryChargeKey), true);
-		show |= row.hasReward(SideMissionRow.COOLANT_KEY) &&
-				preferences.getBoolean(getString(R.string.extraCoolantKey), true);
-		show |= row.hasReward(SideMissionRow.NUCLEAR_KEY) &&
-				preferences.getBoolean(getString(R.string.nuclearKey), true);
-		show |= row.hasReward(SideMissionRow.PRODUCTION_KEY) &&
-				preferences.getBoolean(getString(R.string.speedKey), true);
-		show |= row.hasReward(SideMissionRow.SHIELD_KEY) &&
-				preferences.getBoolean(getString(R.string.shieldKey), true);
-		return show;
+		for (RewardType type: RewardType.values()) {
+			if (type.isShown() && row.hasReward(type)) return true;
+		}
+		
+		return false;
 	}
 	
 	// Check to see if the player has undocked from a station
@@ -3113,11 +3137,11 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 		initViewButtons();
 		initUtilityButtons();
 		
-		// Hide hint text
-		updateHintText.run();
-		
 		// Initialize app font
 		initFont();
+		
+		// Initialize reward types
+		RewardType.initDisplayNames(this);
 		
 		// Start notification cleanup service
 		startService(new Intent(getApplicationContext(), NotificationCleanupService.class));
@@ -3128,6 +3152,10 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 		
 		// Initialize preferences
 		PreferenceManager.setDefaultValues(getApplicationContext(), R.xml.preference, false);
+		RewardType.updateVisibility(preferences);
+		
+		// Hide hint text
+		updateHintText.run();
 		
 		// Initialize message parse protocols
 		ArrayList<ParseMethod> methods = new ArrayList<ParseMethod>(ParseProtocol.NUM_PROTOCOLS);
@@ -3200,6 +3228,15 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 		if (key.equals(getString(R.string.vesselDataKey))) {
 			if (assetsFail) assetsFail = false;
 			else if (server != null && server.isConnected()) createConnection();
+		} else if (key.equals(getString(R.string.recentHostsKey))) {
+			String[] recentList = recentHosts.split("\\*");
+			int numRecent = Integer.parseInt(sharedPreferences.getString(key, "" + recentList.length));
+			recentHosts = "";
+			for (int i = 0; i < recentList.length && i < numRecent; i++) {
+				if (!recentHosts.isEmpty()) recentHosts += "*";
+				recentHosts += recentList[i];
+			}
+			writeRecentHostsToFile();
 		} else if (key.equals(getString(R.string.serverTimeoutKey))) {
 			heartbeatTimeout =
 					Integer.parseInt(sharedPreferences.getString(key, "" + (heartbeatTimeout / 1000)) + "000");
@@ -3210,6 +3247,8 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 			
 			updateRouteGraph(false);
 		} else if (key.endsWith("CheckBox") && !key.startsWith("connect") && !key.startsWith("allow")) {
+			RewardType.updateVisibility(sharedPreferences);
+			
 			updateMissionsTable();
 			updateAlliesTable();
 			

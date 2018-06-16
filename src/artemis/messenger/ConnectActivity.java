@@ -28,10 +28,11 @@ import android.widget.SimpleAdapter;
  */
 public class ConnectActivity extends Activity implements ServerDiscoveryRequester.Listener {
 	// Server list/view fields
-	private SimpleAdapter connectAdapter, serverAdapter;
+	private SimpleAdapter connectAdapter, serverAdapter, recentAdapter;
 	private ArrayList<HashMap<String, String>> serverList;	
 	private ArrayList<HashMap<String, String>> optionsList;
-	private ListView connectMenuView, serverListView;
+	private ArrayList<HashMap<String, String>> recentList;
+	private ListView connectMenuView, serverListView, recentListView;
 	
 	// Other fields
 	private ServerDiscoveryRequester requester;
@@ -98,7 +99,20 @@ public class ConnectActivity extends Activity implements ServerDiscoveryRequeste
 		@Override
 		public void onItemClick(AdapterView<?> parent, View v, int pos, long id) {
 			address = serverList.get(pos).get(keys[1]);
-			if (address.equals("")) address = serverList.get(pos).get(keys[0]);
+			if (address.isEmpty()) address = serverList.get(pos).get(keys[0]);
+			
+			Intent resultIntent = new Intent();
+			resultIntent.putExtra("Address", address);
+			setResult(Activity.RESULT_OK, resultIntent);
+			finish();
+		}
+	};
+	
+	// Click listener for recent server items
+	private final OnItemClickListener recentClickListener = new OnItemClickListener() {
+		@Override
+		public void onItemClick(AdapterView<?> parent, View v, int pos, long id) {
+			address = recentList.get(pos).get(keys[0]);
 			
 			Intent resultIntent = new Intent();
 			resultIntent.putExtra("Address", address);
@@ -151,12 +165,15 @@ public class ConnectActivity extends Activity implements ServerDiscoveryRequeste
 		// Initialize lists of menu items
 		serverList = new ArrayList<HashMap<String, String>>();
 		optionsList = new ArrayList<HashMap<String, String>>();
+		recentList = new ArrayList<HashMap<String, String>>();
 
 		// Initialize adapters for the two menus
 		serverAdapter =
 				new SimpleAdapter(getApplicationContext(), serverList, R.layout.server_list_entry, keys, views);
 		connectAdapter =
 				new SimpleAdapter(getApplicationContext(), optionsList, R.layout.server_list_entry, keys, views);
+		recentAdapter =
+				new SimpleAdapter(getApplicationContext(), recentList, R.layout.server_list_entry, keys, views);
 		
 		// If there was a default address, add that connection as an option
 		address = intent.getStringExtra("URL");
@@ -178,23 +195,38 @@ public class ConnectActivity extends Activity implements ServerDiscoveryRequeste
 		helpOption.put(keys[0], getString(R.string.helpButton));
 		optionsList.add(helpOption);
 		
+		// Get list of recent servers
+		String recentHosts = intent.getStringExtra("Recent");
+		if (!recentHosts.isEmpty()) {
+			for (String h: recentHosts.split("\\*")) {
+				HashMap<String, String> recent = new HashMap<String, String>();
+				recent.put(keys[0], h);
+				recentList.add(recent);
+			}
+		}
+		
 		// Set up the menu adapters
 		connectMenuView = (ListView) findViewById(R.id.connectList);
 		connectMenuView.setAdapter(connectAdapter);
 		serverListView = (ListView) findViewById(R.id.serverList);
 		serverListView.setAdapter(serverAdapter);
+		recentListView = (ListView) findViewById(R.id.recentList);
+		recentListView.setAdapter(recentAdapter);
 		
 		// Set up the headers with grey backgrounds
 		LinearLayout connectHeader = (LinearLayout) findViewById(R.id.connectHeaderBar);
 		LinearLayout serverHeader = (LinearLayout) findViewById(R.id.serverHeaderBar);
+		LinearLayout recentHeader = (LinearLayout) findViewById(R.id.recentHeaderBar);
 
 		int bgcolor = Color.parseColor("#707070");
 		connectHeader.setBackgroundColor(bgcolor);
 		serverHeader.setBackgroundColor(bgcolor);
+		recentHeader.setBackgroundColor(bgcolor);
 		
 		// Set up the click listeners
 		connectMenuView.setOnItemClickListener(connectClickListener);
 		serverListView.setOnItemClickListener(serverClickListener);
+		recentListView.setOnItemClickListener(recentClickListener);
 		
 		// Start scanning immediately
 		findServers();

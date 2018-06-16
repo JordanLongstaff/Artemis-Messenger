@@ -22,7 +22,7 @@ public class StationStatusRow extends ObjectStatusRow {
 	private final int maxShields;
 	private final int[] ordnance;
 	private OrdnanceType building;
-	private boolean setMissile, firstMissile;
+	private boolean setMissile, firstMissile, midBuild;
 	private long startTime, endTime;
 	private final String name;
 	private boolean docking, docked, ready, paused, closest;
@@ -101,7 +101,7 @@ public class StationStatusRow extends ObjectStatusRow {
 		if (setMissile) return;
 		startTime = new Date().getTime();
 		building = type;
-		if (firstMissile) {
+		if (firstMissile && !midBuild) {
 			int buildTime = type.getBuildTime() << 1;
 			buildTime /= productionCoeff;
 			buildTime /= speed;
@@ -118,6 +118,7 @@ public class StationStatusRow extends ObjectStatusRow {
 	
 	// Override previous missile type we were building
 	public void resetMissile() {
+		if (midBuild) return;
 		setMissile = false;
 	}
 	
@@ -134,6 +135,9 @@ public class StationStatusRow extends ObjectStatusRow {
 	
 	// Recalibrate speed if an incoming message says it's incorrect
 	public void reconcileSpeed(int minutes) {
+		if (midBuild) return;
+		midBuild = true;
+		
 		int normalBuildTime = building.getBuildTime() << 1;
 		normalBuildTime /= productionCoeff;
 		int buildTime = normalBuildTime / speed;
@@ -158,6 +162,11 @@ public class StationStatusRow extends ObjectStatusRow {
 	public void setBuildTime(int minutes) {
 		if (firstMissile) return;
 		endTime = new Date().getTime() + minutes * ONE_MINUTE;
+	}
+	
+	// Reset record of build progress
+	public void resetBuildProgress() {
+		midBuild = false;
 	}
 	
 	// Number of fighters on the station

@@ -319,6 +319,10 @@ public class SettingsActivity extends PreferenceActivity {
 				findPreference(getString(R.string.udpTimeoutKey));
 		bindPreferenceSummaryToValue(udpTimeoutPref);
 		
+		EditTextPreference recentHostsPref = (EditTextPreference)
+				findPreference(getString(R.string.recentHostsKey));
+		bindPreferenceSummaryToValue(recentHostsPref);
+		
 		RingtonePreference newMissionPref = (RingtonePreference)
 				findPreference(getString(R.string.newMissionPrefKey));
 		bindPreferenceSummaryToValue(newMissionPref);
@@ -361,7 +365,9 @@ public class SettingsActivity extends PreferenceActivity {
 
 			} else if (preference instanceof EditTextPreference) {
 				if (stringValue.equals("")) return false; 
-				preference.setSummary(stringValue + (preference.getKey().contains("Port") ? "" : " seconds"));
+				preference.setSummary(stringValue +
+						(preference.getKey().contains("Port") || preference.getKey().startsWith("recent") ?
+								"" : " seconds"));
 				
 			} else if (preference instanceof RingtonePreference) {
 				// For ringtone preferences, look up the correct display value
