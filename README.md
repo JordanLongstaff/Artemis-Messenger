@@ -1,4 +1,4 @@
-# Artemis Messenger 5.3.1
+# Artemis Messenger 5.3.2
 
 ## What is Artemis Messenger?
 

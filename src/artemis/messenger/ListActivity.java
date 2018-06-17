@@ -2085,7 +2085,10 @@ public class ListActivity extends Activity implements OnSharedPreferenceChangeLi
 		if (!message.startsWith("Transfer")) return false;
 		
 		// Update last mission to make progress on a mission
-		missionShip = message.split(", ", 2)[1].split("\\. ", 2)[0];
+		String[] messageParts = message.substring(0, message.length() - 1).split(", ", 2)[1].split("\\.");
+		missionShip = messageParts[0];
+		for (int i = 1; i < messageParts.length - 1; i++)
+			missionShip += "." + messageParts[i];
 		
 		// If progress was completion, do nothing (no other parsers)
 		if (message.endsWith("!")) return true;
